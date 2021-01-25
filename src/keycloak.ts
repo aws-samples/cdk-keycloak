@@ -1,10 +1,10 @@
 import * as ec2 from '@aws-cdk/aws-ec2';
 import * as ecs from '@aws-cdk/aws-ecs';
+import * as iam from '@aws-cdk/aws-iam';
+import * as logs from '@aws-cdk/aws-logs';
 import * as rds from '@aws-cdk/aws-rds';
 import * as secretsmanager from '@aws-cdk/aws-secretsmanager';
 import * as cdk from '@aws-cdk/core';
-import * as logs from '@aws-cdk/aws-logs';
-import * as iam from '@aws-cdk/aws-iam';
 // import * as certmgr from '@aws-cdk/aws-certificatemanager';
 
 export interface KeyCloadProps {
@@ -20,9 +20,10 @@ export class KeyCloak extends cdk.Construct {
     this.vpc = props.vpc ?? getOrCreateVpc(this);
     this.db = this.addDatabase();
     this.addKeyCloakContainerService({
-      dbSecret: this.db.secret,
-      dbHost: this.db.clusterEndpointHostname,
-      dbUser: this.db.databaseUsername,
+      database: this.db,
+      // dbSecret: this.db.secret,
+      // dbHost: this.db.clusterEndpointHostname,
+      // dbUser: this.db.databaseUsername,
       vpc: this.vpc,
       keycloakSecret: this._generateKeycloakSecret(),
     });
@@ -110,9 +111,10 @@ export class Database extends cdk.Construct {
 
 export interface ContainerServiceProps {
   readonly vpc: ec2.IVpc;
-  readonly dbHost: string;
-  readonly dbUser: string;
-  readonly dbSecret: secretsmanager.ISecret;
+  readonly database: Database;
+  // readonly dbHost: string;
+  // readonly dbUser: string;
+  // readonly dbSecret: secretsmanager.ISecret;
   readonly keycloakSecret: secretsmanager.ISecret;
 }
 
@@ -137,20 +139,20 @@ export class ContainerService extends cdk.Construct {
     const kc = taskDefinition.addContainer('keycloak', {
       image: ecs.ContainerImage.fromRegistry('jboss/keycloak:12.0.2'),
       environment: {
-        DB_ADDR: props.dbHost,
+        DB_ADDR: props.database.clusterEndpointHostname,
         DB_DATABASE: 'keycloak',
         DB_PORT: '3306',
-        DB_USER: props.dbUser,
+        DB_USER: props.database.databaseUsername,
         DB_VENDOR: 'mysql',
         JDBC_PARAMS: 'useSSL=false',
       },
       secrets: {
-        DB_PASSWORD: ecs.Secret.fromSecretsManager(props.dbSecret, 'password'),
+        DB_PASSWORD: ecs.Secret.fromSecretsManager(props.database.secret, 'password'),
         KEYCLOAK_PASSWORD: ecs.Secret.fromSecretsManager(props.keycloakSecret, 'password'),
       },
-      logging: ecs.LogDrivers.awsLogs({ 
+      logging: ecs.LogDrivers.awsLogs({
         streamPrefix: 'KeyCloak',
-        logGroup: new logs.LogGroup(this, 'LogGroup', { 
+        logGroup: new logs.LogGroup(this, 'LogGroup', {
           logGroupName: `KeyCloak${id}`,
           retention: logs.RetentionDays.ONE_MONTH,
         }),
@@ -167,10 +169,14 @@ export class ContainerService extends cdk.Construct {
         rollback: true,
       },
     });
-    
+
     // allow task execution role to read the secrets
-    props.dbSecret.grantRead(taskDefinition.executionRole!)
-    props.keycloakSecret.grantRead(taskDefinition.executionRole!)
+    props.database.secret.grantRead(taskDefinition.executionRole!);
+    props.keycloakSecret.grantRead(taskDefinition.executionRole!);
+
+    // allow ecs task connect to database
+    props.database.dbcluster.connections.allowDefaultPortFrom(this.service)
+    
 
   }
 }
