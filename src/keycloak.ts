@@ -5,7 +5,6 @@ import * as logs from '@aws-cdk/aws-logs';
 import * as rds from '@aws-cdk/aws-rds';
 import * as secretsmanager from '@aws-cdk/aws-secretsmanager';
 import * as cdk from '@aws-cdk/core';
-// import * as certmgr from '@aws-cdk/aws-certificatemanager';
 
 export interface KeyCloadProps {
   readonly vpc?: ec2.IVpc;
@@ -21,9 +20,6 @@ export class KeyCloak extends cdk.Construct {
     this.db = this.addDatabase();
     this.addKeyCloakContainerService({
       database: this.db,
-      // dbSecret: this.db.secret,
-      // dbHost: this.db.clusterEndpointHostname,
-      // dbUser: this.db.databaseUsername,
       vpc: this.vpc,
       keycloakSecret: this._generateKeycloakSecret(),
     });
@@ -87,7 +83,6 @@ export class Database extends cdk.Construct {
 
     this.secret = dbcluster.secret!;
 
-
     // allow internally from the same security group
     dbcluster.connections.allowInternally(ec2.Port.tcp(this._autoraListenerPort));
     // allow from the whole vpc cidr
@@ -112,9 +107,6 @@ export class Database extends cdk.Construct {
 export interface ContainerServiceProps {
   readonly vpc: ec2.IVpc;
   readonly database: Database;
-  // readonly dbHost: string;
-  // readonly dbUser: string;
-  // readonly dbSecret: secretsmanager.ISecret;
   readonly keycloakSecret: secretsmanager.ISecret;
 }
 
@@ -176,8 +168,6 @@ export class ContainerService extends cdk.Construct {
 
     // allow ecs task connect to database
     props.database.dbcluster.connections.allowDefaultPortFrom(this.service);
-
-
   }
 }
 
