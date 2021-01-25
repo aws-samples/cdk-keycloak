@@ -3,6 +3,7 @@ import * as ecs from '@aws-cdk/aws-ecs';
 import * as rds from '@aws-cdk/aws-rds';
 import * as secretsmanager from '@aws-cdk/aws-secretsmanager';
 import * as cdk from '@aws-cdk/core';
+import * as logs from '@aws-cdk/aws-logs';
 // import * as certmgr from '@aws-cdk/aws-certificatemanager';
 
 export interface KeyCloadProps {
@@ -139,6 +140,13 @@ export class ContainerService extends cdk.Construct {
         DB_PASSWORD: ecs.Secret.fromSecretsManager(props.dbSecret, 'password'),
         KEYCLOAK_PASSWORD: ecs.Secret.fromSecretsManager(props.keycloakSecret, 'password'),
       },
+      logging: ecs.LogDrivers.awsLogs({ 
+        streamPrefix: 'KeyCloak',
+        logGroup: new logs.LogGroup(this, 'LogGroup', { 
+          logGroupName: `KeyCloak${id}`,
+          retention: logs.RetentionDays.ONE_MONTH,
+        }),
+      }),
     });
     kc.addPortMappings({
       containerPort: 8080,
