@@ -33,7 +33,7 @@ const project = new AwsCdkConstructLibrary({
     'cdk',
     'keycloak',
     'aws',
-  ]
+  ],
 });
 
 // create a custom projen and yarn upgrade workflow
