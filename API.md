@@ -38,9 +38,7 @@ new ContainerService(scope: Construct, id: string, props: ContainerServiceProps)
 * **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  *No description*
 * **id** (<code>string</code>)  *No description*
 * **props** (<code>[ContainerServiceProps](#cdk-keycloak-containerserviceprops)</code>)  *No description*
-  * **dbHost** (<code>string</code>)  *No description* 
-  * **dbSecret** (<code>[ISecret](#aws-cdk-aws-secretsmanager-isecret)</code>)  *No description* 
-  * **dbUser** (<code>string</code>)  *No description* 
+  * **database** (<code>[Database](#cdk-keycloak-database)</code>)  *No description* 
   * **keycloakSecret** (<code>[ISecret](#aws-cdk-aws-secretsmanager-isecret)</code>)  *No description* 
   * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  *No description* 
 
@@ -151,9 +149,7 @@ addKeyCloakContainerService(props: ContainerServiceProps): ContainerService
 ```
 
 * **props** (<code>[ContainerServiceProps](#cdk-keycloak-containerserviceprops)</code>)  *No description*
-  * **dbHost** (<code>string</code>)  *No description* 
-  * **dbSecret** (<code>[ISecret](#aws-cdk-aws-secretsmanager-isecret)</code>)  *No description* 
-  * **dbUser** (<code>string</code>)  *No description* 
+  * **database** (<code>[Database](#cdk-keycloak-database)</code>)  *No description* 
   * **keycloakSecret** (<code>[ISecret](#aws-cdk-aws-secretsmanager-isecret)</code>)  *No description* 
   * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  *No description* 
 
@@ -171,9 +167,7 @@ __Returns__:
 
 Name | Type | Description 
 -----|------|-------------
-**dbHost** | <code>string</code> | <span></span>
-**dbSecret** | <code>[ISecret](#aws-cdk-aws-secretsmanager-isecret)</code> | <span></span>
-**dbUser** | <code>string</code> | <span></span>
+**database** | <code>[Database](#cdk-keycloak-database)</code> | <span></span>
 **keycloakSecret** | <code>[ISecret](#aws-cdk-aws-secretsmanager-isecret)</code> | <span></span>
 **vpc** | <code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code> | <span></span>
 

@@ -175,8 +175,8 @@ export class ContainerService extends cdk.Construct {
     props.keycloakSecret.grantRead(taskDefinition.executionRole!);
 
     // allow ecs task connect to database
-    props.database.dbcluster.connections.allowDefaultPortFrom(this.service)
-    
+    props.database.dbcluster.connections.allowDefaultPortFrom(this.service);
+
 
   }
 }
