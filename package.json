@@ -74,7 +74,9 @@
   },
   "bundledDependencies": [],
   "keywords": [
-    "cdk"
+    "aws",
+    "cdk",
+    "keycloak"
   ],
   "main": "lib/index.js",
   "license": "Apache-2.0",

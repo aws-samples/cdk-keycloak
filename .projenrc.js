@@ -29,6 +29,11 @@ const project = new AwsCdkConstructLibrary({
     distName: 'cdk-keycloak',
     module: 'cdk_keycloak',
   },
+  keywords: [
+    'cdk',
+    'keycloak',
+    'aws',
+  ]
 });
 
 // create a custom projen and yarn upgrade workflow
