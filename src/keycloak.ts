@@ -4,6 +4,7 @@ import * as rds from '@aws-cdk/aws-rds';
 import * as secretsmanager from '@aws-cdk/aws-secretsmanager';
 import * as cdk from '@aws-cdk/core';
 import * as logs from '@aws-cdk/aws-logs';
+import * as iam from '@aws-cdk/aws-iam';
 // import * as certmgr from '@aws-cdk/aws-certificatemanager';
 
 export interface KeyCloadProps {
@@ -122,9 +123,16 @@ export class ContainerService extends cdk.Construct {
 
     const vpc = props.vpc;
     const cluster = new ecs.Cluster(this, 'Cluster', { vpc });
+    const taskRole = new iam.Role(this, 'TaskRole', {
+      assumedBy: new iam.CompositePrincipal(
+        new iam.ServicePrincipal('ecs.amazonaws.com'),
+        new iam.ServicePrincipal('ecs-tasks.amazonaws.com'),
+      ),
+    });
     const taskDefinition = new ecs.FargateTaskDefinition(this, 'TaskDef', {
       cpu: 4096,
       memoryLimitMiB: 30720,
+      executionRole: taskRole,
     });
     const kc = taskDefinition.addContainer('keycloak', {
       image: ecs.ContainerImage.fromRegistry('jboss/keycloak:12.0.2'),
@@ -159,6 +167,11 @@ export class ContainerService extends cdk.Construct {
         rollback: true,
       },
     });
+    
+    // allow task execution role to read the secrets
+    props.dbSecret.grantRead(taskDefinition.executionRole!)
+    props.keycloakSecret.grantRead(taskDefinition.executionRole!)
+
   }
 }
 
