@@ -1,3 +1,7 @@
+[![NPM version](https://badge.fury.io/js/cdk-keycloak.svg)](https://badge.fury.io/js/cdk-keycloak)
+[![PyPI version](https://badge.fury.io/py/cdk-keycloak.svg)](https://badge.fury.io/py/cdk-keycloak)
+![Release](https://github.com/pahud/cdk-keycloak/workflows/Release/badge.svg)
+
 # `cdk-keycloak`
 
 CDK construct library that allows you to create KeyCloak service on AWS in TypeScript or Python
