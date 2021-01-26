@@ -12,7 +12,9 @@ export class IntegTesting {
     };
 
     const stack = new cdk.Stack(app, 'keycloak-demo', { env });
-    new KeyCloak(stack, 'KeyCloak');
+    new KeyCloak(stack, 'KeyCloak', {
+      certificateArn: stack.node.tryGetContext('ACM_CERT_ARN') || 'MOCK_ARN',
+    });
     this.stack = [stack];
   }
 }

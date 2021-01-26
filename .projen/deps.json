@@ -113,6 +113,11 @@
       "type": "peer"
     },
     {
+      "name": "@aws-cdk/aws-elasticloadbalancingv2",
+      "version": "^1.73.0",
+      "type": "peer"
+    },
+    {
       "name": "@aws-cdk/aws-iam",
       "version": "^1.73.0",
       "type": "peer"
@@ -159,6 +164,11 @@
     },
     {
       "name": "@aws-cdk/aws-ecs",
+      "version": "^1.73.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-elasticloadbalancingv2",
       "version": "^1.73.0",
       "type": "runtime"
     },

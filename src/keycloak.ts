@@ -1,5 +1,7 @@
+import * as certmgr from '@aws-cdk/aws-certificatemanager';
 import * as ec2 from '@aws-cdk/aws-ec2';
 import * as ecs from '@aws-cdk/aws-ecs';
+import * as elbv2 from '@aws-cdk/aws-elasticloadbalancingv2';
 import * as iam from '@aws-cdk/aws-iam';
 import * as logs from '@aws-cdk/aws-logs';
 import * as rds from '@aws-cdk/aws-rds';
@@ -7,13 +9,20 @@ import * as secretsmanager from '@aws-cdk/aws-secretsmanager';
 import * as cdk from '@aws-cdk/core';
 
 export interface KeyCloadProps {
+  /**
+   * VPC for the workload
+   */
   readonly vpc?: ec2.IVpc;
+  /**
+   * ACM certificate ARN to import
+   */
+  readonly certificateArn: string;
 }
 
 export class KeyCloak extends cdk.Construct {
   readonly vpc: ec2.IVpc;
   readonly db?: Database;
-  constructor(scope: cdk.Construct, id: string, props: KeyCloadProps = {}) {
+  constructor(scope: cdk.Construct, id: string, props: KeyCloadProps) {
     super(scope, id);
 
     this.vpc = props.vpc ?? getOrCreateVpc(this);
@@ -22,6 +31,7 @@ export class KeyCloak extends cdk.Construct {
       database: this.db,
       vpc: this.vpc,
       keycloakSecret: this._generateKeycloakSecret(),
+      certificate: certmgr.Certificate.fromCertificateArn(this, 'ACMCert', props.certificateArn),
     });
   }
   public addDatabase(): Database {
@@ -108,6 +118,7 @@ export interface ContainerServiceProps {
   readonly vpc: ec2.IVpc;
   readonly database: Database;
   readonly keycloakSecret: secretsmanager.ISecret;
+  readonly certificate: certmgr.ICertificate;
 }
 
 export class ContainerService extends cdk.Construct {
@@ -147,6 +158,7 @@ export class ContainerService extends cdk.Construct {
         logGroup: new logs.LogGroup(this, 'LogGroup', {
           logGroupName: `KeyCloak${id}`,
           retention: logs.RetentionDays.ONE_MONTH,
+          removalPolicy: cdk.RemovalPolicy.DESTROY,
         }),
       }),
     });
@@ -160,6 +172,29 @@ export class ContainerService extends cdk.Construct {
       circuitBreaker: {
         rollback: true,
       },
+    });
+
+
+    const alb = new elbv2.ApplicationLoadBalancer(this, 'ALB', {
+      vpc,
+      internetFacing: true,
+    });
+    const listener = alb.addListener('HttpListener', {
+      protocol: elbv2.ApplicationProtocol.HTTPS,
+      certificates: [
+        {
+          certificateArn: props.certificate.certificateArn,
+        },
+      ],
+    });
+
+    this.service.registerLoadBalancerTargets({
+      containerName: 'keycloak',
+      listener: ecs.ListenerConfig.applicationListener(listener, {
+        protocol: elbv2.ApplicationProtocol.HTTPS,
+      }),
+      newTargetGroupId: 'ECS',
+      containerPort: 8080,
     });
 
     // allow task execution role to read the secrets
@@ -184,4 +219,3 @@ function getOrCreateVpc(scope: cdk.Construct): ec2.IVpc {
 function printOutput(scope: cdk.Construct, id: string, key: string | number) {
   new cdk.CfnOutput(scope, id, { value: String(key) });
 }
-

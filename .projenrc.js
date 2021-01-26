@@ -19,6 +19,7 @@ const project = new AwsCdkConstructLibrary({
     '@aws-cdk/aws-certificatemanager',
     '@aws-cdk/aws-rds',
     '@aws-cdk/aws-secretsmanager',
+    '@aws-cdk/aws-elasticloadbalancingv2',
   ],
   dependabot: false,
   catalog: {

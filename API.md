@@ -38,6 +38,7 @@ new ContainerService(scope: Construct, id: string, props: ContainerServiceProps)
 * **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  *No description*
 * **id** (<code>string</code>)  *No description*
 * **props** (<code>[ContainerServiceProps](#cdk-keycloak-containerserviceprops)</code>)  *No description*
+  * **certificate** (<code>[ICertificate](#aws-cdk-aws-certificatemanager-icertificate)</code>)  *No description* 
   * **database** (<code>[Database](#cdk-keycloak-database)</code>)  *No description* 
   * **keycloakSecret** (<code>[ISecret](#aws-cdk-aws-secretsmanager-isecret)</code>)  *No description* 
   * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  *No description* 
@@ -107,13 +108,14 @@ __Extends__: [Construct](#aws-cdk-core-construct)
 
 
 ```ts
-new KeyCloak(scope: Construct, id: string, props?: KeyCloadProps)
+new KeyCloak(scope: Construct, id: string, props: KeyCloadProps)
 ```
 
 * **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  *No description*
 * **id** (<code>string</code>)  *No description*
 * **props** (<code>[KeyCloadProps](#cdk-keycloak-keycloadprops)</code>)  *No description*
-  * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  *No description* __*Optional*__
+  * **certificateArn** (<code>string</code>)  ACM certificate ARN to import. 
+  * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  VPC for the workload. __*Optional*__
 
 
 
@@ -149,6 +151,7 @@ addKeyCloakContainerService(props: ContainerServiceProps): ContainerService
 ```
 
 * **props** (<code>[ContainerServiceProps](#cdk-keycloak-containerserviceprops)</code>)  *No description*
+  * **certificate** (<code>[ICertificate](#aws-cdk-aws-certificatemanager-icertificate)</code>)  *No description* 
   * **database** (<code>[Database](#cdk-keycloak-database)</code>)  *No description* 
   * **keycloakSecret** (<code>[ISecret](#aws-cdk-aws-secretsmanager-isecret)</code>)  *No description* 
   * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  *No description* 
@@ -167,6 +170,7 @@ __Returns__:
 
 Name | Type | Description 
 -----|------|-------------
+**certificate** | <code>[ICertificate](#aws-cdk-aws-certificatemanager-icertificate)</code> | <span></span>
 **database** | <code>[Database](#cdk-keycloak-database)</code> | <span></span>
 **keycloakSecret** | <code>[ISecret](#aws-cdk-aws-secretsmanager-isecret)</code> | <span></span>
 **vpc** | <code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code> | <span></span>
@@ -198,7 +202,8 @@ Name | Type | Description
 
 Name | Type | Description 
 -----|------|-------------
-**vpc**? | <code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code> | __*Optional*__
+**certificateArn** | <code>string</code> | ACM certificate ARN to import.
+**vpc**? | <code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code> | VPC for the workload.<br/>__*Optional*__
 
 
 

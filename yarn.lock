@@ -269,7 +269,7 @@
     "@aws-cdk/core" "1.86.0"
     constructs "^3.2.0"
 
-"@aws-cdk/aws-elasticloadbalancingv2@1.86.0":
+"@aws-cdk/aws-elasticloadbalancingv2@1.86.0", "@aws-cdk/aws-elasticloadbalancingv2@^1.73.0":
   version "1.86.0"
   resolved "https://registry.yarnpkg.com/@aws-cdk/aws-elasticloadbalancingv2/-/aws-elasticloadbalancingv2-1.86.0.tgz#763ddcbd7b3f386ee2fc61b34404361421fd02b9"
   integrity sha512-jGZWjYAluj9/17m8TG8GwpD69UH1Dd0ShsvtwLgT6o6vauJktyiVBrPSWxFn5j00rj0qFO4gynyj2bnx7mf19A==
