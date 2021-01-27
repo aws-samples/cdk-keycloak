@@ -74,8 +74,7 @@ new Database(scope: Construct, id: string, props: DatabaseProps)
 * **id** (<code>string</code>)  *No description*
 * **props** (<code>[DatabaseProps](#cdk-keycloak-databaseprops)</code>)  *No description*
   * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  *No description* 
-  * **databaseUsername** (<code>string</code>)  database user name. __*Default*__: admin
-  * **engine** (<code>[IClusterEngine](#aws-cdk-aws-rds-iclusterengine)</code>)  *No description* __*Optional*__
+  * **engine** (<code>[IInstanceEngine](#aws-cdk-aws-rds-iinstanceengine)</code>)  *No description* __*Optional*__
   * **instanceType** (<code>[InstanceType](#aws-cdk-aws-ec2-instancetype)</code>)  *No description* __*Optional*__
 
 
@@ -87,9 +86,7 @@ Name | Type | Description
 -----|------|-------------
 **clusterEndpointHostname** | <code>string</code> | <span></span>
 **clusterIdentifier** | <code>string</code> | <span></span>
-**clusterReadEndpointHostname** | <code>string</code> | <span></span>
-**databaseUsername** | <code>string</code> | <span></span>
-**dbcluster** | <code>[DatabaseCluster](#aws-cdk-aws-rds-databasecluster)</code> | <span></span>
+**dbinstance** | <code>[DatabaseInstance](#aws-cdk-aws-rds-databaseinstance)</code> | <span></span>
 **secret** | <code>[ISecret](#aws-cdk-aws-secretsmanager-isecret)</code> | <span></span>
 **vpc** | <code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code> | <span></span>
 
@@ -187,8 +184,7 @@ Name | Type | Description
 Name | Type | Description 
 -----|------|-------------
 **vpc** | <code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code> | <span></span>
-**databaseUsername**? | <code>string</code> | database user name.<br/>__*Default*__: admin
-**engine**? | <code>[IClusterEngine](#aws-cdk-aws-rds-iclusterengine)</code> | __*Optional*__
+**engine**? | <code>[IInstanceEngine](#aws-cdk-aws-rds-iinstanceengine)</code> | __*Optional*__
 **instanceType**? | <code>[InstanceType](#aws-cdk-aws-ec2-instancetype)</code> | __*Optional*__
 
 

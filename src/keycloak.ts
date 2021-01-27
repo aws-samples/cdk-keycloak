@@ -46,6 +46,8 @@ export class KeyCloak extends cdk.Construct {
     return new secretsmanager.Secret(this, 'KCSecret', {
       generateSecretString: {
         generateStringKey: 'password',
+        excludePunctuation: true,
+        passwordLength: 12,
         secretStringTemplate: JSON.stringify({ username: 'keycloak' }),
       },
     });
@@ -55,61 +57,72 @@ export class KeyCloak extends cdk.Construct {
 export interface DatabaseProps {
   readonly vpc: ec2.IVpc;
   readonly instanceType?: ec2.InstanceType;
-  readonly engine?: rds.IClusterEngine;
-  /**
-   * database user name
-   *
-   * @default admin
-   */
-  readonly databaseUsername?: string;
+  readonly engine?: rds.IInstanceEngine;
+  // /**
+  //  * database user name
+  //  *
+  //  * @default admin
+  //  */
+  // readonly databaseUsername?: string;
 }
 
 export class Database extends cdk.Construct {
-  readonly dbcluster: rds.DatabaseCluster;
-  readonly databaseUsername: string;
+  readonly dbinstance: rds.DatabaseInstance;
+  // readonly databaseUsername: string;
   readonly vpc: ec2.IVpc;
   readonly clusterEndpointHostname: string;
-  readonly clusterReadEndpointHostname: string;
+  // readonly clusterReadEndpointHostname: string;
   readonly clusterIdentifier: string;
   readonly secret: secretsmanager.ISecret;
-  private readonly _autoraListenerPort: number = 3306;
+  private readonly _mysqlListenerPort: number = 3306;
 
 
   constructor(scope: cdk.Construct, id: string, props: DatabaseProps) {
     super(scope, id);
-    this.databaseUsername = props.databaseUsername ?? 'admin';
-    const dbcluster = new rds.DatabaseCluster(this, 'Database', {
-      engine: props.engine ?? rds.DatabaseClusterEngine.AURORA_MYSQL,
-      credentials: {
-        username: this.databaseUsername,
-      },
-      instanceProps: {
-        instanceType: props.instanceType ?? new ec2.InstanceType('r5.large'),
-        vpc: props.vpc,
-      },
-      parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.aurora-mysql5.7'),
+    // this.databaseUsername = props.databaseUsername ?? 'admin';
+    const dbInstance = new rds.DatabaseInstance(this, 'DBInstance', {
+      vpc: props.vpc,
+      engine: rds.DatabaseInstanceEngine.mysql({
+        version: rds.MysqlEngineVersion.VER_8_0_20,
+      }),
+      credentials: rds.Credentials.fromGeneratedSecret('admin'),
+      instanceType: props.instanceType ?? new ec2.InstanceType('r5.large'),
+      parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.mysql8.0'),
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
-    this.secret = dbcluster.secret!;
+    // const dbcluster = new rds.DatabaseCluster(this, 'Database', {
+    //   engine: props.engine ?? rds.DatabaseClusterEngine.AURORA_MYSQL,
+    //   credentials: {
+    //     username: this.databaseUsername,
+    //   },
+    //   instanceProps: {
+    //     instanceType: props.instanceType ?? new ec2.InstanceType('r5.large'),
+    //     vpc: props.vpc,
+    //   },
+    //   parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.aurora-mysql5.7'),
+    //   removalPolicy: cdk.RemovalPolicy.DESTROY,
+    // });
+
+    this.secret = dbInstance.secret!;
 
     // allow internally from the same security group
-    dbcluster.connections.allowInternally(ec2.Port.tcp(this._autoraListenerPort));
+    dbInstance.connections.allowInternally(ec2.Port.tcp(this._mysqlListenerPort));
     // allow from the whole vpc cidr
-    dbcluster.connections.allowFrom(ec2.Peer.ipv4(props.vpc.vpcCidrBlock), ec2.Port.tcp(this._autoraListenerPort));
+    dbInstance.connections.allowFrom(ec2.Peer.ipv4(props.vpc.vpcCidrBlock), ec2.Port.tcp(this._mysqlListenerPort));
 
-    this.dbcluster = dbcluster;
+    this.dbinstance = dbInstance;
     this.vpc = props.vpc;
-    this.clusterEndpointHostname = dbcluster.clusterEndpoint.hostname;
-    this.clusterReadEndpointHostname = dbcluster.clusterReadEndpoint.hostname;
-    this.clusterIdentifier = dbcluster.clusterIdentifier;
+    this.clusterEndpointHostname = dbInstance.dbInstanceEndpointAddress;
+    // this.clusterReadEndpointHostname = dbInstance.clusterReadEndpoint.hostname;
+    this.clusterIdentifier = dbInstance.instanceIdentifier;
 
     printOutput(this, 'clusterEndpointHostname', this.clusterEndpointHostname);
-    printOutput(this, 'clusterReadEndpointHostname', this.clusterReadEndpointHostname);
+    // printOutput(this, 'clusterReadEndpointHostname', this.clusterReadEndpointHostname);
     printOutput(this, 'clusterIdentifier', this.clusterIdentifier);
 
-    if (dbcluster.secret) {
-      printOutput(this, 'DBSecretArn', dbcluster.secret.secretArn);
+    if (this.dbinstance.secret) {
+      printOutput(this, 'DBSecretArn', this.dbinstance.secret.secretArn);
     }
   }
 }
@@ -139,13 +152,40 @@ export class ContainerService extends cdk.Construct {
       memoryLimitMiB: 30720,
       executionRole: taskRole,
     });
+
+    const logGroup = new logs.LogGroup(this, 'LogGroup', {
+      retention: logs.RetentionDays.ONE_MONTH,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+
+    // bootstrap container that creates the database if not exist
+    const bootstrap = taskDefinition.addContainer('bootstrap', {
+      essential: false,
+      image: ecs.ContainerImage.fromRegistry('public.ecr.aws/ubuntu/mysql:latest'),
+      environment: {
+        DB_NAME: 'keycloak',
+        DB_USER: 'admin',
+        DB_ADDR: props.database.clusterEndpointHostname,
+      },
+      secrets: {
+        DB_PASSWORD: ecs.Secret.fromSecretsManager(props.database.secret, 'password'),
+      },
+      command: [
+        'sh', '-c',
+        'mysql -u$DB_USER -p$DB_PASSWORD -h$DB_ADDR -e "CREATE DATABASE IF NOT EXISTS $DB_NAME"',
+      ],
+      logging: ecs.LogDrivers.awsLogs({
+        streamPrefix: 'bootstrap',
+        logGroup,
+      }),
+    });
     const kc = taskDefinition.addContainer('keycloak', {
       image: ecs.ContainerImage.fromRegistry('jboss/keycloak:12.0.2'),
       environment: {
         DB_ADDR: props.database.clusterEndpointHostname,
         DB_DATABASE: 'keycloak',
         DB_PORT: '3306',
-        DB_USER: props.database.databaseUsername,
+        DB_USER: 'admin',
         DB_VENDOR: 'mysql',
         JDBC_PARAMS: 'useSSL=false',
       },
@@ -154,16 +194,17 @@ export class ContainerService extends cdk.Construct {
         KEYCLOAK_PASSWORD: ecs.Secret.fromSecretsManager(props.keycloakSecret, 'password'),
       },
       logging: ecs.LogDrivers.awsLogs({
-        streamPrefix: 'KeyCloak',
-        logGroup: new logs.LogGroup(this, 'LogGroup', {
-          logGroupName: `KeyCloak${id}`,
-          retention: logs.RetentionDays.ONE_MONTH,
-          removalPolicy: cdk.RemovalPolicy.DESTROY,
-        }),
+        streamPrefix: 'keycloak',
+        logGroup,
       }),
     });
     kc.addPortMappings({
       containerPort: 8080,
+    });
+
+    kc.addContainerDependencies({
+      container: bootstrap,
+      condition: ecs.ContainerDependencyCondition.SUCCESS,
     });
 
     this.service = new ecs.FargateService(this, 'Service', {
@@ -172,13 +213,15 @@ export class ContainerService extends cdk.Construct {
       circuitBreaker: {
         rollback: true,
       },
+      desiredCount: 1,
     });
-
 
     const alb = new elbv2.ApplicationLoadBalancer(this, 'ALB', {
       vpc,
       internetFacing: true,
     });
+    printOutput(this, 'EndpointURL', alb.loadBalancerDnsName);
+
     const listener = alb.addListener('HttpListener', {
       protocol: elbv2.ApplicationProtocol.HTTPS,
       certificates: [
@@ -202,7 +245,14 @@ export class ContainerService extends cdk.Construct {
     props.keycloakSecret.grantRead(taskDefinition.executionRole!);
 
     // allow ecs task connect to database
-    props.database.dbcluster.connections.allowDefaultPortFrom(this.service);
+    props.database.dbinstance.connections.allowDefaultPortFrom(this.service);
+
+    // create a bastion host
+    const bast = new ec2.BastionHostLinux(this, 'Bast', {
+      vpc,
+      instanceType: new ec2.InstanceType('m5.large'),
+    });
+    props.database.dbinstance.connections.allowDefaultPortFrom(bast);
   }
 }
 
