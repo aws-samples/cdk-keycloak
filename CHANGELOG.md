@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.9](https://github.com/pahud/cdk-keycloak/compare/v0.0.7...v0.0.9) (2021-01-27)
+
+
+### Features
+
+* bootstrap container support ([#9](https://github.com/pahud/cdk-keycloak/issues/9)) ([b5cf701](https://github.com/pahud/cdk-keycloak/commit/b5cf70180dfb2f3d3dd2840f125af03ba320e67b)), closes [#8](https://github.com/pahud/cdk-keycloak/issues/8)
+
 ### [0.0.8](https://github.com/pahud/cdk-keycloak/compare/v0.0.7...v0.0.8) (2021-01-27)
 
 
