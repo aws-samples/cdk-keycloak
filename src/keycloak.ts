@@ -58,20 +58,12 @@ export interface DatabaseProps {
   readonly vpc: ec2.IVpc;
   readonly instanceType?: ec2.InstanceType;
   readonly engine?: rds.IInstanceEngine;
-  // /**
-  //  * database user name
-  //  *
-  //  * @default admin
-  //  */
-  // readonly databaseUsername?: string;
 }
 
 export class Database extends cdk.Construct {
   readonly dbinstance: rds.DatabaseInstance;
-  // readonly databaseUsername: string;
   readonly vpc: ec2.IVpc;
   readonly clusterEndpointHostname: string;
-  // readonly clusterReadEndpointHostname: string;
   readonly clusterIdentifier: string;
   readonly secret: secretsmanager.ISecret;
   private readonly _mysqlListenerPort: number = 3306;
@@ -79,30 +71,16 @@ export class Database extends cdk.Construct {
 
   constructor(scope: cdk.Construct, id: string, props: DatabaseProps) {
     super(scope, id);
-    // this.databaseUsername = props.databaseUsername ?? 'admin';
     const dbInstance = new rds.DatabaseInstance(this, 'DBInstance', {
       vpc: props.vpc,
       engine: rds.DatabaseInstanceEngine.mysql({
-        version: rds.MysqlEngineVersion.VER_8_0_20,
+        version: rds.MysqlEngineVersion.VER_8_0_21,
       }),
       credentials: rds.Credentials.fromGeneratedSecret('admin'),
       instanceType: props.instanceType ?? new ec2.InstanceType('r5.large'),
       parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.mysql8.0'),
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
-
-    // const dbcluster = new rds.DatabaseCluster(this, 'Database', {
-    //   engine: props.engine ?? rds.DatabaseClusterEngine.AURORA_MYSQL,
-    //   credentials: {
-    //     username: this.databaseUsername,
-    //   },
-    //   instanceProps: {
-    //     instanceType: props.instanceType ?? new ec2.InstanceType('r5.large'),
-    //     vpc: props.vpc,
-    //   },
-    //   parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.aurora-mysql5.7'),
-    //   removalPolicy: cdk.RemovalPolicy.DESTROY,
-    // });
 
     this.secret = dbInstance.secret!;
 
@@ -114,11 +92,9 @@ export class Database extends cdk.Construct {
     this.dbinstance = dbInstance;
     this.vpc = props.vpc;
     this.clusterEndpointHostname = dbInstance.dbInstanceEndpointAddress;
-    // this.clusterReadEndpointHostname = dbInstance.clusterReadEndpoint.hostname;
     this.clusterIdentifier = dbInstance.instanceIdentifier;
 
     printOutput(this, 'clusterEndpointHostname', this.clusterEndpointHostname);
-    // printOutput(this, 'clusterReadEndpointHostname', this.clusterReadEndpointHostname);
     printOutput(this, 'clusterIdentifier', this.clusterIdentifier);
 
     if (this.dbinstance.secret) {
