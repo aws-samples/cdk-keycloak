@@ -11,7 +11,7 @@ export class IntegTesting {
       account: process.env.CDK_DEFAULT_ACCOUNT,
     };
 
-    const stack = new cdk.Stack(app, 'keycloak-demo', { env });
+    const stack = new cdk.Stack(app, 'keycloak-demo2', { env });
     new KeyCloak(stack, 'KeyCloak', {
       certificateArn: stack.node.tryGetContext('ACM_CERT_ARN') || 'MOCK_ARN',
     });

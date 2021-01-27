@@ -23,3 +23,4 @@ new KeyCloak(stack, 'KeyCloak', {
   certificateArn: 'arn:aws:acm:us-east-1:123456789012:certificate/293cf875-ca98-4c2e-a797-e1cf6df2553c'
 });
 ```
+
