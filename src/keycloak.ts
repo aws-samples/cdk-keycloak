@@ -17,6 +17,12 @@ export interface KeyCloadProps {
    * ACM certificate ARN to import
    */
   readonly certificateArn: string;
+  /**
+   * Create a bastion host for debugging or trouble-shooting
+   *
+   * @default false
+   */
+  readonly bastion?: boolean;
 }
 
 export class KeyCloak extends cdk.Construct {
@@ -32,6 +38,7 @@ export class KeyCloak extends cdk.Construct {
       vpc: this.vpc,
       keycloakSecret: this._generateKeycloakSecret(),
       certificate: certmgr.Certificate.fromCertificateArn(this, 'ACMCert', props.certificateArn),
+      bastion: props.bastion,
     });
   }
   public addDatabase(): Database {
@@ -108,6 +115,7 @@ export interface ContainerServiceProps {
   readonly database: Database;
   readonly keycloakSecret: secretsmanager.ISecret;
   readonly certificate: certmgr.ICertificate;
+  readonly bastion?: boolean;
 }
 
 export class ContainerService extends cdk.Construct {
@@ -190,6 +198,7 @@ export class ContainerService extends cdk.Construct {
         rollback: true,
       },
       desiredCount: 1,
+      healthCheckGracePeriod: cdk.Duration.seconds(120),
     });
 
     const alb = new elbv2.ApplicationLoadBalancer(this, 'ALB', {
@@ -200,20 +209,17 @@ export class ContainerService extends cdk.Construct {
 
     const listener = alb.addListener('HttpListener', {
       protocol: elbv2.ApplicationProtocol.HTTPS,
-      certificates: [
-        {
-          certificateArn: props.certificate.certificateArn,
-        },
-      ],
+      certificates: [{ certificateArn: props.certificate.certificateArn }],
     });
 
-    this.service.registerLoadBalancerTargets({
-      containerName: 'keycloak',
-      listener: ecs.ListenerConfig.applicationListener(listener, {
-        protocol: elbv2.ApplicationProtocol.HTTPS,
-      }),
-      newTargetGroupId: 'ECS',
-      containerPort: 8080,
+    listener.addTargets('ECSTarget', {
+      targets: [this.service],
+      // set slow_start.duration_seconds to 60
+      // see https://docs.aws.amazon.com/cli/latest/reference/elbv2/modify-target-group-attributes.html
+      slowStart: cdk.Duration.seconds(60),
+      stickinessCookieDuration: cdk.Duration.days(1),
+      port: 8080,
+      protocol: elbv2.ApplicationProtocol.HTTP,
     });
 
     // allow task execution role to read the secrets
@@ -224,14 +230,15 @@ export class ContainerService extends cdk.Construct {
     props.database.dbinstance.connections.allowDefaultPortFrom(this.service);
 
     // create a bastion host
-    const bast = new ec2.BastionHostLinux(this, 'Bast', {
-      vpc,
-      instanceType: new ec2.InstanceType('m5.large'),
-    });
-    props.database.dbinstance.connections.allowDefaultPortFrom(bast);
+    if (props.bastion === true) {
+      const bast = new ec2.BastionHostLinux(this, 'Bast', {
+        vpc,
+        instanceType: new ec2.InstanceType('m5.large'),
+      });
+      props.database.dbinstance.connections.allowDefaultPortFrom(bast);
+    }
   }
 }
-
 
 function getOrCreateVpc(scope: cdk.Construct): ec2.IVpc {
   // use an existing vpc or create a new one
