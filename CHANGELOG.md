@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.11](https://github.com/pahud/cdk-keycloak/compare/v0.0.10...v0.0.11) (2021-01-28)
+
+
+### Features
+
+* make circuit breaker optional ([cdf31d8](https://github.com/pahud/cdk-keycloak/commit/cdf31d806dfaf43139f3f60ec92d77f4596f4ed6))
+* optional node number ([43fa306](https://github.com/pahud/cdk-keycloak/commit/43fa306f0fd92ebb9849b4497f9426a9bc5583b0))
+* support slow start and sticky session ([8571453](https://github.com/pahud/cdk-keycloak/commit/8571453c203a38aa8f4eb65d2306b40063b7b496))
+
 ### [0.0.10](https://github.com/pahud/cdk-keycloak/compare/v0.0.9...v0.0.10) (2021-01-28)
 
 ### [0.0.9](https://github.com/pahud/cdk-keycloak/compare/v0.0.7...v0.0.9) (2021-01-27)
