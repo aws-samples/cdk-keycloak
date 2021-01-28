@@ -23,6 +23,12 @@ export interface KeyCloadProps {
    * @default false
    */
   readonly bastion?: boolean;
+  /**
+   * Number of keycloak node in the cluster
+   *
+   * @default 1
+   */
+  readonly nodeCount?: number;
 }
 
 export class KeyCloak extends cdk.Construct {
@@ -39,6 +45,7 @@ export class KeyCloak extends cdk.Construct {
       keycloakSecret: this._generateKeycloakSecret(),
       certificate: certmgr.Certificate.fromCertificateArn(this, 'ACMCert', props.certificateArn),
       bastion: props.bastion,
+      nodeCount: props.nodeCount,
     });
   }
   public addDatabase(): Database {
@@ -47,7 +54,7 @@ export class KeyCloak extends cdk.Construct {
     });
   }
   public addKeyCloakContainerService(props: ContainerServiceProps) {
-    return new ContainerService(this, 'KeyCloakContainerSerivce', props );
+    return new ContainerService(this, 'KeyCloakContainerSerivce', props);
   }
   private _generateKeycloakSecret(): secretsmanager.ISecret {
     return new secretsmanager.Secret(this, 'KCSecret', {
@@ -146,6 +153,12 @@ export interface ContainerServiceProps {
    * @default false
    */
   readonly circuitBreaker?: boolean;
+  /**
+   * Number of keycloak node in the cluster
+   *
+   * @default 1
+   */
+  readonly nodeCount?: number;
 }
 
 export class ContainerService extends cdk.Construct {
@@ -225,7 +238,7 @@ export class ContainerService extends cdk.Construct {
       cluster,
       taskDefinition,
       circuitBreaker: props.circuitBreaker ? { rollback: true } : undefined,
-      desiredCount: 1,
+      desiredCount: props.nodeCount ?? 1,
       healthCheckGracePeriod: cdk.Duration.seconds(120),
     });
 

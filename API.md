@@ -44,6 +44,7 @@ new ContainerService(scope: Construct, id: string, props: ContainerServiceProps)
   * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  The VPC for the service. 
   * **bastion** (<code>boolean</code>)  Whether to create the bastion host. __*Default*__: false
   * **circuitBreaker** (<code>boolean</code>)  Whether to enable the ECS service deployment circuit breaker. __*Default*__: false
+  * **nodeCount** (<code>number</code>)  Number of keycloak node in the cluster. __*Default*__: 1
 
 
 
@@ -115,6 +116,7 @@ new KeyCloak(scope: Construct, id: string, props: KeyCloadProps)
 * **props** (<code>[KeyCloadProps](#cdk-keycloak-keycloadprops)</code>)  *No description*
   * **certificateArn** (<code>string</code>)  ACM certificate ARN to import. 
   * **bastion** (<code>boolean</code>)  Create a bastion host for debugging or trouble-shooting. __*Default*__: false
+  * **nodeCount** (<code>number</code>)  Number of keycloak node in the cluster. __*Default*__: 1
   * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  VPC for the workload. __*Optional*__
 
 
@@ -157,6 +159,7 @@ addKeyCloakContainerService(props: ContainerServiceProps): ContainerService
   * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  The VPC for the service. 
   * **bastion** (<code>boolean</code>)  Whether to create the bastion host. __*Default*__: false
   * **circuitBreaker** (<code>boolean</code>)  Whether to enable the ECS service deployment circuit breaker. __*Default*__: false
+  * **nodeCount** (<code>number</code>)  Number of keycloak node in the cluster. __*Default*__: 1
 
 __Returns__:
 * <code>[ContainerService](#cdk-keycloak-containerservice)</code>
@@ -178,6 +181,7 @@ Name | Type | Description
 **vpc** | <code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code> | The VPC for the service.
 **bastion**? | <code>boolean</code> | Whether to create the bastion host.<br/>__*Default*__: false
 **circuitBreaker**? | <code>boolean</code> | Whether to enable the ECS service deployment circuit breaker.<br/>__*Default*__: false
+**nodeCount**? | <code>number</code> | Number of keycloak node in the cluster.<br/>__*Default*__: 1
 
 
 
@@ -207,6 +211,7 @@ Name | Type | Description
 -----|------|-------------
 **certificateArn** | <code>string</code> | ACM certificate ARN to import.
 **bastion**? | <code>boolean</code> | Create a bastion host for debugging or trouble-shooting.<br/>__*Default*__: false
+**nodeCount**? | <code>number</code> | Number of keycloak node in the cluster.<br/>__*Default*__: 1
 **vpc**? | <code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code> | VPC for the workload.<br/>__*Optional*__
 
 
