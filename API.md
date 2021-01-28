@@ -38,11 +38,12 @@ new ContainerService(scope: Construct, id: string, props: ContainerServiceProps)
 * **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  *No description*
 * **id** (<code>string</code>)  *No description*
 * **props** (<code>[ContainerServiceProps](#cdk-keycloak-containerserviceprops)</code>)  *No description*
-  * **certificate** (<code>[ICertificate](#aws-cdk-aws-certificatemanager-icertificate)</code>)  *No description* 
-  * **database** (<code>[Database](#cdk-keycloak-database)</code>)  *No description* 
-  * **keycloakSecret** (<code>[ISecret](#aws-cdk-aws-secretsmanager-isecret)</code>)  *No description* 
-  * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  *No description* 
-  * **bastion** (<code>boolean</code>)  *No description* __*Optional*__
+  * **certificate** (<code>[ICertificate](#aws-cdk-aws-certificatemanager-icertificate)</code>)  The ACM certificate. 
+  * **database** (<code>[Database](#cdk-keycloak-database)</code>)  The RDS database for the service. 
+  * **keycloakSecret** (<code>[ISecret](#aws-cdk-aws-secretsmanager-isecret)</code>)  The secrets manager secret for the keycloak. 
+  * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  The VPC for the service. 
+  * **bastion** (<code>boolean</code>)  Whether to create the bastion host. __*Default*__: false
+  * **circuitBreaker** (<code>boolean</code>)  Whether to enable the ECS service deployment circuit breaker. __*Default*__: false
 
 
 
@@ -74,9 +75,9 @@ new Database(scope: Construct, id: string, props: DatabaseProps)
 * **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  *No description*
 * **id** (<code>string</code>)  *No description*
 * **props** (<code>[DatabaseProps](#cdk-keycloak-databaseprops)</code>)  *No description*
-  * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  *No description* 
-  * **engine** (<code>[IInstanceEngine](#aws-cdk-aws-rds-iinstanceengine)</code>)  *No description* __*Optional*__
-  * **instanceType** (<code>[InstanceType](#aws-cdk-aws-ec2-instancetype)</code>)  *No description* __*Optional*__
+  * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  The VPC for the database. 
+  * **engine** (<code>[IInstanceEngine](#aws-cdk-aws-rds-iinstanceengine)</code>)  The database instance engine. __*Optional*__
+  * **instanceType** (<code>[InstanceType](#aws-cdk-aws-ec2-instancetype)</code>)  The database instance type. __*Optional*__
 
 
 
@@ -150,11 +151,12 @@ addKeyCloakContainerService(props: ContainerServiceProps): ContainerService
 ```
 
 * **props** (<code>[ContainerServiceProps](#cdk-keycloak-containerserviceprops)</code>)  *No description*
-  * **certificate** (<code>[ICertificate](#aws-cdk-aws-certificatemanager-icertificate)</code>)  *No description* 
-  * **database** (<code>[Database](#cdk-keycloak-database)</code>)  *No description* 
-  * **keycloakSecret** (<code>[ISecret](#aws-cdk-aws-secretsmanager-isecret)</code>)  *No description* 
-  * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  *No description* 
-  * **bastion** (<code>boolean</code>)  *No description* __*Optional*__
+  * **certificate** (<code>[ICertificate](#aws-cdk-aws-certificatemanager-icertificate)</code>)  The ACM certificate. 
+  * **database** (<code>[Database](#cdk-keycloak-database)</code>)  The RDS database for the service. 
+  * **keycloakSecret** (<code>[ISecret](#aws-cdk-aws-secretsmanager-isecret)</code>)  The secrets manager secret for the keycloak. 
+  * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  The VPC for the service. 
+  * **bastion** (<code>boolean</code>)  Whether to create the bastion host. __*Default*__: false
+  * **circuitBreaker** (<code>boolean</code>)  Whether to enable the ECS service deployment circuit breaker. __*Default*__: false
 
 __Returns__:
 * <code>[ContainerService](#cdk-keycloak-containerservice)</code>
@@ -170,11 +172,12 @@ __Returns__:
 
 Name | Type | Description 
 -----|------|-------------
-**certificate** | <code>[ICertificate](#aws-cdk-aws-certificatemanager-icertificate)</code> | <span></span>
-**database** | <code>[Database](#cdk-keycloak-database)</code> | <span></span>
-**keycloakSecret** | <code>[ISecret](#aws-cdk-aws-secretsmanager-isecret)</code> | <span></span>
-**vpc** | <code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code> | <span></span>
-**bastion**? | <code>boolean</code> | __*Optional*__
+**certificate** | <code>[ICertificate](#aws-cdk-aws-certificatemanager-icertificate)</code> | The ACM certificate.
+**database** | <code>[Database](#cdk-keycloak-database)</code> | The RDS database for the service.
+**keycloakSecret** | <code>[ISecret](#aws-cdk-aws-secretsmanager-isecret)</code> | The secrets manager secret for the keycloak.
+**vpc** | <code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code> | The VPC for the service.
+**bastion**? | <code>boolean</code> | Whether to create the bastion host.<br/>__*Default*__: false
+**circuitBreaker**? | <code>boolean</code> | Whether to enable the ECS service deployment circuit breaker.<br/>__*Default*__: false
 
 
 
@@ -187,9 +190,9 @@ Name | Type | Description
 
 Name | Type | Description 
 -----|------|-------------
-**vpc** | <code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code> | <span></span>
-**engine**? | <code>[IInstanceEngine](#aws-cdk-aws-rds-iinstanceengine)</code> | __*Optional*__
-**instanceType**? | <code>[InstanceType](#aws-cdk-aws-ec2-instancetype)</code> | __*Optional*__
+**vpc** | <code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code> | The VPC for the database.
+**engine**? | <code>[IInstanceEngine](#aws-cdk-aws-rds-iinstanceengine)</code> | The database instance engine.<br/>__*Optional*__
+**instanceType**? | <code>[InstanceType](#aws-cdk-aws-ec2-instancetype)</code> | The database instance type.<br/>__*Optional*__
 
 
 

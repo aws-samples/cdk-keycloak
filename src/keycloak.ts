@@ -62,8 +62,17 @@ export class KeyCloak extends cdk.Construct {
 }
 
 export interface DatabaseProps {
+  /**
+   * The VPC for the database
+   */
   readonly vpc: ec2.IVpc;
+  /**
+   * The database instance type
+   */
   readonly instanceType?: ec2.InstanceType;
+  /**
+   * The database instance engine
+   */
   readonly engine?: rds.IInstanceEngine;
 }
 
@@ -111,11 +120,32 @@ export class Database extends cdk.Construct {
 }
 
 export interface ContainerServiceProps {
+  /**
+   * The VPC for the service
+   */
   readonly vpc: ec2.IVpc;
+  /**
+   * The RDS database for the service
+   */
   readonly database: Database;
+  /**
+   * The secrets manager secret for the keycloak
+   */
   readonly keycloakSecret: secretsmanager.ISecret;
+  /**
+   * The ACM certificate
+   */
   readonly certificate: certmgr.ICertificate;
+  /**
+   * Whether to create the bastion host
+   * @default false
+   */
   readonly bastion?: boolean;
+  /**
+   * Whether to enable the ECS service deployment circuit breaker
+   * @default false
+   */
+  readonly circuitBreaker?: boolean;
 }
 
 export class ContainerService extends cdk.Construct {
@@ -194,9 +224,7 @@ export class ContainerService extends cdk.Construct {
     this.service = new ecs.FargateService(this, 'Service', {
       cluster,
       taskDefinition,
-      circuitBreaker: {
-        rollback: true,
-      },
+      circuitBreaker: props.circuitBreaker ? { rollback: true } : undefined,
       desiredCount: 1,
       healthCheckGracePeriod: cdk.Duration.seconds(120),
     });
@@ -240,6 +268,10 @@ export class ContainerService extends cdk.Construct {
   }
 }
 
+/**
+ * Create or import VPC
+ * @param scope the cdk scope
+ */
 function getOrCreateVpc(scope: cdk.Construct): ec2.IVpc {
   // use an existing vpc or create a new one
   return scope.node.tryGetContext('use_default_vpc') === '1' ?
