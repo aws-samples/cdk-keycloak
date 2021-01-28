@@ -42,6 +42,7 @@ new ContainerService(scope: Construct, id: string, props: ContainerServiceProps)
   * **database** (<code>[Database](#cdk-keycloak-database)</code>)  *No description* 
   * **keycloakSecret** (<code>[ISecret](#aws-cdk-aws-secretsmanager-isecret)</code>)  *No description* 
   * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  *No description* 
+  * **bastion** (<code>boolean</code>)  *No description* __*Optional*__
 
 
 
@@ -112,6 +113,7 @@ new KeyCloak(scope: Construct, id: string, props: KeyCloadProps)
 * **id** (<code>string</code>)  *No description*
 * **props** (<code>[KeyCloadProps](#cdk-keycloak-keycloadprops)</code>)  *No description*
   * **certificateArn** (<code>string</code>)  ACM certificate ARN to import. 
+  * **bastion** (<code>boolean</code>)  Create a bastion host for debugging or trouble-shooting. __*Default*__: false
   * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  VPC for the workload. __*Optional*__
 
 
@@ -152,6 +154,7 @@ addKeyCloakContainerService(props: ContainerServiceProps): ContainerService
   * **database** (<code>[Database](#cdk-keycloak-database)</code>)  *No description* 
   * **keycloakSecret** (<code>[ISecret](#aws-cdk-aws-secretsmanager-isecret)</code>)  *No description* 
   * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  *No description* 
+  * **bastion** (<code>boolean</code>)  *No description* __*Optional*__
 
 __Returns__:
 * <code>[ContainerService](#cdk-keycloak-containerservice)</code>
@@ -171,6 +174,7 @@ Name | Type | Description
 **database** | <code>[Database](#cdk-keycloak-database)</code> | <span></span>
 **keycloakSecret** | <code>[ISecret](#aws-cdk-aws-secretsmanager-isecret)</code> | <span></span>
 **vpc** | <code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code> | <span></span>
+**bastion**? | <code>boolean</code> | __*Optional*__
 
 
 
@@ -199,6 +203,7 @@ Name | Type | Description
 Name | Type | Description 
 -----|------|-------------
 **certificateArn** | <code>string</code> | ACM certificate ARN to import.
+**bastion**? | <code>boolean</code> | Create a bastion host for debugging or trouble-shooting.<br/>__*Default*__: false
 **vpc**? | <code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code> | VPC for the workload.<br/>__*Optional*__
 
 
