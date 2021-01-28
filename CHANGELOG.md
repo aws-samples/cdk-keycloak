@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.13](https://github.com/pahud/cdk-keycloak/compare/v0.0.12...v0.0.13) (2021-01-28)
+
+
+### Features
+
+* support VpcSubnets ([#19](https://github.com/pahud/cdk-keycloak/issues/19)) ([eec51b2](https://github.com/pahud/cdk-keycloak/commit/eec51b26ff65ae2acff5c7e7fb247f2b9b0d7234)), closes [#18](https://github.com/pahud/cdk-keycloak/issues/18)
+
 ### [0.0.12](https://github.com/pahud/cdk-keycloak/compare/v0.0.11...v0.0.12) (2021-01-28)
 
 ### [0.0.11](https://github.com/pahud/cdk-keycloak/compare/v0.0.10...v0.0.11) (2021-01-28)
