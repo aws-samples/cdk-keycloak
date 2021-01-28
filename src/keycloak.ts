@@ -29,6 +29,24 @@ export interface KeyCloadProps {
    * @default 1
    */
   readonly nodeCount?: number;
+  /**
+   * VPC public subnets for ALB
+   *
+   * @default - VPC public subnets
+   */
+  readonly publicSubnets?: ec2.SubnetSelection;
+  /**
+   * VPC private subnets for keycloak service
+   *
+   * @default - VPC private subnets
+   */
+  readonly privateSubnets?: ec2.SubnetSelection;
+  /**
+   * VPC subnets for database
+   *
+   * @default - VPC isolated subnets
+   */
+  readonly databaseSubnets?: ec2.SubnetSelection;
 }
 
 export class KeyCloak extends cdk.Construct {
@@ -42,6 +60,8 @@ export class KeyCloak extends cdk.Construct {
     this.addKeyCloakContainerService({
       database: this.db,
       vpc: this.vpc,
+      publicSubnets: props.publicSubnets,
+      privateSubnets: props.privateSubnets,
       keycloakSecret: this._generateKeycloakSecret(),
       certificate: certmgr.Certificate.fromCertificateArn(this, 'ACMCert', props.certificateArn),
       bastion: props.bastion,
@@ -74,6 +94,14 @@ export interface DatabaseProps {
    */
   readonly vpc: ec2.IVpc;
   /**
+   * VPC public subnets for ALB
+   */
+  readonly publicSubnets?: ec2.SubnetSelection;
+  /**
+   * VPC subnets for database
+   */
+  readonly databaseSubnets?: ec2.SubnetSelection;
+  /**
    * The database instance type
    */
   readonly instanceType?: ec2.InstanceType;
@@ -96,6 +124,7 @@ export class Database extends cdk.Construct {
     super(scope, id);
     const dbInstance = new rds.DatabaseInstance(this, 'DBInstance', {
       vpc: props.vpc,
+      vpcSubnets: props.databaseSubnets,
       engine: rds.DatabaseInstanceEngine.mysql({
         version: rds.MysqlEngineVersion.VER_8_0_21,
       }),
@@ -131,6 +160,14 @@ export interface ContainerServiceProps {
    * The VPC for the service
    */
   readonly vpc: ec2.IVpc;
+  /**
+   * VPC subnets for keycloak service
+   */
+  readonly privateSubnets?: ec2.SubnetSelection;
+  /**
+   * VPC public subnets for ALB
+   */
+  readonly publicSubnets?: ec2.SubnetSelection;
   /**
    * The RDS database for the service
    */
@@ -244,6 +281,7 @@ export class ContainerService extends cdk.Construct {
 
     const alb = new elbv2.ApplicationLoadBalancer(this, 'ALB', {
       vpc,
+      vpcSubnets: props.publicSubnets,
       internetFacing: true,
     });
     printOutput(this, 'EndpointURL', alb.loadBalancerDnsName);
