@@ -266,7 +266,7 @@ export class ContainerService extends cdk.Construct {
     kc.addPortMappings(
       { containerPort: 8443 },
       { containerPort: 8080 },
-      );
+    );
 
     kc.addContainerDependencies({
       container: bootstrap,
