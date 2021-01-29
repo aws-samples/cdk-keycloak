@@ -287,10 +287,10 @@ export class ContainerService extends cdk.Construct {
     });
     printOutput(this, 'EndpointURL', alb.loadBalancerDnsName);
 
-    const listener = alb.addListener('HttpListener', {
+    const listener = alb.addListener('HttpsListener', {
       protocol: elbv2.ApplicationProtocol.HTTPS,
       certificates: [{ certificateArn: props.certificate.certificateArn }],
-    });
+    }); 
 
     listener.addTargets('ECSTarget', {
       targets: [this.service],
