@@ -545,10 +545,6 @@ Object {
                 "ContainerPort": 8443,
                 "Protocol": "tcp",
               },
-              Object {
-                "ContainerPort": 8080,
-                "Protocol": "tcp",
-              },
             ],
             "Secrets": Array [
               Object {
