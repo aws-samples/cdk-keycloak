@@ -235,7 +235,7 @@ Object {
       },
       "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
     },
-    "KeyCloakKeyCloakContainerSerivceALBHttpListener1716AF8E": Object {
+    "KeyCloakKeyCloakContainerSerivceALBHttpsListener140F85B9": Object {
       "Properties": Object {
         "Certificates": Array [
           Object {
@@ -245,7 +245,7 @@ Object {
         "DefaultActions": Array [
           Object {
             "TargetGroupArn": Object {
-              "Ref": "KeyCloakKeyCloakContainerSerivceALBHttpListenerECSTargetGroup2B539045",
+              "Ref": "KeyCloakKeyCloakContainerSerivceALBHttpsListenerECSTargetGroupCE3EF52C",
             },
             "Type": "forward",
           },
@@ -258,7 +258,7 @@ Object {
       },
       "Type": "AWS::ElasticLoadBalancingV2::Listener",
     },
-    "KeyCloakKeyCloakContainerSerivceALBHttpListenerECSTargetGroup2B539045": Object {
+    "KeyCloakKeyCloakContainerSerivceALBHttpsListenerECSTargetGroupCE3EF52C": Object {
       "Properties": Object {
         "Port": 8443,
         "Protocol": "HTTPS",
@@ -339,8 +339,8 @@ Object {
     },
     "KeyCloakKeyCloakContainerSerivceService79D3F427": Object {
       "DependsOn": Array [
-        "KeyCloakKeyCloakContainerSerivceALBHttpListenerECSTargetGroup2B539045",
-        "KeyCloakKeyCloakContainerSerivceALBHttpListener1716AF8E",
+        "KeyCloakKeyCloakContainerSerivceALBHttpsListenerECSTargetGroupCE3EF52C",
+        "KeyCloakKeyCloakContainerSerivceALBHttpsListener140F85B9",
       ],
       "Properties": Object {
         "Cluster": Object {
@@ -350,7 +350,7 @@ Object {
           "MaximumPercent": 200,
           "MinimumHealthyPercent": 50,
         },
-        "DesiredCount": 1,
+        "DesiredCount": 2,
         "EnableECSManagedTags": false,
         "HealthCheckGracePeriodSeconds": 120,
         "LaunchType": "FARGATE",
@@ -359,7 +359,7 @@ Object {
             "ContainerName": "keycloak",
             "ContainerPort": 8443,
             "TargetGroupArn": Object {
-              "Ref": "KeyCloakKeyCloakContainerSerivceALBHttpListenerECSTargetGroup2B539045",
+              "Ref": "KeyCloakKeyCloakContainerSerivceALBHttpsListenerECSTargetGroupCE3EF52C",
             },
           },
         ],
