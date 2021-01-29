@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.16](https://github.com/pahud/cdk-keycloak/compare/v0.0.15...v0.0.16) (2021-01-29)
+
+
+### Bug Fixes
+
+* remove port 8080 ([#25](https://github.com/pahud/cdk-keycloak/issues/25)) ([cd13e4f](https://github.com/pahud/cdk-keycloak/commit/cd13e4f339eac4032d7f7f2394ec949fbc39aa61)), closes [/github.com/pahud/cdk-keycloak/pull/24#pullrequestreview-578994559](https://github.com/pahud//github.com/pahud/cdk-keycloak/pull/24/issues/pullrequestreview-578994559)
+
+### [0.0.15](https://github.com/pahud/cdk-keycloak/compare/v0.0.14...v0.0.15) (2021-01-29)
+
+
+### Bug Fixes
+
+* KEYCLOAK_USER and Https port mapping ([#24](https://github.com/pahud/cdk-keycloak/issues/24)) ([cc190d9](https://github.com/pahud/cdk-keycloak/commit/cc190d940ee3921a2ab18e3667b6c87f16546c93)), closes [#21](https://github.com/pahud/cdk-keycloak/issues/21) [#22](https://github.com/pahud/cdk-keycloak/issues/22)
+
+### [0.0.14](https://github.com/pahud/cdk-keycloak/compare/v0.0.13...v0.0.14) (2021-01-29)
+
+### [0.0.13](https://github.com/pahud/cdk-keycloak/compare/v0.0.12...v0.0.13) (2021-01-28)
+
+
+### Features
+
+* support VpcSubnets ([#19](https://github.com/pahud/cdk-keycloak/issues/19)) ([eec51b2](https://github.com/pahud/cdk-keycloak/commit/eec51b26ff65ae2acff5c7e7fb247f2b9b0d7234)), closes [#18](https://github.com/pahud/cdk-keycloak/issues/18)
+
 ### [0.0.12](https://github.com/pahud/cdk-keycloak/compare/v0.0.11...v0.0.12) (2021-01-28)
 
 ### [0.0.11](https://github.com/pahud/cdk-keycloak/compare/v0.0.10...v0.0.11) (2021-01-28)
