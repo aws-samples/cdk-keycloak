@@ -255,6 +255,7 @@ export class ContainerService extends cdk.Construct {
       },
       secrets: {
         DB_PASSWORD: ecs.Secret.fromSecretsManager(props.database.secret, 'password'),
+        KEYCLOAK_USER: ecs.Secret.fromSecretsManager(props.keycloakSecret, 'username'),
         KEYCLOAK_PASSWORD: ecs.Secret.fromSecretsManager(props.keycloakSecret, 'password'),
       },
       logging: ecs.LogDrivers.awsLogs({
