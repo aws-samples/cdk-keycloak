@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.15](https://github.com/pahud/cdk-keycloak/compare/v0.0.14...v0.0.15) (2021-01-29)
+
+
+### Bug Fixes
+
+* KEYCLOAK_USER and Https port mapping ([#24](https://github.com/pahud/cdk-keycloak/issues/24)) ([cc190d9](https://github.com/pahud/cdk-keycloak/commit/cc190d940ee3921a2ab18e3667b6c87f16546c93)), closes [#21](https://github.com/pahud/cdk-keycloak/issues/21) [#22](https://github.com/pahud/cdk-keycloak/issues/22)
+
 ### [0.0.14](https://github.com/pahud/cdk-keycloak/compare/v0.0.13...v0.0.14) (2021-01-29)
 
 ### [0.0.13](https://github.com/pahud/cdk-keycloak/compare/v0.0.12...v0.0.13) (2021-01-28)
