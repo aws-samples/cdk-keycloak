@@ -260,8 +260,8 @@ Object {
     },
     "KeyCloakKeyCloakContainerSerivceALBHttpListenerECSTargetGroup2B539045": Object {
       "Properties": Object {
-        "Port": 8080,
-        "Protocol": "HTTP",
+        "Port": 8443,
+        "Protocol": "HTTPS",
         "TargetGroupAttributes": Array [
           Object {
             "Key": "slow_start.duration_seconds",
@@ -305,7 +305,7 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "KeyCloakKeyCloakContainerSerivceALBSecurityGrouptokeycloakdemoKeyCloakKeyCloakContainerSerivceServiceSecurityGroup4DE99C4F8080535614E1": Object {
+    "KeyCloakKeyCloakContainerSerivceALBSecurityGrouptokeycloakdemoKeyCloakKeyCloakContainerSerivceServiceSecurityGroup4DE99C4F84431D27BEE9": Object {
       "Properties": Object {
         "Description": "Load balancer to target",
         "DestinationSecurityGroupId": Object {
@@ -314,7 +314,7 @@ Object {
             "GroupId",
           ],
         },
-        "FromPort": 8080,
+        "FromPort": 8443,
         "GroupId": Object {
           "Fn::GetAtt": Array [
             "KeyCloakKeyCloakContainerSerivceALBSecurityGroup8F5103C6",
@@ -322,7 +322,7 @@ Object {
           ],
         },
         "IpProtocol": "tcp",
-        "ToPort": 8080,
+        "ToPort": 8443,
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
@@ -357,7 +357,7 @@ Object {
         "LoadBalancers": Array [
           Object {
             "ContainerName": "keycloak",
-            "ContainerPort": 8080,
+            "ContainerPort": 8443,
             "TargetGroupArn": Object {
               "Ref": "KeyCloakKeyCloakContainerSerivceALBHttpListenerECSTargetGroup2B539045",
             },
@@ -406,10 +406,10 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "KeyCloakKeyCloakContainerSerivceServiceSecurityGroupfromkeycloakdemoKeyCloakKeyCloakContainerSerivceALBSecurityGroup2467C3338080C147F8EE": Object {
+    "KeyCloakKeyCloakContainerSerivceServiceSecurityGroupfromkeycloakdemoKeyCloakKeyCloakContainerSerivceALBSecurityGroup2467C3338443866EBF70": Object {
       "Properties": Object {
         "Description": "Load balancer to target",
-        "FromPort": 8080,
+        "FromPort": 8443,
         "GroupId": Object {
           "Fn::GetAtt": Array [
             "KeyCloakKeyCloakContainerSerivceServiceSecurityGroup4C80023D",
@@ -423,7 +423,7 @@ Object {
             "GroupId",
           ],
         },
-        "ToPort": 8080,
+        "ToPort": 8443,
       },
       "Type": "AWS::EC2::SecurityGroupIngress",
     },
@@ -542,6 +542,10 @@ Object {
             "Name": "keycloak",
             "PortMappings": Array [
               Object {
+                "ContainerPort": 8443,
+                "Protocol": "tcp",
+              },
+              Object {
                 "ContainerPort": 8080,
                 "Protocol": "tcp",
               },
@@ -557,6 +561,20 @@ Object {
                         "Ref": "KeyCloakDatabaseDBInstanceSecretAttachment0508FD7E",
                       },
                       ":password::",
+                    ],
+                  ],
+                },
+              },
+              Object {
+                "Name": "KEYCLOAK_USER",
+                "ValueFrom": Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Ref": "KeyCloakKCSecretF8498E5C",
+                      },
+                      ":username::",
                     ],
                   ],
                 },
