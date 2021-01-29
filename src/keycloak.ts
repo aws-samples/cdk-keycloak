@@ -290,7 +290,7 @@ export class ContainerService extends cdk.Construct {
     const listener = alb.addListener('HttpsListener', {
       protocol: elbv2.ApplicationProtocol.HTTPS,
       certificates: [{ certificateArn: props.certificate.certificateArn }],
-    }); 
+    });
 
     listener.addTargets('ECSTarget', {
       targets: [this.service],
