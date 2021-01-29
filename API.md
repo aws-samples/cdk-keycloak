@@ -121,7 +121,7 @@ new KeyCloak(scope: Construct, id: string, props: KeyCloadProps)
   * **certificateArn** (<code>string</code>)  ACM certificate ARN to import. 
   * **bastion** (<code>boolean</code>)  Create a bastion host for debugging or trouble-shooting. __*Default*__: false
   * **databaseSubnets** (<code>[SubnetSelection](#aws-cdk-aws-ec2-subnetselection)</code>)  VPC subnets for database. __*Default*__: VPC isolated subnets
-  * **nodeCount** (<code>number</code>)  Number of keycloak node in the cluster. __*Default*__: 1
+  * **nodeCount** (<code>number</code>)  Number of keycloak node in the cluster. __*Default*__: 2
   * **privateSubnets** (<code>[SubnetSelection](#aws-cdk-aws-ec2-subnetselection)</code>)  VPC private subnets for keycloak service. __*Default*__: VPC private subnets
   * **publicSubnets** (<code>[SubnetSelection](#aws-cdk-aws-ec2-subnetselection)</code>)  VPC public subnets for ALB. __*Default*__: VPC public subnets
   * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  VPC for the workload. __*Optional*__
@@ -225,7 +225,7 @@ Name | Type | Description
 **certificateArn** | <code>string</code> | ACM certificate ARN to import.
 **bastion**? | <code>boolean</code> | Create a bastion host for debugging or trouble-shooting.<br/>__*Default*__: false
 **databaseSubnets**? | <code>[SubnetSelection](#aws-cdk-aws-ec2-subnetselection)</code> | VPC subnets for database.<br/>__*Default*__: VPC isolated subnets
-**nodeCount**? | <code>number</code> | Number of keycloak node in the cluster.<br/>__*Default*__: 1
+**nodeCount**? | <code>number</code> | Number of keycloak node in the cluster.<br/>__*Default*__: 2
 **privateSubnets**? | <code>[SubnetSelection](#aws-cdk-aws-ec2-subnetselection)</code> | VPC private subnets for keycloak service.<br/>__*Default*__: VPC private subnets
 **publicSubnets**? | <code>[SubnetSelection](#aws-cdk-aws-ec2-subnetselection)</code> | VPC public subnets for ALB.<br/>__*Default*__: VPC public subnets
 **vpc**? | <code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code> | VPC for the workload.<br/>__*Optional*__

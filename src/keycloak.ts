@@ -26,7 +26,7 @@ export interface KeyCloadProps {
   /**
    * Number of keycloak node in the cluster
    *
-   * @default 1
+   * @default 2
    */
   readonly nodeCount?: number;
   /**
@@ -276,7 +276,7 @@ export class ContainerService extends cdk.Construct {
       cluster,
       taskDefinition,
       circuitBreaker: props.circuitBreaker ? { rollback: true } : undefined,
-      desiredCount: props.nodeCount ?? 1,
+      desiredCount: props.nodeCount ?? 2,
       healthCheckGracePeriod: cdk.Duration.seconds(120),
     });
 

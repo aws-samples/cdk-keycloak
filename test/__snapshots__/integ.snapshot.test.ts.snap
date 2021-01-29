@@ -350,7 +350,7 @@ Object {
           "MaximumPercent": 200,
           "MinimumHealthyPercent": 50,
         },
-        "DesiredCount": 1,
+        "DesiredCount": 2,
         "EnableECSManagedTags": false,
         "HealthCheckGracePeriodSeconds": 120,
         "LaunchType": "FARGATE",
