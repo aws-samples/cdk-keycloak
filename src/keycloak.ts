@@ -263,9 +263,10 @@ export class ContainerService extends cdk.Construct {
         logGroup,
       }),
     });
-    kc.addPortMappings({
-      containerPort: 8080,
-    });
+    kc.addPortMappings(
+      { containerPort: 8443 },
+      { containerPort: 8080 },
+      );
 
     kc.addContainerDependencies({
       container: bootstrap,
@@ -298,8 +299,8 @@ export class ContainerService extends cdk.Construct {
       // see https://docs.aws.amazon.com/cli/latest/reference/elbv2/modify-target-group-attributes.html
       slowStart: cdk.Duration.seconds(60),
       stickinessCookieDuration: cdk.Duration.days(1),
-      port: 8080,
-      protocol: elbv2.ApplicationProtocol.HTTP,
+      port: 8443,
+      protocol: elbv2.ApplicationProtocol.HTTPS,
     });
 
     // allow task execution role to read the secrets
