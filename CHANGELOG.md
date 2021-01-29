@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.16](https://github.com/pahud/cdk-keycloak/compare/v0.0.15...v0.0.16) (2021-01-29)
+
+
+### Bug Fixes
+
+* remove port 8080 ([#25](https://github.com/pahud/cdk-keycloak/issues/25)) ([cd13e4f](https://github.com/pahud/cdk-keycloak/commit/cd13e4f339eac4032d7f7f2394ec949fbc39aa61)), closes [/github.com/pahud/cdk-keycloak/pull/24#pullrequestreview-578994559](https://github.com/pahud//github.com/pahud/cdk-keycloak/pull/24/issues/pullrequestreview-578994559)
+
 ### [0.0.15](https://github.com/pahud/cdk-keycloak/compare/v0.0.14...v0.0.15) (2021-01-29)
 
 
