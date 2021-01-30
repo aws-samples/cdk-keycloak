@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.18](https://github.com/pahud/cdk-keycloak/compare/v0.0.16...v0.0.18) (2021-01-30)
+
+
+### Features
+
+* set default nodeCount to 2 ([9576800](https://github.com/pahud/cdk-keycloak/commit/957680063051d3487e968eabe61cd37973a22bc9))
+* support VpcSubnets ([f815f5e](https://github.com/pahud/cdk-keycloak/commit/f815f5ee66458ac6ff4f50db5208e0e8f8550da3))
+
+
+### Bug Fixes
+
+* ALB port mapping should go to 8443. Closes [#22](https://github.com/pahud/cdk-keycloak/issues/22) ([6393c61](https://github.com/pahud/cdk-keycloak/commit/6393c6177fbf6b85a3d6b7d70ddce1d11ebca26a))
+* default nodeCount should be 2 ([#27](https://github.com/pahud/cdk-keycloak/issues/27)) ([7533d3f](https://github.com/pahud/cdk-keycloak/commit/7533d3f692b3854c85358a656072f94cfc2d2911)), closes [#26](https://github.com/pahud/cdk-keycloak/issues/26)
+* missing KEYCLOAK_USER in the env var. Closes [#21](https://github.com/pahud/cdk-keycloak/issues/21) ([9e45c12](https://github.com/pahud/cdk-keycloak/commit/9e45c126eb97f9a2382367fce7ff249f782e57a3))
+
 ### [0.0.17](https://github.com/pahud/cdk-keycloak/compare/v0.0.16...v0.0.17) (2021-01-29)
 
 
