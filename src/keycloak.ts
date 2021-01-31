@@ -47,6 +47,18 @@ export interface KeyCloadProps {
    * @default - VPC isolated subnets
    */
   readonly databaseSubnets?: ec2.SubnetSelection;
+  /**
+   * Database instance type
+   *
+   * @default r5.large
+   */
+  readonly databaseInstanceType?: ec2.InstanceType;
+  /**
+   * The database instance engine
+   *
+   * @default - MySQL 8.0.21
+   */
+  readonly engine?: rds.IInstanceEngine;
 }
 
 export class KeyCloak extends cdk.Construct {
@@ -56,7 +68,12 @@ export class KeyCloak extends cdk.Construct {
     super(scope, id);
 
     this.vpc = props.vpc ?? getOrCreateVpc(this);
-    this.db = this.addDatabase();
+    this.db = this.addDatabase({
+      vpc: this.vpc,
+      databaseSubnets: props.databaseSubnets,
+      instanceType: props.databaseInstanceType,
+      engine: props.engine,
+    });
     this.addKeyCloakContainerService({
       database: this.db,
       vpc: this.vpc,
@@ -68,10 +85,8 @@ export class KeyCloak extends cdk.Construct {
       nodeCount: props.nodeCount,
     });
   }
-  public addDatabase(): Database {
-    return new Database(this, 'Database', {
-      vpc: this.vpc,
-    });
+  public addDatabase(props: DatabaseProps): Database {
+    return new Database(this, 'Database', props);
   }
   public addKeyCloakContainerService(props: ContainerServiceProps) {
     return new ContainerService(this, 'KeyCloakContainerSerivce', props);
@@ -94,19 +109,19 @@ export interface DatabaseProps {
    */
   readonly vpc: ec2.IVpc;
   /**
-   * VPC public subnets for ALB
-   */
-  readonly publicSubnets?: ec2.SubnetSelection;
-  /**
    * VPC subnets for database
    */
   readonly databaseSubnets?: ec2.SubnetSelection;
   /**
    * The database instance type
+   *
+   * @default r5.large
    */
   readonly instanceType?: ec2.InstanceType;
   /**
    * The database instance engine
+   *
+   * @default - MySQL 8.0.21
    */
   readonly engine?: rds.IInstanceEngine;
 }
@@ -125,7 +140,7 @@ export class Database extends cdk.Construct {
     const dbInstance = new rds.DatabaseInstance(this, 'DBInstance', {
       vpc: props.vpc,
       vpcSubnets: props.databaseSubnets,
-      engine: rds.DatabaseInstanceEngine.mysql({
+      engine: props.engine ?? rds.DatabaseInstanceEngine.mysql({
         version: rds.MysqlEngineVersion.VER_8_0_21,
       }),
       credentials: rds.Credentials.fromGeneratedSecret('admin'),
