@@ -47,6 +47,7 @@ new ContainerService(scope: Construct, id: string, props: ContainerServiceProps)
   * **nodeCount** (<code>number</code>)  Number of keycloak node in the cluster. __*Default*__: 1
   * **privateSubnets** (<code>[SubnetSelection](#aws-cdk-aws-ec2-subnetselection)</code>)  VPC subnets for keycloak service. __*Optional*__
   * **publicSubnets** (<code>[SubnetSelection](#aws-cdk-aws-ec2-subnetselection)</code>)  VPC public subnets for ALB. __*Optional*__
+  * **stickinessCookieDuration** (<code>[Duration](#aws-cdk-core-duration)</code>)  The sticky session duration for the keycloak workload with ALB. __*Default*__: one day
 
 
 
@@ -129,6 +130,7 @@ new KeyCloak(scope: Construct, id: string, props: KeyCloadProps)
   * **nodeCount** (<code>number</code>)  Number of keycloak node in the cluster. __*Default*__: 2
   * **privateSubnets** (<code>[SubnetSelection](#aws-cdk-aws-ec2-subnetselection)</code>)  VPC private subnets for keycloak service. __*Default*__: VPC private subnets
   * **publicSubnets** (<code>[SubnetSelection](#aws-cdk-aws-ec2-subnetselection)</code>)  VPC public subnets for ALB. __*Default*__: VPC public subnets
+  * **stickinessCookieDuration** (<code>[Duration](#aws-cdk-core-duration)</code>)  The sticky session duration for the keycloak workload with ALB. __*Default*__: one day
   * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  VPC for the workload. __*Optional*__
 
 
@@ -180,6 +182,7 @@ addKeyCloakContainerService(props: ContainerServiceProps): ContainerService
   * **nodeCount** (<code>number</code>)  Number of keycloak node in the cluster. __*Default*__: 1
   * **privateSubnets** (<code>[SubnetSelection](#aws-cdk-aws-ec2-subnetselection)</code>)  VPC subnets for keycloak service. __*Optional*__
   * **publicSubnets** (<code>[SubnetSelection](#aws-cdk-aws-ec2-subnetselection)</code>)  VPC public subnets for ALB. __*Optional*__
+  * **stickinessCookieDuration** (<code>[Duration](#aws-cdk-core-duration)</code>)  The sticky session duration for the keycloak workload with ALB. __*Default*__: one day
 
 __Returns__:
 * <code>[ContainerService](#cdk-keycloak-containerservice)</code>
@@ -204,6 +207,7 @@ Name | Type | Description
 **nodeCount**? | <code>number</code> | Number of keycloak node in the cluster.<br/>__*Default*__: 1
 **privateSubnets**? | <code>[SubnetSelection](#aws-cdk-aws-ec2-subnetselection)</code> | VPC subnets for keycloak service.<br/>__*Optional*__
 **publicSubnets**? | <code>[SubnetSelection](#aws-cdk-aws-ec2-subnetselection)</code> | VPC public subnets for ALB.<br/>__*Optional*__
+**stickinessCookieDuration**? | <code>[Duration](#aws-cdk-core-duration)</code> | The sticky session duration for the keycloak workload with ALB.<br/>__*Default*__: one day
 
 
 
@@ -242,6 +246,7 @@ Name | Type | Description
 **nodeCount**? | <code>number</code> | Number of keycloak node in the cluster.<br/>__*Default*__: 2
 **privateSubnets**? | <code>[SubnetSelection](#aws-cdk-aws-ec2-subnetselection)</code> | VPC private subnets for keycloak service.<br/>__*Default*__: VPC private subnets
 **publicSubnets**? | <code>[SubnetSelection](#aws-cdk-aws-ec2-subnetselection)</code> | VPC public subnets for ALB.<br/>__*Default*__: VPC public subnets
+**stickinessCookieDuration**? | <code>[Duration](#aws-cdk-core-duration)</code> | The sticky session duration for the keycloak workload with ALB.<br/>__*Default*__: one day
 **vpc**? | <code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code> | VPC for the workload.<br/>__*Optional*__
 
 
