@@ -8,7 +8,7 @@ export class IntegTesting {
     const app = new cdk.App();
 
     const env = {
-      region: process.env.CDK_DEFAULT_REGION,
+      region: process.env.CDK_DEFAULT_REGION || 'us-east-1',
       account: process.env.CDK_DEFAULT_ACCOUNT,
     };
 
@@ -17,6 +17,7 @@ export class IntegTesting {
     // create a default keycloak workload with minimal required props
     new KeyCloak(stack, 'KeyCloak', {
       certificateArn: stack.node.tryGetContext('ACM_CERT_ARN') || 'MOCK_ARN',
+      autoraServerless: true,
     });
 
     this.stack = [stack];
