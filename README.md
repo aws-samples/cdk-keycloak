@@ -24,6 +24,16 @@ new KeyCloak(stack, 'KeyCloak', {
 });
 ```
 
+# Aurora Serverless support
+
+Use `autoraServerless` to opt in Amazon Aurora Serverless cluster. Please note only some regions are supported, check [Supported features in Amazon Aurora by AWS Region and Aurora DB engine](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Concepts.AuroraFeaturesRegionsDBEngines.grids.html) for availability.
+
+```ts
+new KeyCloak(stack, 'KeyCloak', {
+  autoraServerless: true,
+});
+```
+
 
 # Deploy in existing Vpc Subnets
 
