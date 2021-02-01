@@ -11,7 +11,7 @@ import * as cdk from '@aws-cdk/core';
 
 // regional availibility for aurora serverless
 // see https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Concepts.AuroraFeaturesRegionsDBEngines.grids.html
-const AURORA_SERVERLESS_SUPPORTED_REGION = [
+const AURORA_SERVERLESS_SUPPORTED_REGIONS = [
   'us-east-1',
   'us-east-2',
   'us-west-1',
@@ -26,9 +26,8 @@ const AURORA_SERVERLESS_SUPPORTED_REGION = [
   'eu-west-1',
   'eu-west-2',
   'eu-west-3',
+  'cn-northwest-1',
 ];
-// `cn-northwest-1` is supported
-AURORA_SERVERLESS_SUPPORTED_REGION.push('cn-northwest-1');
 
 export interface KeyCloadProps {
   /**
@@ -103,10 +102,10 @@ export class KeyCloak extends cdk.Construct {
   constructor(scope: cdk.Construct, id: string, props: KeyCloadProps) {
     super(scope, id);
 
-    const stack = cdk.Stack.of(this);
-    const region = stack.region;
+    const region = cdk.Stack.of(this).region;
+    const regionIsResolved = !cdk.Token.isUnresolved(region);
 
-    if (props.autoraServerless === true && AURORA_SERVERLESS_SUPPORTED_REGION.indexOf(region) === -1) {
+    if (props.autoraServerless === true && regionIsResolved && !AURORA_SERVERLESS_SUPPORTED_REGIONS.includes(region)) {
       throw new Error(`Aurora serverless is not supported in ${region}`);
     }
 
