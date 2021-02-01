@@ -89,6 +89,12 @@ export interface KeyCloadProps {
    * @default false
    */
   readonly autoraServerless?: boolean;
+  /**
+   * The sticky session duration for the keycloak workload with ALB.
+   *
+   * @default - one day
+   */
+  readonly stickinessCookieDuration?: cdk.Duration;
 }
 
 export class KeyCloak extends cdk.Construct {
@@ -121,6 +127,7 @@ export class KeyCloak extends cdk.Construct {
       certificate: certmgr.Certificate.fromCertificateArn(this, 'ACMCert', props.certificateArn),
       bastion: props.bastion,
       nodeCount: props.nodeCount,
+      stickinessCookieDuration: props.stickinessCookieDuration,
     });
   }
   public addDatabase(props: DatabaseProps): Database {
@@ -279,6 +286,12 @@ export interface ContainerServiceProps {
    * @default 1
    */
   readonly nodeCount?: number;
+  /**
+   * The sticky session duration for the keycloak workload with ALB.
+   *
+   * @default - one day
+   */
+  readonly stickinessCookieDuration?: cdk.Duration;
 }
 
 export class ContainerService extends cdk.Construct {
@@ -380,7 +393,7 @@ export class ContainerService extends cdk.Construct {
       // set slow_start.duration_seconds to 60
       // see https://docs.aws.amazon.com/cli/latest/reference/elbv2/modify-target-group-attributes.html
       slowStart: cdk.Duration.seconds(60),
-      stickinessCookieDuration: cdk.Duration.days(1),
+      stickinessCookieDuration: props.stickinessCookieDuration ?? cdk.Duration.days(1),
       port: 8443,
       protocol: elbv2.ApplicationProtocol.HTTPS,
     });
