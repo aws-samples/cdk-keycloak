@@ -59,6 +59,14 @@ export interface KeyCloadProps {
    * @default - MySQL 8.0.21
    */
   readonly engine?: rds.IInstanceEngine;
+  /**
+   * Whether to use aurora serverless. When enabled, the `databaseInstanceType` and
+   * `engine` will be ignored. The `rds.DatabaseClusterEngine.AURORA_MYSQL` will be used as
+   * the default cluster engine instead.
+   *
+   * @default false
+   */
+  readonly autoraServerless?: boolean;
 }
 
 export class KeyCloak extends cdk.Construct {
@@ -73,6 +81,7 @@ export class KeyCloak extends cdk.Construct {
       databaseSubnets: props.databaseSubnets,
       instanceType: props.databaseInstanceType,
       engine: props.engine,
+      autoraServerless: props.autoraServerless,
     });
     this.addKeyCloakContainerService({
       database: this.db,
@@ -124,20 +133,59 @@ export interface DatabaseProps {
    * @default - MySQL 8.0.21
    */
   readonly engine?: rds.IInstanceEngine;
+  /**
+   * enable aurora serverless
+   *
+   * @default false
+   */
+  readonly autoraServerless?: boolean;
 }
 
 export class Database extends cdk.Construct {
-  readonly dbinstance: rds.DatabaseInstance;
+  readonly dbinstance?: rds.DatabaseInstance;
+  readonly dbCluster?: rds.ServerlessCluster;
   readonly vpc: ec2.IVpc;
   readonly clusterEndpointHostname: string;
   readonly clusterIdentifier: string;
   readonly secret: secretsmanager.ISecret;
+  readonly connections: ec2.Connections;
   private readonly _mysqlListenerPort: number = 3306;
-
 
   constructor(scope: cdk.Construct, id: string, props: DatabaseProps) {
     super(scope, id);
-    const dbInstance = new rds.DatabaseInstance(this, 'DBInstance', {
+    // const dbInstance = this._createRdsInstance(props)
+
+    this.vpc = props.vpc;
+
+    if (props.autoraServerless === true) {
+      this.dbCluster = this._createServerlessCluster(props);
+      this.secret = this.dbCluster.secret!;
+      // allow internally from the same security group
+      this.dbCluster.connections.allowInternally(ec2.Port.tcp(this._mysqlListenerPort));
+      // allow from the whole vpc cidr
+      this.dbCluster.connections.allowFrom(ec2.Peer.ipv4(props.vpc.vpcCidrBlock), ec2.Port.tcp(this._mysqlListenerPort));
+      this.clusterEndpointHostname = this.dbCluster.clusterEndpoint.hostname;
+      this.clusterIdentifier = this.dbCluster.clusterIdentifier;
+      this.connections = this.dbCluster.connections;
+      printOutput(this, 'DBSecretArn', this.dbCluster.secret!.secretArn);
+    } else {
+      this.dbinstance = this._createRdsInstance(props);
+      this.secret = this.dbinstance.secret!;
+      // allow internally from the same security group
+      this.dbinstance.connections.allowInternally(ec2.Port.tcp(this._mysqlListenerPort));
+      // allow from the whole vpc cidr
+      this.dbinstance.connections.allowFrom(ec2.Peer.ipv4(props.vpc.vpcCidrBlock), ec2.Port.tcp(this._mysqlListenerPort));
+      this.clusterEndpointHostname = this.dbinstance.dbInstanceEndpointAddress;
+      this.clusterIdentifier = this.dbinstance.instanceIdentifier;
+      this.connections = this.dbinstance.connections;
+      printOutput(this, 'DBSecretArn', this.dbinstance.secret!.secretArn);
+    };
+
+    printOutput(this, 'clusterEndpointHostname', this.clusterEndpointHostname);
+    printOutput(this, 'clusterIdentifier', this.clusterIdentifier);
+  }
+  private _createRdsInstance(props: DatabaseProps): rds.DatabaseInstance {
+    return new rds.DatabaseInstance(this, 'DBInstance', {
       vpc: props.vpc,
       vpcSubnets: props.databaseSubnets,
       engine: props.engine ?? rds.DatabaseInstanceEngine.mysql({
@@ -148,25 +196,16 @@ export class Database extends cdk.Construct {
       parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.mysql8.0'),
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
-
-    this.secret = dbInstance.secret!;
-
-    // allow internally from the same security group
-    dbInstance.connections.allowInternally(ec2.Port.tcp(this._mysqlListenerPort));
-    // allow from the whole vpc cidr
-    dbInstance.connections.allowFrom(ec2.Peer.ipv4(props.vpc.vpcCidrBlock), ec2.Port.tcp(this._mysqlListenerPort));
-
-    this.dbinstance = dbInstance;
-    this.vpc = props.vpc;
-    this.clusterEndpointHostname = dbInstance.dbInstanceEndpointAddress;
-    this.clusterIdentifier = dbInstance.instanceIdentifier;
-
-    printOutput(this, 'clusterEndpointHostname', this.clusterEndpointHostname);
-    printOutput(this, 'clusterIdentifier', this.clusterIdentifier);
-
-    if (this.dbinstance.secret) {
-      printOutput(this, 'DBSecretArn', this.dbinstance.secret.secretArn);
-    }
+  }
+  private _createServerlessCluster(props: DatabaseProps): rds.ServerlessCluster {
+    return new rds.ServerlessCluster(this, 'AuroraServerlessCluster', {
+      engine: rds.DatabaseClusterEngine.AURORA_MYSQL,
+      vpc: props.vpc,
+      vpcSubnets: props.databaseSubnets,
+      credentials: rds.Credentials.fromGeneratedSecret('admin'),
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.aurora-mysql5.7'),
+    });
   }
 }
 
@@ -322,7 +361,8 @@ export class ContainerService extends cdk.Construct {
     props.keycloakSecret.grantRead(taskDefinition.executionRole!);
 
     // allow ecs task connect to database
-    props.database.dbinstance.connections.allowDefaultPortFrom(this.service);
+    props.database.connections.allowDefaultPortFrom(this.service);
+
 
     // create a bastion host
     if (props.bastion === true) {
@@ -330,7 +370,7 @@ export class ContainerService extends cdk.Construct {
         vpc,
         instanceType: new ec2.InstanceType('m5.large'),
       });
-      props.database.dbinstance.connections.allowDefaultPortFrom(bast);
+      props.database.connections.allowDefaultPortFrom(bast);
     }
   }
 }
