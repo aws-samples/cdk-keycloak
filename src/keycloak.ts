@@ -105,7 +105,7 @@ export class KeyCloak extends cdk.Construct {
     const region = cdk.Stack.of(this).region;
     const regionIsResolved = !cdk.Token.isUnresolved(region);
 
-    if (props.auroraServerless === true && regionIsResolved && !AURORA_SERVERLESS_SUPPORTED_REGIONS.includes(region)) {
+    if (props.auroraServerless && regionIsResolved && !AURORA_SERVERLESS_SUPPORTED_REGIONS.includes(region)) {
       throw new Error(`Aurora serverless is not supported in ${region}`);
     }
 
