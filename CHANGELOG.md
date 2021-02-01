@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.20](https://github.com/pahud/cdk-keycloak/compare/v0.0.19...v0.0.20) (2021-02-01)
+
+### [0.0.19](https://github.com/pahud/cdk-keycloak/compare/v0.0.18...v0.0.19) (2021-01-31)
+
+
+### Features
+
+* expose database instanceType property ([#31](https://github.com/pahud/cdk-keycloak/issues/31)) ([96526fa](https://github.com/pahud/cdk-keycloak/commit/96526fafe8cdf1c4d6c1792804fe8a5c69ffc618)), closes [#30](https://github.com/pahud/cdk-keycloak/issues/30)
+
 ### [0.0.18](https://github.com/pahud/cdk-keycloak/compare/v0.0.16...v0.0.18) (2021-01-30)
 
 
