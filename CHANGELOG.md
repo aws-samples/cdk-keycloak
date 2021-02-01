@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.21](https://github.com/pahud/cdk-keycloak/compare/v0.0.20...v0.0.21) (2021-02-01)
+
+
+### Features
+
+* **database:** Aurora serverless support ([#34](https://github.com/pahud/cdk-keycloak/issues/34)) ([3a3bddd](https://github.com/pahud/cdk-keycloak/commit/3a3bddd2ed9e0996aad33d61fc421c1da04a090d)), closes [#33](https://github.com/pahud/cdk-keycloak/issues/33)
+
 ### [0.0.20](https://github.com/pahud/cdk-keycloak/compare/v0.0.19...v0.0.20) (2021-02-01)
 
 ### [0.0.19](https://github.com/pahud/cdk-keycloak/compare/v0.0.18...v0.0.19) (2021-01-31)
