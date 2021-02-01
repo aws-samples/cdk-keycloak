@@ -87,7 +87,7 @@ export interface KeyCloadProps {
    *
    * @default false
    */
-  readonly autoraServerless?: boolean;
+  readonly auroraServerless?: boolean;
   /**
    * The sticky session duration for the keycloak workload with ALB.
    *
@@ -105,7 +105,7 @@ export class KeyCloak extends cdk.Construct {
     const region = cdk.Stack.of(this).region;
     const regionIsResolved = !cdk.Token.isUnresolved(region);
 
-    if (props.autoraServerless === true && regionIsResolved && !AURORA_SERVERLESS_SUPPORTED_REGIONS.includes(region)) {
+    if (props.auroraServerless === true && regionIsResolved && !AURORA_SERVERLESS_SUPPORTED_REGIONS.includes(region)) {
       throw new Error(`Aurora serverless is not supported in ${region}`);
     }
 
@@ -115,7 +115,7 @@ export class KeyCloak extends cdk.Construct {
       databaseSubnets: props.databaseSubnets,
       instanceType: props.databaseInstanceType,
       engine: props.engine,
-      autoraServerless: props.autoraServerless,
+      auroraServerless: props.auroraServerless,
     });
     this.addKeyCloakContainerService({
       database: this.db,
@@ -173,12 +173,35 @@ export interface DatabaseProps {
    *
    * @default false
    */
-  readonly autoraServerless?: boolean;
+  readonly auroraServerless?: boolean;
 }
 
+/**
+ * Database configuration
+ */
+export interface DatabaseCofig {
+  /**
+   * The database secret.
+   */
+  readonly secret: secretsmanager.ISecret;
+  /**
+   * The database connnections.
+   */
+  readonly connections: ec2.Connections;
+  /**
+   * The endpoint address for the database.
+   */
+  readonly endpoint: string;
+  /**
+   * The databasae identifier.
+   */
+  readonly identifier: string;
+}
+
+/**
+ * Represents the database instance or database cluster
+ */
 export class Database extends cdk.Construct {
-  readonly dbinstance?: rds.DatabaseInstance;
-  readonly dbCluster?: rds.ServerlessCluster;
   readonly vpc: ec2.IVpc;
   readonly clusterEndpointHostname: string;
   readonly clusterIdentifier: string;
@@ -188,39 +211,23 @@ export class Database extends cdk.Construct {
 
   constructor(scope: cdk.Construct, id: string, props: DatabaseProps) {
     super(scope, id);
-    // const dbInstance = this._createRdsInstance(props)
-
     this.vpc = props.vpc;
-
-    if (props.autoraServerless === true) {
-      this.dbCluster = this._createServerlessCluster(props);
-      this.secret = this.dbCluster.secret!;
-      // allow internally from the same security group
-      this.dbCluster.connections.allowInternally(ec2.Port.tcp(this._mysqlListenerPort));
-      // allow from the whole vpc cidr
-      this.dbCluster.connections.allowFrom(ec2.Peer.ipv4(props.vpc.vpcCidrBlock), ec2.Port.tcp(this._mysqlListenerPort));
-      this.clusterEndpointHostname = this.dbCluster.clusterEndpoint.hostname;
-      this.clusterIdentifier = this.dbCluster.clusterIdentifier;
-      this.connections = this.dbCluster.connections;
-      printOutput(this, 'DBSecretArn', this.dbCluster.secret!.secretArn);
-    } else {
-      this.dbinstance = this._createRdsInstance(props);
-      this.secret = this.dbinstance.secret!;
-      // allow internally from the same security group
-      this.dbinstance.connections.allowInternally(ec2.Port.tcp(this._mysqlListenerPort));
-      // allow from the whole vpc cidr
-      this.dbinstance.connections.allowFrom(ec2.Peer.ipv4(props.vpc.vpcCidrBlock), ec2.Port.tcp(this._mysqlListenerPort));
-      this.clusterEndpointHostname = this.dbinstance.dbInstanceEndpointAddress;
-      this.clusterIdentifier = this.dbinstance.instanceIdentifier;
-      this.connections = this.dbinstance.connections;
-      printOutput(this, 'DBSecretArn', this.dbinstance.secret!.secretArn);
-    };
-
+    const config = props.auroraServerless ? this._createServerlessCluster(props)
+      : this._createRdsInstance(props);
+    this.secret = config.secret;
+    // allow internally from the same security group
+    config.connections.allowInternally(ec2.Port.tcp(this._mysqlListenerPort));
+    // allow from the whole vpc cidr
+    config.connections.allowFrom(ec2.Peer.ipv4(props.vpc.vpcCidrBlock), ec2.Port.tcp(this._mysqlListenerPort));
+    this.clusterEndpointHostname = config.endpoint;
+    this.clusterIdentifier = config.identifier;
+    this.connections = config.connections;
+    printOutput(this, 'DBSecretArn', config.secret.secretArn);
     printOutput(this, 'clusterEndpointHostname', this.clusterEndpointHostname);
     printOutput(this, 'clusterIdentifier', this.clusterIdentifier);
   }
-  private _createRdsInstance(props: DatabaseProps): rds.DatabaseInstance {
-    return new rds.DatabaseInstance(this, 'DBInstance', {
+  private _createRdsInstance(props: DatabaseProps): DatabaseCofig {
+    const dbInstance = new rds.DatabaseInstance(this, 'DBInstance', {
       vpc: props.vpc,
       vpcSubnets: props.databaseSubnets,
       engine: props.engine ?? rds.DatabaseInstanceEngine.mysql({
@@ -231,9 +238,15 @@ export class Database extends cdk.Construct {
       parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.mysql8.0'),
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
+    return {
+      connections: dbInstance.connections,
+      endpoint: dbInstance.dbInstanceEndpointAddress,
+      identifier: dbInstance.instanceIdentifier,
+      secret: dbInstance.secret!,
+    };
   }
-  private _createServerlessCluster(props: DatabaseProps): rds.ServerlessCluster {
-    return new rds.ServerlessCluster(this, 'AuroraServerlessCluster', {
+  private _createServerlessCluster(props: DatabaseProps): DatabaseCofig {
+    const dbCluster = new rds.ServerlessCluster(this, 'AuroraServerlessCluster', {
       engine: rds.DatabaseClusterEngine.AURORA_MYSQL,
       vpc: props.vpc,
       vpcSubnets: props.databaseSubnets,
@@ -241,6 +254,12 @@ export class Database extends cdk.Construct {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.aurora-mysql5.7'),
     });
+    return {
+      connections: dbCluster.connections,
+      endpoint: dbCluster.clusterEndpoint.hostname,
+      identifier: dbCluster.clusterIdentifier,
+      secret: dbCluster.secret!,
+    };
   }
 }
 
