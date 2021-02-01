@@ -8,7 +8,7 @@ export class IntegTesting {
     const app = new cdk.App();
 
     const env = {
-      region: process.env.CDK_DEFAULT_REGION,
+      region: process.env.CDK_DEFAULT_REGION || 'us-east-1',
       account: process.env.CDK_DEFAULT_ACCOUNT,
     };
 

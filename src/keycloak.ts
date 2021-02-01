@@ -8,6 +8,28 @@ import * as rds from '@aws-cdk/aws-rds';
 import * as secretsmanager from '@aws-cdk/aws-secretsmanager';
 import * as cdk from '@aws-cdk/core';
 
+
+// regional availibility for aurora serverless
+// see https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Concepts.AuroraFeaturesRegionsDBEngines.grids.html
+const AURORA_SERVERLESS_SUPPORTED_REGION = [
+  'us-east-1',
+  'us-east-2',
+  'us-west-1',
+  'us-west-2',
+  'ap-south-1',
+  'ap-northeast-1',
+  'ap-northeast-2',
+  'ap-southeast-1',
+  'ap-southeast-2',
+  'ca-central-1',
+  'eu-central-1',
+  'eu-west-1',
+  'eu-west-2',
+  'eu-west-3',
+];
+// `cn-northwest-1` is supported
+AURORA_SERVERLESS_SUPPORTED_REGION.push('cn-northwest-1');
+
 export interface KeyCloadProps {
   /**
    * VPC for the workload
@@ -74,6 +96,13 @@ export class KeyCloak extends cdk.Construct {
   readonly db?: Database;
   constructor(scope: cdk.Construct, id: string, props: KeyCloadProps) {
     super(scope, id);
+
+    const stack = cdk.Stack.of(this);
+    const region = stack.region;
+
+    if (props.autoraServerless === true && AURORA_SERVERLESS_SUPPORTED_REGION.indexOf(region) === -1) {
+      throw new Error(`Aurora serverless is not supported in ${region}`);
+    }
 
     this.vpc = props.vpc ?? getOrCreateVpc(this);
     this.db = this.addDatabase({

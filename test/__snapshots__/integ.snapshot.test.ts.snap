@@ -460,9 +460,7 @@ Object {
                 "awslogs-group": Object {
                   "Ref": "KeyCloakKeyCloakContainerSerivceLogGroup010F2AAE",
                 },
-                "awslogs-region": Object {
-                  "Ref": "AWS::Region",
-                },
+                "awslogs-region": "us-east-1",
                 "awslogs-stream-prefix": "bootstrap",
               },
             },
@@ -530,9 +528,7 @@ Object {
                 "awslogs-group": Object {
                   "Ref": "KeyCloakKeyCloakContainerSerivceLogGroup010F2AAE",
                 },
-                "awslogs-region": Object {
-                  "Ref": "AWS::Region",
-                },
+                "awslogs-region": "us-east-1",
                 "awslogs-stream-prefix": "keycloak",
               },
             },
