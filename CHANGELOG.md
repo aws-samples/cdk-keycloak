@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.23](https://github.com/pahud/cdk-keycloak/compare/v0.0.21...v0.0.23) (2021-02-01)
+
+
+### Features
+
+* expose database instanceType property ([38c1393](https://github.com/pahud/cdk-keycloak/commit/38c1393d13302911f63bbe389c2524f9cf8bad24))
+* support aurora serverless ([2dae269](https://github.com/pahud/cdk-keycloak/commit/2dae269820847a8e158469eb17f1f76e0cc0d75e))
+
+
+### Bug Fixes
+
+* raise error when reion is unresolved ([#37](https://github.com/pahud/cdk-keycloak/issues/37)) ([b5ce2ca](https://github.com/pahud/cdk-keycloak/commit/b5ce2ca2d2900c541ce985cbd936856f84e9296f))
+
 ### [0.0.22](https://github.com/pahud/cdk-keycloak/compare/v0.0.21...v0.0.22) (2021-02-01)
 
 
