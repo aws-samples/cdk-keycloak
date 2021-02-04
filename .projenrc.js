@@ -27,6 +27,7 @@ const project = new AwsCdkConstructLibrary({
     twitter: 'pahudnet',
   },
   releaseBranches: ['main'],
+  defaultReleaseBranch: ['main'],
   publishToPypi: {
     distName: 'cdk-keycloak',
     module: 'cdk_keycloak',
