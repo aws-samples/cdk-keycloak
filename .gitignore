@@ -19,6 +19,7 @@ build/Release
 cdk.context.json
 cdk.out
 coverage
+dependabot.yml
 images
 jspm_packages/
 junit.xml

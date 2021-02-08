@@ -16,6 +16,7 @@
 /tsconfig.json
 cdk.context.json
 cdk.out
+dependabot.yml
 dist
 images
 junit.xml
