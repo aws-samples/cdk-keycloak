@@ -34,6 +34,35 @@ new KeyCloak(stack, 'KeyCloak', {
 });
 ```
 
+# RDS for MySQL cluster 
+
+To create RDS cluster for MySQL with writer and reader instances for high availability:
+
+```ts
+new KeyCloak(stack, 'KeyCloak', {
+  certificateArn: stack.node.tryGetContext('ACM_CERT_ARN') || 'MOCK_ARN',
+});
+```
+
+Behind the scene, a default RDS cluster for MySQL with 2 database instances will be created.
+
+
+# RDS for MySQL instance
+
+To create single RDS instance for your testing or development environment, use `singleDbInstance` to turn on the
+single db instance deployment.
+
+Plesae note this is not recommended for production environment.
+
+```ts
+new KeyCloak(stack, 'KeyCloak', {
+  certificateArn: stack.node.tryGetContext('ACM_CERT_ARN') || 'MOCK_ARN',
+  singleDbInstance: true,
+});
+
+```
+
+
 
 # Deploy in existing Vpc Subnets
 

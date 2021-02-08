@@ -79,7 +79,13 @@ export interface KeyCloadProps {
    *
    * @default - MySQL 8.0.21
    */
-  readonly engine?: rds.IInstanceEngine;
+  readonly instanceEngine?: rds.IInstanceEngine;
+  /**
+   * The database cluster engine
+   *
+   * @default rds.AuroraMysqlEngineVersion.VER_2_09_1
+   */
+  readonly clusterEngine?: rds.IClusterEngine;
   /**
    * Whether to use aurora serverless. When enabled, the `databaseInstanceType` and
    * `engine` will be ignored. The `rds.DatabaseClusterEngine.AURORA_MYSQL` will be used as
@@ -88,6 +94,12 @@ export interface KeyCloadProps {
    * @default false
    */
   readonly auroraServerless?: boolean;
+  /**
+   * Whether to use single RDS instance rather than RDS cluster. Not recommended for production.
+   *
+   * @default false
+   */
+  readonly singleDbInstance?: boolean;
   /**
    * The sticky session duration for the keycloak workload with ALB.
    *
@@ -114,8 +126,10 @@ export class KeyCloak extends cdk.Construct {
       vpc: this.vpc,
       databaseSubnets: props.databaseSubnets,
       instanceType: props.databaseInstanceType,
-      engine: props.engine,
+      instanceEngine: props.instanceEngine,
+      clusterEngine: props.clusterEngine,
       auroraServerless: props.auroraServerless,
+      singleDbInstance: props.singleDbInstance,
     });
     this.addKeyCloakContainerService({
       database: this.db,
@@ -167,13 +181,26 @@ export interface DatabaseProps {
    *
    * @default - MySQL 8.0.21
    */
-  readonly engine?: rds.IInstanceEngine;
+  readonly instanceEngine?: rds.IInstanceEngine;
+  /**
+   * The database cluster engine
+   *
+   * @default rds.AuroraMysqlEngineVersion.VER_2_09_1
+   */
+  readonly clusterEngine?: rds.IClusterEngine;
   /**
    * enable aurora serverless
    *
    * @default false
    */
   readonly auroraServerless?: boolean;
+
+  /**
+   * Whether to use single RDS instance rather than RDS cluster. Not recommended for production.
+   *
+   * @default false
+   */
+  readonly singleDbInstance?: boolean;
 }
 
 /**
@@ -213,7 +240,7 @@ export class Database extends cdk.Construct {
     super(scope, id);
     this.vpc = props.vpc;
     const config = props.auroraServerless ? this._createServerlessCluster(props)
-      : this._createRdsInstance(props);
+      : props.singleDbInstance ? this._createRdsInstance(props) : this._createRdsCluster(props);
     this.secret = config.secret;
     // allow internally from the same security group
     config.connections.allowInternally(ec2.Port.tcp(this._mysqlListenerPort));
@@ -230,7 +257,7 @@ export class Database extends cdk.Construct {
     const dbInstance = new rds.DatabaseInstance(this, 'DBInstance', {
       vpc: props.vpc,
       vpcSubnets: props.databaseSubnets,
-      engine: props.engine ?? rds.DatabaseInstanceEngine.mysql({
+      engine: props.instanceEngine ?? rds.DatabaseInstanceEngine.mysql({
         version: rds.MysqlEngineVersion.VER_8_0_21,
       }),
       credentials: rds.Credentials.fromGeneratedSecret('admin'),
@@ -243,6 +270,28 @@ export class Database extends cdk.Construct {
       endpoint: dbInstance.dbInstanceEndpointAddress,
       identifier: dbInstance.instanceIdentifier,
       secret: dbInstance.secret!,
+    };
+  }
+  // create a RDS for MySQL DB cluster
+  private _createRdsCluster(props: DatabaseProps): DatabaseCofig {
+    const dbCluster = new rds.DatabaseCluster(this, 'DBCluster', {
+      engine: props.clusterEngine ?? rds.DatabaseClusterEngine.auroraMysql({
+        version: rds.AuroraMysqlEngineVersion.VER_2_09_1,
+      }),
+      credentials: rds.Credentials.fromGeneratedSecret('admin'),
+      instanceProps: {
+        vpc: props.vpc,
+        vpcSubnets: props.databaseSubnets,
+        instanceType: props.instanceType ?? new ec2.InstanceType('r5.large'),
+      },
+      parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.mysql8.0'),
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+    return {
+      connections: dbCluster.connections,
+      endpoint: dbCluster.clusterEndpoint.hostname,
+      identifier: dbCluster.clusterIdentifier,
+      secret: dbCluster.secret!,
     };
   }
   private _createServerlessCluster(props: DatabaseProps): DatabaseCofig {

@@ -82,9 +82,11 @@ new Database(scope: Construct, id: string, props: DatabaseProps)
 * **props** (<code>[DatabaseProps](#cdk-keycloak-databaseprops)</code>)  *No description*
   * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  The VPC for the database. 
   * **auroraServerless** (<code>boolean</code>)  enable aurora serverless. __*Default*__: false
+  * **clusterEngine** (<code>[IClusterEngine](#aws-cdk-aws-rds-iclusterengine)</code>)  The database cluster engine. __*Default*__: rds.AuroraMysqlEngineVersion.VER_2_09_1
   * **databaseSubnets** (<code>[SubnetSelection](#aws-cdk-aws-ec2-subnetselection)</code>)  VPC subnets for database. __*Optional*__
-  * **engine** (<code>[IInstanceEngine](#aws-cdk-aws-rds-iinstanceengine)</code>)  The database instance engine. __*Default*__: MySQL 8.0.21
+  * **instanceEngine** (<code>[IInstanceEngine](#aws-cdk-aws-rds-iinstanceengine)</code>)  The database instance engine. __*Default*__: MySQL 8.0.21
   * **instanceType** (<code>[InstanceType](#aws-cdk-aws-ec2-instancetype)</code>)  The database instance type. __*Default*__: r5.large
+  * **singleDbInstance** (<code>boolean</code>)  Whether to use single RDS instance rather than RDS cluster. __*Default*__: false
 
 
 
@@ -123,12 +125,14 @@ new KeyCloak(scope: Construct, id: string, props: KeyCloadProps)
   * **certificateArn** (<code>string</code>)  ACM certificate ARN to import. 
   * **auroraServerless** (<code>boolean</code>)  Whether to use aurora serverless. __*Default*__: false
   * **bastion** (<code>boolean</code>)  Create a bastion host for debugging or trouble-shooting. __*Default*__: false
+  * **clusterEngine** (<code>[IClusterEngine](#aws-cdk-aws-rds-iclusterengine)</code>)  The database cluster engine. __*Default*__: rds.AuroraMysqlEngineVersion.VER_2_09_1
   * **databaseInstanceType** (<code>[InstanceType](#aws-cdk-aws-ec2-instancetype)</code>)  Database instance type. __*Default*__: r5.large
   * **databaseSubnets** (<code>[SubnetSelection](#aws-cdk-aws-ec2-subnetselection)</code>)  VPC subnets for database. __*Default*__: VPC isolated subnets
-  * **engine** (<code>[IInstanceEngine](#aws-cdk-aws-rds-iinstanceengine)</code>)  The database instance engine. __*Default*__: MySQL 8.0.21
+  * **instanceEngine** (<code>[IInstanceEngine](#aws-cdk-aws-rds-iinstanceengine)</code>)  The database instance engine. __*Default*__: MySQL 8.0.21
   * **nodeCount** (<code>number</code>)  Number of keycloak node in the cluster. __*Default*__: 2
   * **privateSubnets** (<code>[SubnetSelection](#aws-cdk-aws-ec2-subnetselection)</code>)  VPC private subnets for keycloak service. __*Default*__: VPC private subnets
   * **publicSubnets** (<code>[SubnetSelection](#aws-cdk-aws-ec2-subnetselection)</code>)  VPC public subnets for ALB. __*Default*__: VPC public subnets
+  * **singleDbInstance** (<code>boolean</code>)  Whether to use single RDS instance rather than RDS cluster. __*Default*__: false
   * **stickinessCookieDuration** (<code>[Duration](#aws-cdk-core-duration)</code>)  The sticky session duration for the keycloak workload with ALB. __*Default*__: one day
   * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  VPC for the workload. __*Optional*__
 
@@ -156,9 +160,11 @@ addDatabase(props: DatabaseProps): Database
 * **props** (<code>[DatabaseProps](#cdk-keycloak-databaseprops)</code>)  *No description*
   * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  The VPC for the database. 
   * **auroraServerless** (<code>boolean</code>)  enable aurora serverless. __*Default*__: false
+  * **clusterEngine** (<code>[IClusterEngine](#aws-cdk-aws-rds-iclusterengine)</code>)  The database cluster engine. __*Default*__: rds.AuroraMysqlEngineVersion.VER_2_09_1
   * **databaseSubnets** (<code>[SubnetSelection](#aws-cdk-aws-ec2-subnetselection)</code>)  VPC subnets for database. __*Optional*__
-  * **engine** (<code>[IInstanceEngine](#aws-cdk-aws-rds-iinstanceengine)</code>)  The database instance engine. __*Default*__: MySQL 8.0.21
+  * **instanceEngine** (<code>[IInstanceEngine](#aws-cdk-aws-rds-iinstanceengine)</code>)  The database instance engine. __*Default*__: MySQL 8.0.21
   * **instanceType** (<code>[InstanceType](#aws-cdk-aws-ec2-instancetype)</code>)  The database instance type. __*Default*__: r5.large
+  * **singleDbInstance** (<code>boolean</code>)  Whether to use single RDS instance rather than RDS cluster. __*Default*__: false
 
 __Returns__:
 * <code>[Database](#cdk-keycloak-database)</code>
@@ -237,9 +243,11 @@ Name | Type | Description
 -----|------|-------------
 **vpc** | <code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code> | The VPC for the database.
 **auroraServerless**? | <code>boolean</code> | enable aurora serverless.<br/>__*Default*__: false
+**clusterEngine**? | <code>[IClusterEngine](#aws-cdk-aws-rds-iclusterengine)</code> | The database cluster engine.<br/>__*Default*__: rds.AuroraMysqlEngineVersion.VER_2_09_1
 **databaseSubnets**? | <code>[SubnetSelection](#aws-cdk-aws-ec2-subnetselection)</code> | VPC subnets for database.<br/>__*Optional*__
-**engine**? | <code>[IInstanceEngine](#aws-cdk-aws-rds-iinstanceengine)</code> | The database instance engine.<br/>__*Default*__: MySQL 8.0.21
+**instanceEngine**? | <code>[IInstanceEngine](#aws-cdk-aws-rds-iinstanceengine)</code> | The database instance engine.<br/>__*Default*__: MySQL 8.0.21
 **instanceType**? | <code>[InstanceType](#aws-cdk-aws-ec2-instancetype)</code> | The database instance type.<br/>__*Default*__: r5.large
+**singleDbInstance**? | <code>boolean</code> | Whether to use single RDS instance rather than RDS cluster.<br/>__*Default*__: false
 
 
 
@@ -255,12 +263,14 @@ Name | Type | Description
 **certificateArn** | <code>string</code> | ACM certificate ARN to import.
 **auroraServerless**? | <code>boolean</code> | Whether to use aurora serverless.<br/>__*Default*__: false
 **bastion**? | <code>boolean</code> | Create a bastion host for debugging or trouble-shooting.<br/>__*Default*__: false
+**clusterEngine**? | <code>[IClusterEngine](#aws-cdk-aws-rds-iclusterengine)</code> | The database cluster engine.<br/>__*Default*__: rds.AuroraMysqlEngineVersion.VER_2_09_1
 **databaseInstanceType**? | <code>[InstanceType](#aws-cdk-aws-ec2-instancetype)</code> | Database instance type.<br/>__*Default*__: r5.large
 **databaseSubnets**? | <code>[SubnetSelection](#aws-cdk-aws-ec2-subnetselection)</code> | VPC subnets for database.<br/>__*Default*__: VPC isolated subnets
-**engine**? | <code>[IInstanceEngine](#aws-cdk-aws-rds-iinstanceengine)</code> | The database instance engine.<br/>__*Default*__: MySQL 8.0.21
+**instanceEngine**? | <code>[IInstanceEngine](#aws-cdk-aws-rds-iinstanceengine)</code> | The database instance engine.<br/>__*Default*__: MySQL 8.0.21
 **nodeCount**? | <code>number</code> | Number of keycloak node in the cluster.<br/>__*Default*__: 2
 **privateSubnets**? | <code>[SubnetSelection](#aws-cdk-aws-ec2-subnetselection)</code> | VPC private subnets for keycloak service.<br/>__*Default*__: VPC private subnets
 **publicSubnets**? | <code>[SubnetSelection](#aws-cdk-aws-ec2-subnetselection)</code> | VPC public subnets for ALB.<br/>__*Default*__: VPC public subnets
+**singleDbInstance**? | <code>boolean</code> | Whether to use single RDS instance rather than RDS cluster.<br/>__*Default*__: false
 **stickinessCookieDuration**? | <code>[Duration](#aws-cdk-core-duration)</code> | The sticky session duration for the keycloak workload with ALB.<br/>__*Default*__: one day
 **vpc**? | <code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code> | VPC for the workload.<br/>__*Optional*__
 
