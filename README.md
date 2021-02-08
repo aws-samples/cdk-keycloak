@@ -36,9 +36,7 @@ new KeyCloak(stack, 'KeyCloak', {
 });
 ```
 
-
 Behind the scene, a default RDS cluster for MySQL with 2 database instances will be created.
-
 
 # Opt-in for Single RDS instance
 
@@ -54,8 +52,6 @@ new KeyCloak(stack, 'KeyCloak', {
 });
 
 ```
-
-
 
 # Deploy in existing Vpc Subnets
 
