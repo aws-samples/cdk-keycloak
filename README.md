@@ -26,11 +26,12 @@ new KeyCloak(stack, 'KeyCloak', {
 
 # Aurora Serverless support
 
-Use `autoraServerless` to opt in Amazon Aurora Serverless cluster. Please note only some regions are supported, check [Supported features in Amazon Aurora by AWS Region and Aurora DB engine](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Concepts.AuroraFeaturesRegionsDBEngines.grids.html) for availability.
+Use `auroraServerless` to opt in Amazon Aurora Serverless cluster. Please note only some regions are supported, check [Supported features in Amazon Aurora by AWS Region and Aurora DB engine](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Concepts.AuroraFeaturesRegionsDBEngines.grids.html) for availability.
 
 ```ts
 new KeyCloak(stack, 'KeyCloak', {
-  autoraServerless: true,
+  certificateArn,
+  auroraServerless: true,
 });
 ```
 
@@ -40,7 +41,7 @@ To create RDS cluster for MySQL with writer and reader instances for high availa
 
 ```ts
 new KeyCloak(stack, 'KeyCloak', {
-  certificateArn: stack.node.tryGetContext('ACM_CERT_ARN') || 'MOCK_ARN',
+  certificateArn,
 });
 ```
 
@@ -56,7 +57,7 @@ Plesae note this is not recommended for production environment.
 
 ```ts
 new KeyCloak(stack, 'KeyCloak', {
-  certificateArn: stack.node.tryGetContext('ACM_CERT_ARN') || 'MOCK_ARN',
+  certificateArn,
   singleDbInstance: true,
 });
 
