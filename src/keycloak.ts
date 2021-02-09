@@ -29,6 +29,13 @@ const AURORA_SERVERLESS_SUPPORTED_REGIONS = [
   'cn-northwest-1',
 ];
 
+const KEYCLOAK_VERSION = '12.0.2';
+
+const KEYCLOAK_DOCKER_IMAGE = {
+  global: `jboss/keycloak:${KEYCLOAK_VERSION}`,
+  china: `048912060910.dkr.ecr.cn-northwest-1.amazonaws.com.cn/dockerhub/jboss/keycloak:${KEYCLOAK_VERSION}`,
+};
+
 export interface KeyCloadProps {
   /**
    * VPC for the workload
@@ -407,7 +414,7 @@ export class ContainerService extends cdk.Construct {
       }),
     });
     const kc = taskDefinition.addContainer('keycloak', {
-      image: ecs.ContainerImage.fromRegistry('jboss/keycloak:12.0.2'),
+      image: ecs.ContainerImage.fromRegistry(getKeyCloakDockerImageUri(cdk.Stack.of(this))),
       environment: {
         DB_ADDR: props.database.clusterEndpointHostname,
         DB_DATABASE: 'keycloak',
@@ -434,6 +441,11 @@ export class ContainerService extends cdk.Construct {
       container: bootstrap,
       condition: ecs.ContainerDependencyCondition.SUCCESS,
     });
+
+    // we need extra privileges to fetch keycloak docker images from China mirror site
+    if (isChina(cdk.Stack.of(this))) {
+      taskDefinition.executionRole?.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonEC2ContainerRegistryReadOnly'));
+    }
 
     this.service = new ecs.FargateService(this, 'Service', {
       cluster,
@@ -499,4 +511,12 @@ function getOrCreateVpc(scope: cdk.Construct): ec2.IVpc {
 
 function printOutput(scope: cdk.Construct, id: string, key: string | number) {
   new cdk.CfnOutput(scope, id, { value: String(key) });
+}
+
+function isChina(stack: cdk.Stack) {
+  return !cdk.Token.isUnresolved(stack.region) && stack.region.startsWith('cn-');
+}
+
+function getKeyCloakDockerImageUri(stack: cdk.Stack) {
+  return isChina(stack) ? KEYCLOAK_DOCKER_IMAGE.china : KEYCLOAK_DOCKER_IMAGE.global;
 }
