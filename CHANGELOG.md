@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.35](https://github.com/pahud/cdk-keycloak/compare/v0.0.34...v0.0.35) (2021-02-09)
+
+
+### Features
+
+* support ecr china mirror ([#63](https://github.com/pahud/cdk-keycloak/issues/63)) ([1f7f2dc](https://github.com/pahud/cdk-keycloak/commit/1f7f2dc87cbadcb14e50ce65459153dd6f52f49e)), closes [#62](https://github.com/pahud/cdk-keycloak/issues/62)
+
 ### [0.0.34](https://github.com/pahud/cdk-keycloak/compare/v0.0.33...v0.0.34) (2021-02-09)
 
 
