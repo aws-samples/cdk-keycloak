@@ -18,7 +18,6 @@ export class IntegTesting {
     new KeyCloak(stack, 'KeyCloak', {
       certificateArn: stack.node.tryGetContext('ACM_CERT_ARN') || 'MOCK_ARN',
       auroraServerless: false,
-      singleDbInstance: true,
     });
 
     this.stack = [stack];

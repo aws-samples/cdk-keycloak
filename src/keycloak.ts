@@ -284,7 +284,7 @@ export class Database extends cdk.Construct {
         vpcSubnets: props.databaseSubnets,
         instanceType: props.instanceType ?? new ec2.InstanceType('r5.large'),
       },
-      parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.mysql8.0'),
+      parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.aurora-mysql5.7'),
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
     return {
