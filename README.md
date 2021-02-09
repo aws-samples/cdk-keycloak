@@ -26,14 +26,31 @@ new KeyCloak(stack, 'KeyCloak', {
 
 # Aurora Serverless support
 
-Use `autoraServerless` to opt in Amazon Aurora Serverless cluster. Please note only some regions are supported, check [Supported features in Amazon Aurora by AWS Region and Aurora DB engine](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Concepts.AuroraFeaturesRegionsDBEngines.grids.html) for availability.
+The `KeyCloak` construct provisions the **Amaozn RDS cluster for MySQL** with **2** database instances under the hood, to opt in **Amazon Aurora Serverless**, use `auroraServerless` to opt in Amazon Aurora Serverless cluster. Please note only some regions are supported, check [Supported features in Amazon Aurora by AWS Region and Aurora DB engine](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Concepts.AuroraFeaturesRegionsDBEngines.grids.html) for availability.
 
 ```ts
 new KeyCloak(stack, 'KeyCloak', {
-  autoraServerless: true,
+  certificateArn,
+  auroraServerless: true,
 });
 ```
 
+Behind the scene, a default RDS cluster for MySQL with 2 database instances will be created.
+
+# Opt-in for Single RDS instance
+
+To create single RDS instance for your testing or development environment, use `singleDbInstance` to turn on the
+single db instance deployment.
+
+Plesae note this is not recommended for production environment.
+
+```ts
+new KeyCloak(stack, 'KeyCloak', {
+  certificateArn,
+  singleDbInstance: true,
+});
+
+```
 
 # Deploy in existing Vpc Subnets
 
