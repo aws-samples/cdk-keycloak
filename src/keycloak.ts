@@ -31,11 +31,6 @@ const AURORA_SERVERLESS_SUPPORTED_REGIONS = [
 
 const KEYCLOAK_VERSION = '12.0.2';
 
-const KEYCLOAK_DOCKER_IMAGE = {
-  global: `jboss/keycloak:${KEYCLOAK_VERSION}`,
-  china: `048912060910.dkr.ecr.cn-northwest-1.amazonaws.com.cn/dockerhub/jboss/keycloak:${KEYCLOAK_VERSION}`,
-};
-
 export interface KeyCloadProps {
   /**
    * VPC for the workload
@@ -370,9 +365,26 @@ export interface ContainerServiceProps {
 
 export class ContainerService extends cdk.Construct {
   readonly service: ecs.FargateService;
+  private dockerImageMap: cdk.CfnMapping;
+  private keycloakDockerImageMap: { [region: string]: string }
   constructor(scope: cdk.Construct, id: string, props: ContainerServiceProps) {
     super(scope, id);
 
+    this.keycloakDockerImageMap = {
+      global: `jboss/keycloak:${KEYCLOAK_VERSION}`,
+      china: `048912060910.dkr.ecr.cn-northwest-1.amazonaws.com.cn/dockerhub/jboss/keycloak:${KEYCLOAK_VERSION}`,
+    };
+
+    const dockerImageMap: { [k1: string]: { [k2: string]: any } } = {};
+
+    for (const [region, image] of Object.entries(this.keycloakDockerImageMap)) {
+      dockerImageMap[region] = { keycloak: image };
+    }
+
+    // build the docker image mapping
+    this.dockerImageMap = new cdk.CfnMapping(scope, 'ImageMap', {
+      mapping: dockerImageMap,
+    });
     const vpc = props.vpc;
     const cluster = new ecs.Cluster(this, 'Cluster', { vpc });
     const taskRole = new iam.Role(this, 'TaskRole', {
@@ -414,7 +426,7 @@ export class ContainerService extends cdk.Construct {
       }),
     });
     const kc = taskDefinition.addContainer('keycloak', {
-      image: ecs.ContainerImage.fromRegistry(getKeyCloakDockerImageUri(cdk.Stack.of(this))),
+      image: ecs.ContainerImage.fromRegistry(this.getKeyCloakDockerImageUri()),
       environment: {
         DB_ADDR: props.database.clusterEndpointHostname,
         DB_DATABASE: 'keycloak',
@@ -494,6 +506,15 @@ export class ContainerService extends cdk.Construct {
       props.database.connections.allowDefaultPortFrom(bast);
     }
   }
+  private getKeyCloakDockerImageUri(): string {
+    const stack = cdk.Stack.of(this);
+    const region = stack.region;
+    if (cdk.Token.isUnresolved(region)) {
+      return this.dockerImageMap.findInMap(cdk.Aws.REGION, 'keycloak');
+    } else {
+      return this.keycloakDockerImageMap[isChina(stack) ? 'china' : 'global'];
+    }
+  }
 }
 
 /**
@@ -515,8 +536,4 @@ function printOutput(scope: cdk.Construct, id: string, key: string | number) {
 
 function isChina(stack: cdk.Stack) {
   return !cdk.Token.isUnresolved(stack.region) && stack.region.startsWith('cn-');
-}
-
-function getKeyCloakDockerImageUri(stack: cdk.Stack) {
-  return isChina(stack) ? KEYCLOAK_DOCKER_IMAGE.china : KEYCLOAK_DOCKER_IMAGE.global;
 }

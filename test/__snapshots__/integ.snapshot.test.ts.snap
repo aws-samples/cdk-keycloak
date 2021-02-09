@@ -2,6 +2,16 @@
 
 exports[`integ snapshot validation 1`] = `
 Object {
+  "Mappings": Object {
+    "KeyCloakImageMapC44189F2": Object {
+      "china": Object {
+        "keycloak": "048912060910.dkr.ecr.cn-northwest-1.amazonaws.com.cn/dockerhub/jboss/keycloak:12.0.2",
+      },
+      "global": Object {
+        "keycloak": "jboss/keycloak:12.0.2",
+      },
+    },
+  },
   "Outputs": Object {
     "KeyCloakDatabaseDBSecretArn28BEB641": Object {
       "Value": Object {
