@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.34](https://github.com/pahud/cdk-keycloak/compare/v0.0.33...v0.0.34) (2021-02-09)
+
+
+### Features
+
+* support rds cluster ([#60](https://github.com/pahud/cdk-keycloak/issues/60)) ([734705d](https://github.com/pahud/cdk-keycloak/commit/734705df914bcb0b183b1cae9668c3afcec92468)), closes [#59](https://github.com/pahud/cdk-keycloak/issues/59)
+
 ### [0.0.33](https://github.com/pahud/cdk-keycloak/compare/v0.0.32...v0.0.33) (2021-02-09)
 
 ### [0.0.32](https://github.com/pahud/cdk-keycloak/compare/v0.0.31...v0.0.32) (2021-02-08)
