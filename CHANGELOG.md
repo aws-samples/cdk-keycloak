@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.39](https://github.com/pahud/cdk-keycloak/compare/v0.0.38...v0.0.39) (2021-02-10)
+
+### [0.0.38](https://github.com/pahud/cdk-keycloak/compare/v0.0.37...v0.0.38) (2021-02-10)
+
+
+### Features
+
+* support ecs service autoscaling ([#68](https://github.com/pahud/cdk-keycloak/issues/68)) ([0476ee7](https://github.com/pahud/cdk-keycloak/commit/0476ee7f0d60b013b989568e8bee35ea19028040)), closes [#67](https://github.com/pahud/cdk-keycloak/issues/67)
+
 ### [0.0.37](https://github.com/pahud/cdk-keycloak/compare/v0.0.36...v0.0.37) (2021-02-10)
 
 ### [0.0.36](https://github.com/pahud/cdk-keycloak/compare/v0.0.35...v0.0.36) (2021-02-09)
