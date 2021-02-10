@@ -13,6 +13,7 @@ Name|Description
 
 Name|Description
 ----|-----------
+[AutoScaleTask](#cdk-keycloak-autoscaletask)|The ECS task autoscaling definition.
 [ContainerServiceProps](#cdk-keycloak-containerserviceprops)|*No description*
 [DatabaseCofig](#cdk-keycloak-databasecofig)|Database configuration.
 [DatabaseProps](#cdk-keycloak-databaseprops)|*No description*
@@ -43,6 +44,7 @@ new ContainerService(scope: Construct, id: string, props: ContainerServiceProps)
   * **database** (<code>[Database](#cdk-keycloak-database)</code>)  The RDS database for the service. 
   * **keycloakSecret** (<code>[ISecret](#aws-cdk-aws-secretsmanager-isecret)</code>)  The secrets manager secret for the keycloak. 
   * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  The VPC for the service. 
+  * **autoScaleTask** (<code>[AutoScaleTask](#cdk-keycloak-autoscaletask)</code>)  Autoscaling for the ECS Service. __*Default*__: no ecs service autoscaling
   * **bastion** (<code>boolean</code>)  Whether to create the bastion host. __*Default*__: false
   * **circuitBreaker** (<code>boolean</code>)  Whether to enable the ECS service deployment circuit breaker. __*Default*__: false
   * **nodeCount** (<code>number</code>)  Number of keycloak node in the cluster. __*Default*__: 1
@@ -124,6 +126,7 @@ new KeyCloak(scope: Construct, id: string, props: KeyCloadProps)
 * **props** (<code>[KeyCloadProps](#cdk-keycloak-keycloadprops)</code>)  *No description*
   * **certificateArn** (<code>string</code>)  ACM certificate ARN to import. 
   * **auroraServerless** (<code>boolean</code>)  Whether to use aurora serverless. __*Default*__: false
+  * **autoScaleTask** (<code>[AutoScaleTask](#cdk-keycloak-autoscaletask)</code>)  Autoscaling for the ECS Service. __*Default*__: no ecs service autoscaling
   * **bastion** (<code>boolean</code>)  Create a bastion host for debugging or trouble-shooting. __*Default*__: false
   * **clusterEngine** (<code>[IClusterEngine](#aws-cdk-aws-rds-iclusterengine)</code>)  The database cluster engine. __*Default*__: rds.AuroraMysqlEngineVersion.VER_2_09_1
   * **databaseInstanceType** (<code>[InstanceType](#aws-cdk-aws-ec2-instancetype)</code>)  Database instance type. __*Default*__: r5.large
@@ -182,6 +185,7 @@ addKeyCloakContainerService(props: ContainerServiceProps): ContainerService
   * **database** (<code>[Database](#cdk-keycloak-database)</code>)  The RDS database for the service. 
   * **keycloakSecret** (<code>[ISecret](#aws-cdk-aws-secretsmanager-isecret)</code>)  The secrets manager secret for the keycloak. 
   * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  The VPC for the service. 
+  * **autoScaleTask** (<code>[AutoScaleTask](#cdk-keycloak-autoscaletask)</code>)  Autoscaling for the ECS Service. __*Default*__: no ecs service autoscaling
   * **bastion** (<code>boolean</code>)  Whether to create the bastion host. __*Default*__: false
   * **circuitBreaker** (<code>boolean</code>)  Whether to enable the ECS service deployment circuit breaker. __*Default*__: false
   * **nodeCount** (<code>number</code>)  Number of keycloak node in the cluster. __*Default*__: 1
@@ -191,6 +195,21 @@ addKeyCloakContainerService(props: ContainerServiceProps): ContainerService
 
 __Returns__:
 * <code>[ContainerService](#cdk-keycloak-containerservice)</code>
+
+
+
+## struct AutoScaleTask  <a id="cdk-keycloak-autoscaletask"></a>
+
+
+The ECS task autoscaling definition.
+
+
+
+Name | Type | Description 
+-----|------|-------------
+**max**? | <code>number</code> | The maximal count of the task number.<br/>__*Default*__: min + 5
+**min**? | <code>number</code> | The minimal count of the task number.<br/>__*Default*__: nodeCount
+**targetCpuUtilization**? | <code>number</code> | The target cpu utilization for the service autoscaling.<br/>__*Default*__: 75
 
 
 
@@ -207,6 +226,7 @@ Name | Type | Description
 **database** | <code>[Database](#cdk-keycloak-database)</code> | The RDS database for the service.
 **keycloakSecret** | <code>[ISecret](#aws-cdk-aws-secretsmanager-isecret)</code> | The secrets manager secret for the keycloak.
 **vpc** | <code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code> | The VPC for the service.
+**autoScaleTask**? | <code>[AutoScaleTask](#cdk-keycloak-autoscaletask)</code> | Autoscaling for the ECS Service.<br/>__*Default*__: no ecs service autoscaling
 **bastion**? | <code>boolean</code> | Whether to create the bastion host.<br/>__*Default*__: false
 **circuitBreaker**? | <code>boolean</code> | Whether to enable the ECS service deployment circuit breaker.<br/>__*Default*__: false
 **nodeCount**? | <code>number</code> | Number of keycloak node in the cluster.<br/>__*Default*__: 1
@@ -262,6 +282,7 @@ Name | Type | Description
 -----|------|-------------
 **certificateArn** | <code>string</code> | ACM certificate ARN to import.
 **auroraServerless**? | <code>boolean</code> | Whether to use aurora serverless.<br/>__*Default*__: false
+**autoScaleTask**? | <code>[AutoScaleTask](#cdk-keycloak-autoscaletask)</code> | Autoscaling for the ECS Service.<br/>__*Default*__: no ecs service autoscaling
 **bastion**? | <code>boolean</code> | Create a bastion host for debugging or trouble-shooting.<br/>__*Default*__: false
 **clusterEngine**? | <code>[IClusterEngine](#aws-cdk-aws-rds-iclusterengine)</code> | The database cluster engine.<br/>__*Default*__: rds.AuroraMysqlEngineVersion.VER_2_09_1
 **databaseInstanceType**? | <code>[InstanceType](#aws-cdk-aws-ec2-instancetype)</code> | Database instance type.<br/>__*Default*__: r5.large

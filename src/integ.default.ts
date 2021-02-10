@@ -17,7 +17,13 @@ export class IntegTesting {
     // create a default keycloak workload with minimal required props
     new KeyCloak(stack, 'KeyCloak', {
       certificateArn: stack.node.tryGetContext('ACM_CERT_ARN') || 'MOCK_ARN',
-      auroraServerless: false,
+      auroraServerless: true,
+      nodeCount: 2,
+      autoScaleTask: {
+        min: 2,
+        max: 10,
+        targetCpuUtilization: 60,
+      },
     });
 
     this.stack = [stack];
