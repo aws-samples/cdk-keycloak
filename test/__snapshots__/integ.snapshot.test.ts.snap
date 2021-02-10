@@ -15,20 +15,20 @@ Object {
   "Outputs": Object {
     "KeyCloakDatabaseDBSecretArn28BEB641": Object {
       "Value": Object {
-        "Ref": "KeyCloakDatabaseDBClusterSecretAttachment50401C92",
+        "Ref": "KeyCloakDatabaseAuroraServerlessClusterSecretAttachmentA32F9C7B",
       },
     },
     "KeyCloakDatabaseclusterEndpointHostname38FB0D1E": Object {
       "Value": Object {
         "Fn::GetAtt": Array [
-          "KeyCloakDatabaseDBCluster06E9C0E1",
+          "KeyCloakDatabaseAuroraServerlessClusterDB73D16F",
           "Endpoint.Address",
         ],
       },
     },
     "KeyCloakDatabaseclusterIdentifierF00C290B": Object {
       "Value": Object {
-        "Ref": "KeyCloakDatabaseDBCluster06E9C0E1",
+        "Ref": "KeyCloakDatabaseAuroraServerlessClusterDB73D16F",
       },
     },
     "KeyCloakKeyCloakContainerSerivceEndpointURL9C81E19A": Object {
@@ -41,32 +41,33 @@ Object {
     },
   },
   "Resources": Object {
-    "KeyCloakDatabaseDBCluster06E9C0E1": Object {
+    "KeyCloakDatabaseAuroraServerlessClusterDB73D16F": Object {
       "DeletionPolicy": "Delete",
       "Properties": Object {
         "DBClusterParameterGroupName": "default.aurora-mysql5.7",
         "DBSubnetGroupName": Object {
-          "Ref": "KeyCloakDatabaseDBClusterSubnetsE36F1B1B",
+          "Ref": "KeyCloakDatabaseAuroraServerlessClusterSubnets6166944B",
         },
         "Engine": "aurora-mysql",
-        "EngineVersion": "5.7.mysql_aurora.2.09.1",
+        "EngineMode": "serverless",
         "MasterUserPassword": Object {
           "Fn::Join": Array [
             "",
             Array [
               "{{resolve:secretsmanager:",
               Object {
-                "Ref": "keycloakdemoKeyCloakDatabaseDBClusterSecret77AE3E0D3fdaad7efa858a3daf9490cf0a702aeb",
+                "Ref": "keycloakdemoKeyCloakDatabaseAuroraServerlessClusterSecretBBC2EF3A3fdaad7efa858a3daf9490cf0a702aeb",
               },
               ":SecretString:password::}}",
             ],
           ],
         },
         "MasterUsername": "admin",
+        "StorageEncrypted": true,
         "VpcSecurityGroupIds": Array [
           Object {
             "Fn::GetAtt": Array [
-              "KeyCloakDatabaseDBClusterSecurityGroup843B4392",
+              "KeyCloakDatabaseAuroraServerlessClusterSecurityGroupF0CB4641",
               "GroupId",
             ],
           },
@@ -75,59 +76,19 @@ Object {
       "Type": "AWS::RDS::DBCluster",
       "UpdateReplacePolicy": "Delete",
     },
-    "KeyCloakDatabaseDBClusterInstance12532FD3D": Object {
-      "DeletionPolicy": "Delete",
-      "DependsOn": Array [
-        "KeyCloakVpcPrivateSubnet1DefaultRouteA309AD23",
-        "KeyCloakVpcPrivateSubnet2DefaultRoute8D3CC7CF",
-      ],
-      "Properties": Object {
-        "DBClusterIdentifier": Object {
-          "Ref": "KeyCloakDatabaseDBCluster06E9C0E1",
-        },
-        "DBInstanceClass": "db.r5.large",
-        "DBSubnetGroupName": Object {
-          "Ref": "KeyCloakDatabaseDBClusterSubnetsE36F1B1B",
-        },
-        "Engine": "aurora-mysql",
-        "EngineVersion": "5.7.mysql_aurora.2.09.1",
-      },
-      "Type": "AWS::RDS::DBInstance",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "KeyCloakDatabaseDBClusterInstance2EE80EFE4": Object {
-      "DeletionPolicy": "Delete",
-      "DependsOn": Array [
-        "KeyCloakVpcPrivateSubnet1DefaultRouteA309AD23",
-        "KeyCloakVpcPrivateSubnet2DefaultRoute8D3CC7CF",
-      ],
-      "Properties": Object {
-        "DBClusterIdentifier": Object {
-          "Ref": "KeyCloakDatabaseDBCluster06E9C0E1",
-        },
-        "DBInstanceClass": "db.r5.large",
-        "DBSubnetGroupName": Object {
-          "Ref": "KeyCloakDatabaseDBClusterSubnetsE36F1B1B",
-        },
-        "Engine": "aurora-mysql",
-        "EngineVersion": "5.7.mysql_aurora.2.09.1",
-      },
-      "Type": "AWS::RDS::DBInstance",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "KeyCloakDatabaseDBClusterSecretAttachment50401C92": Object {
+    "KeyCloakDatabaseAuroraServerlessClusterSecretAttachmentA32F9C7B": Object {
       "Properties": Object {
         "SecretId": Object {
-          "Ref": "keycloakdemoKeyCloakDatabaseDBClusterSecret77AE3E0D3fdaad7efa858a3daf9490cf0a702aeb",
+          "Ref": "keycloakdemoKeyCloakDatabaseAuroraServerlessClusterSecretBBC2EF3A3fdaad7efa858a3daf9490cf0a702aeb",
         },
         "TargetId": Object {
-          "Ref": "KeyCloakDatabaseDBCluster06E9C0E1",
+          "Ref": "KeyCloakDatabaseAuroraServerlessClusterDB73D16F",
         },
         "TargetType": "AWS::RDS::DBCluster",
       },
       "Type": "AWS::SecretsManager::SecretTargetAttachment",
     },
-    "KeyCloakDatabaseDBClusterSecurityGroup843B4392": Object {
+    "KeyCloakDatabaseAuroraServerlessClusterSecurityGroupF0CB4641": Object {
       "Properties": Object {
         "GroupDescription": "RDS security group",
         "SecurityGroupEgress": Array [
@@ -171,20 +132,20 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "KeyCloakDatabaseDBClusterSecurityGroupfromkeycloakdemoKeyCloakDatabaseDBClusterSecurityGroup7FEA7CF633060A2D6973": Object {
+    "KeyCloakDatabaseAuroraServerlessClusterSecurityGroupfromkeycloakdemoKeyCloakDatabaseAuroraServerlessClusterSecurityGroup1CF1B8093306AB9B4528": Object {
       "Properties": Object {
-        "Description": "from keycloakdemoKeyCloakDatabaseDBClusterSecurityGroup7FEA7CF6:3306",
+        "Description": "from keycloakdemoKeyCloakDatabaseAuroraServerlessClusterSecurityGroup1CF1B809:3306",
         "FromPort": 3306,
         "GroupId": Object {
           "Fn::GetAtt": Array [
-            "KeyCloakDatabaseDBClusterSecurityGroup843B4392",
+            "KeyCloakDatabaseAuroraServerlessClusterSecurityGroupF0CB4641",
             "GroupId",
           ],
         },
         "IpProtocol": "tcp",
         "SourceSecurityGroupId": Object {
           "Fn::GetAtt": Array [
-            "KeyCloakDatabaseDBClusterSecurityGroup843B4392",
+            "KeyCloakDatabaseAuroraServerlessClusterSecurityGroupF0CB4641",
             "GroupId",
           ],
         },
@@ -192,18 +153,18 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupIngress",
     },
-    "KeyCloakDatabaseDBClusterSecurityGroupfromkeycloakdemoKeyCloakKeyCloakContainerSerivceServiceSecurityGroup4DE99C4FIndirectPortC3A8F36F": Object {
+    "KeyCloakDatabaseAuroraServerlessClusterSecurityGroupfromkeycloakdemoKeyCloakKeyCloakContainerSerivceServiceSecurityGroup4DE99C4FIndirectPortF24A4E85": Object {
       "Properties": Object {
         "Description": "from keycloakdemoKeyCloakKeyCloakContainerSerivceServiceSecurityGroup4DE99C4F:{IndirectPort}",
         "FromPort": Object {
           "Fn::GetAtt": Array [
-            "KeyCloakDatabaseDBCluster06E9C0E1",
+            "KeyCloakDatabaseAuroraServerlessClusterDB73D16F",
             "Endpoint.Port",
           ],
         },
         "GroupId": Object {
           "Fn::GetAtt": Array [
-            "KeyCloakDatabaseDBClusterSecurityGroup843B4392",
+            "KeyCloakDatabaseAuroraServerlessClusterSecurityGroupF0CB4641",
             "GroupId",
           ],
         },
@@ -216,16 +177,16 @@ Object {
         },
         "ToPort": Object {
           "Fn::GetAtt": Array [
-            "KeyCloakDatabaseDBCluster06E9C0E1",
+            "KeyCloakDatabaseAuroraServerlessClusterDB73D16F",
             "Endpoint.Port",
           ],
         },
       },
       "Type": "AWS::EC2::SecurityGroupIngress",
     },
-    "KeyCloakDatabaseDBClusterSubnetsE36F1B1B": Object {
+    "KeyCloakDatabaseAuroraServerlessClusterSubnets6166944B": Object {
       "Properties": Object {
-        "DBSubnetGroupDescription": "Subnets for DBCluster database",
+        "DBSubnetGroupDescription": "Subnets for AuroraServerlessCluster database",
         "SubnetIds": Array [
           Object {
             "Ref": "KeyCloakVpcPrivateSubnet1SubnetA692DFFF",
@@ -473,6 +434,65 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupIngress",
     },
+    "KeyCloakKeyCloakContainerSerivceServiceTaskCountTarget0EDF86B3": Object {
+      "Properties": Object {
+        "MaxCapacity": 10,
+        "MinCapacity": 2,
+        "ResourceId": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "service/",
+              Object {
+                "Ref": "KeyCloakKeyCloakContainerSerivceClusterA18E44FF",
+              },
+              "/",
+              Object {
+                "Fn::GetAtt": Array [
+                  "KeyCloakKeyCloakContainerSerivceService79D3F427",
+                  "Name",
+                ],
+              },
+            ],
+          ],
+        },
+        "RoleARN": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":iam::",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              ":role/aws-service-role/ecs.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_ECSService",
+            ],
+          ],
+        },
+        "ScalableDimension": "ecs:service:DesiredCount",
+        "ServiceNamespace": "ecs",
+      },
+      "Type": "AWS::ApplicationAutoScaling::ScalableTarget",
+    },
+    "KeyCloakKeyCloakContainerSerivceServiceTaskCountTargetCpuScaling1480DC0B": Object {
+      "Properties": Object {
+        "PolicyName": "keycloakdemoKeyCloakKeyCloakContainerSerivceServiceTaskCountTargetCpuScaling6EF32B2A",
+        "PolicyType": "TargetTrackingScaling",
+        "ScalingTargetId": Object {
+          "Ref": "KeyCloakKeyCloakContainerSerivceServiceTaskCountTarget0EDF86B3",
+        },
+        "TargetTrackingScalingPolicyConfiguration": Object {
+          "PredefinedMetricSpecification": Object {
+            "PredefinedMetricType": "ECSServiceAverageCPUUtilization",
+          },
+          "TargetValue": 60,
+        },
+      },
+      "Type": "AWS::ApplicationAutoScaling::ScalingPolicy",
+    },
     "KeyCloakKeyCloakContainerSerivceTaskDef30C9533A": Object {
       "Properties": Object {
         "ContainerDefinitions": Array [
@@ -495,7 +515,7 @@ Object {
                 "Name": "DB_ADDR",
                 "Value": Object {
                   "Fn::GetAtt": Array [
-                    "KeyCloakDatabaseDBCluster06E9C0E1",
+                    "KeyCloakDatabaseAuroraServerlessClusterDB73D16F",
                     "Endpoint.Address",
                   ],
                 },
@@ -522,7 +542,7 @@ Object {
                     "",
                     Array [
                       Object {
-                        "Ref": "KeyCloakDatabaseDBClusterSecretAttachment50401C92",
+                        "Ref": "KeyCloakDatabaseAuroraServerlessClusterSecretAttachmentA32F9C7B",
                       },
                       ":password::",
                     ],
@@ -543,7 +563,7 @@ Object {
                 "Name": "DB_ADDR",
                 "Value": Object {
                   "Fn::GetAtt": Array [
-                    "KeyCloakDatabaseDBCluster06E9C0E1",
+                    "KeyCloakDatabaseAuroraServerlessClusterDB73D16F",
                     "Endpoint.Address",
                   ],
                 },
@@ -596,7 +616,7 @@ Object {
                     "",
                     Array [
                       Object {
-                        "Ref": "KeyCloakDatabaseDBClusterSecretAttachment50401C92",
+                        "Ref": "KeyCloakDatabaseAuroraServerlessClusterSecretAttachmentA32F9C7B",
                       },
                       ":password::",
                     ],
@@ -717,7 +737,7 @@ Object {
               ],
               "Effect": "Allow",
               "Resource": Object {
-                "Ref": "KeyCloakDatabaseDBClusterSecretAttachment50401C92",
+                "Ref": "KeyCloakDatabaseAuroraServerlessClusterSecretAttachmentA32F9C7B",
               },
             },
             Object {
@@ -1093,7 +1113,7 @@ Object {
       },
       "Type": "AWS::EC2::VPCGatewayAttachment",
     },
-    "keycloakdemoKeyCloakDatabaseDBClusterSecret77AE3E0D3fdaad7efa858a3daf9490cf0a702aeb": Object {
+    "keycloakdemoKeyCloakDatabaseAuroraServerlessClusterSecretBBC2EF3A3fdaad7efa858a3daf9490cf0a702aeb": Object {
       "Properties": Object {
         "Description": Object {
           "Fn::Join": Array [

@@ -31,6 +31,31 @@ const AURORA_SERVERLESS_SUPPORTED_REGIONS = [
 
 const KEYCLOAK_VERSION = '12.0.2';
 
+
+/**
+ * The ECS task autoscaling definition
+ */
+export interface AutoScaleTask {
+  /**
+   * The minimal count of the task number
+   *
+   * @default - nodeCount
+   */
+  readonly min?: number;
+  /**
+   * The maximal count of the task number
+   *
+   * @default - min + 5
+   */
+  readonly max ?: number;
+  /**
+   * The target cpu utilization for the service autoscaling
+   *
+   * @default 75
+   */
+  readonly targetCpuUtilization ?: number;
+}
+
 export interface KeyCloadProps {
   /**
    * VPC for the workload
@@ -108,6 +133,12 @@ export interface KeyCloadProps {
    * @default - one day
    */
   readonly stickinessCookieDuration?: cdk.Duration;
+  /**
+   * Autoscaling for the ECS Service
+   *
+   * @default - no ecs service autoscaling
+   */
+  readonly autoScaleTask?: AutoScaleTask;
 }
 
 export class KeyCloak extends cdk.Construct {
@@ -143,6 +174,7 @@ export class KeyCloak extends cdk.Construct {
       bastion: props.bastion,
       nodeCount: props.nodeCount,
       stickinessCookieDuration: props.stickinessCookieDuration,
+      autoScaleTask: props.autoScaleTask,
     });
   }
   public addDatabase(props: DatabaseProps): Database {
@@ -361,6 +393,13 @@ export interface ContainerServiceProps {
    * @default - one day
    */
   readonly stickinessCookieDuration?: cdk.Duration;
+
+  /**
+   * Autoscaling for the ECS Service
+   *
+   * @default - no ecs service autoscaling
+   */
+  readonly autoScaleTask?: AutoScaleTask;
 }
 
 export class ContainerService extends cdk.Construct {
@@ -466,6 +505,17 @@ export class ContainerService extends cdk.Construct {
       desiredCount: props.nodeCount ?? 2,
       healthCheckGracePeriod: cdk.Duration.seconds(120),
     });
+
+    if (props.autoScaleTask) {
+      const minCapacity = props.autoScaleTask.min ?? props.nodeCount ?? 2;
+      const scaling = this.service.autoScaleTaskCount({
+        minCapacity,
+        maxCapacity: props.autoScaleTask.max ?? minCapacity+5,
+      });
+      scaling.scaleOnCpuUtilization('CpuScaling', {
+        targetUtilizationPercent: props.autoScaleTask.targetCpuUtilization ?? 75,
+      });
+    };
 
     const alb = new elbv2.ApplicationLoadBalancer(this, 'ALB', {
       vpc,
