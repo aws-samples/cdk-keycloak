@@ -60,7 +60,7 @@ export interface AutoScaleTask {
   readonly targetCpuUtilization ?: number;
 }
 
-export interface KeyCloadProps {
+export interface KeyCloakProps {
   /**
    * VPC for the workload
    */
@@ -148,7 +148,7 @@ export interface KeyCloadProps {
 export class KeyCloak extends cdk.Construct {
   readonly vpc: ec2.IVpc;
   readonly db?: Database;
-  constructor(scope: cdk.Construct, id: string, props: KeyCloadProps) {
+  constructor(scope: cdk.Construct, id: string, props: KeyCloakProps) {
     super(scope, id);
 
     const region = cdk.Stack.of(this).region;
