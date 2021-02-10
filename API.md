@@ -17,7 +17,7 @@ Name|Description
 [ContainerServiceProps](#cdk-keycloak-containerserviceprops)|*No description*
 [DatabaseCofig](#cdk-keycloak-databasecofig)|Database configuration.
 [DatabaseProps](#cdk-keycloak-databaseprops)|*No description*
-[KeyCloadProps](#cdk-keycloak-keycloadprops)|*No description*
+[KeyCloakProps](#cdk-keycloak-keycloakprops)|*No description*
 
 
 
@@ -118,12 +118,12 @@ __Extends__: [Construct](#aws-cdk-core-construct)
 
 
 ```ts
-new KeyCloak(scope: Construct, id: string, props: KeyCloadProps)
+new KeyCloak(scope: Construct, id: string, props: KeyCloakProps)
 ```
 
 * **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  *No description*
 * **id** (<code>string</code>)  *No description*
-* **props** (<code>[KeyCloadProps](#cdk-keycloak-keycloadprops)</code>)  *No description*
+* **props** (<code>[KeyCloakProps](#cdk-keycloak-keycloakprops)</code>)  *No description*
   * **certificateArn** (<code>string</code>)  ACM certificate ARN to import. 
   * **auroraServerless** (<code>boolean</code>)  Whether to use aurora serverless. __*Default*__: false
   * **autoScaleTask** (<code>[AutoScaleTask](#cdk-keycloak-autoscaletask)</code>)  Autoscaling for the ECS Service. __*Default*__: no ecs service autoscaling
@@ -271,7 +271,7 @@ Name | Type | Description
 
 
 
-## struct KeyCloadProps  <a id="cdk-keycloak-keycloadprops"></a>
+## struct KeyCloakProps  <a id="cdk-keycloak-keycloakprops"></a>
 
 
 
