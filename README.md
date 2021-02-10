@@ -52,6 +52,23 @@ new KeyCloak(stack, 'KeyCloak', {
 
 ```
 
+# Service Auto Scaling
+
+Define `autoScaleTask` for the ecs service task autoscaling. For example:
+
+```ts
+new KeyCloak(stack, 'KeyCloak', {
+  auroraServerless: true,
+  nodeCount: 2,
+  autoScaleTask: {
+    min: 2,
+    max: 10,
+    targetCpuUtilization: 60,
+  },
+});
+
+```
+
 # Deploy in existing Vpc Subnets
 
 You can deploy the workload in the existing Vpc and subnets. The `publicSubnets` are for the ALB, `privateSubnets` for the keycloak container tasks and `databaseSubnets` for the database.
