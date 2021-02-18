@@ -36,6 +36,11 @@ const KEYCLOAK_DOCKER_IMAGE_URI_MAP = {
   'aws-cn': `048912060910.dkr.ecr.cn-northwest-1.amazonaws.com.cn/dockerhub/jboss/keycloak:${KEYCLOAK_VERSION}`,
 };
 
+const BOOTSTRAP_DOCKER_IMAGE_URI_MAP = {
+  'aws': 'public.ecr.aws/ubuntu/mysql:latest',
+  'aws-cn': '048912060910.dkr.ecr.cn-northwest-1.amazonaws.com.cn/dockerhub/mysql:latest',
+};
+
 /**
  * The ECS task autoscaling definition
  */
@@ -433,7 +438,7 @@ export class ContainerService extends cdk.Construct {
     // bootstrap container that creates the database if not exist
     const bootstrap = taskDefinition.addContainer('bootstrap', {
       essential: false,
-      image: ecs.ContainerImage.fromRegistry('public.ecr.aws/ubuntu/mysql:latest'),
+      image: ecs.ContainerImage.fromRegistry(this.getBootstrapDockerImageUri()),
       environment: {
         DB_NAME: 'keycloak',
         DB_USER: 'admin',
@@ -548,13 +553,30 @@ export class ContainerService extends cdk.Construct {
       for (const [partition, uri] of Object.entries(KEYCLOAK_DOCKER_IMAGE_URI_MAP)) {
         mapping[partition] = { uri };
       }
-      const imageMap = new cdk.CfnMapping(this, 'ImageMap', { mapping });
+      const imageMap = new cdk.CfnMapping(this, 'KeycloakImageMap', { mapping });
       return imageMap.findInMap(cdk.Aws.PARTITION, 'uri');
     } else {
       if (stack.region.startsWith('cn-')) {
         return KEYCLOAK_DOCKER_IMAGE_URI_MAP['aws-cn'];
       } else {
         return KEYCLOAK_DOCKER_IMAGE_URI_MAP.aws;
+      }
+    }
+  }
+  private getBootstrapDockerImageUri(): string {
+    const stack = cdk.Stack.of(this);
+    if (cdk.Token.isUnresolved(stack.region)) {
+      const mapping: { [k1: string]: { [k2: string]: any } } = {};
+      for (const [partition, uri] of Object.entries(BOOTSTRAP_DOCKER_IMAGE_URI_MAP)) {
+        mapping[partition] = { uri };
+      }
+      const imageMap = new cdk.CfnMapping(this, 'BootstrapImageMap', { mapping });
+      return imageMap.findInMap(cdk.Aws.PARTITION, 'uri');
+    } else {
+      if (stack.region.startsWith('cn-')) {
+        return BOOTSTRAP_DOCKER_IMAGE_URI_MAP['aws-cn'];
+      } else {
+        return BOOTSTRAP_DOCKER_IMAGE_URI_MAP.aws;
       }
     }
   }
