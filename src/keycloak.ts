@@ -31,12 +31,17 @@ const AURORA_SERVERLESS_SUPPORTED_REGIONS = [
 
 const KEYCLOAK_VERSION = '12.0.2';
 
-const KEYCLOAK_DOCKER_IMAGE_URI_MAP = {
+interface dockerImageMap {
+  'aws': string;
+  'aws-cn': string;
+}
+
+const KEYCLOAK_DOCKER_IMAGE_URI_MAP: dockerImageMap = {
   'aws': `jboss/keycloak:${KEYCLOAK_VERSION}`,
   'aws-cn': `048912060910.dkr.ecr.cn-northwest-1.amazonaws.com.cn/dockerhub/jboss/keycloak:${KEYCLOAK_VERSION}`,
 };
 
-const BOOTSTRAP_DOCKER_IMAGE_URI_MAP = {
+const BOOTSTRAP_DOCKER_IMAGE_URI_MAP: dockerImageMap = {
   'aws': 'public.ecr.aws/ubuntu/mysql:latest',
   'aws-cn': '048912060910.dkr.ecr.cn-northwest-1.amazonaws.com.cn/dockerhub/mysql:latest',
 };
@@ -546,39 +551,28 @@ export class ContainerService extends cdk.Construct {
       props.database.connections.allowDefaultPortFrom(bast);
     }
   }
-  private getKeyCloakDockerImageUri(): string {
+  private getImageUriFromMap(map: dockerImageMap, cfnMapping: string): string {
     const stack = cdk.Stack.of(this);
     if (cdk.Token.isUnresolved(stack.region)) {
       const mapping: { [k1: string]: { [k2: string]: any } } = {};
-      for (const [partition, uri] of Object.entries(KEYCLOAK_DOCKER_IMAGE_URI_MAP)) {
+      for (const [partition, uri] of Object.entries(map)) {
         mapping[partition] = { uri };
       }
-      const imageMap = new cdk.CfnMapping(this, 'KeycloakImageMap', { mapping });
+      const imageMap = new cdk.CfnMapping(this, cfnMapping, { mapping });
       return imageMap.findInMap(cdk.Aws.PARTITION, 'uri');
     } else {
       if (stack.region.startsWith('cn-')) {
-        return KEYCLOAK_DOCKER_IMAGE_URI_MAP['aws-cn'];
+        return map['aws-cn'];
       } else {
-        return KEYCLOAK_DOCKER_IMAGE_URI_MAP.aws;
+        return map.aws;
       }
     }
   }
+  private getKeyCloakDockerImageUri(): string {
+    return this.getImageUriFromMap(KEYCLOAK_DOCKER_IMAGE_URI_MAP, 'KeycloakImageMap' );
+  }
   private getBootstrapDockerImageUri(): string {
-    const stack = cdk.Stack.of(this);
-    if (cdk.Token.isUnresolved(stack.region)) {
-      const mapping: { [k1: string]: { [k2: string]: any } } = {};
-      for (const [partition, uri] of Object.entries(BOOTSTRAP_DOCKER_IMAGE_URI_MAP)) {
-        mapping[partition] = { uri };
-      }
-      const imageMap = new cdk.CfnMapping(this, 'BootstrapImageMap', { mapping });
-      return imageMap.findInMap(cdk.Aws.PARTITION, 'uri');
-    } else {
-      if (stack.region.startsWith('cn-')) {
-        return BOOTSTRAP_DOCKER_IMAGE_URI_MAP['aws-cn'];
-      } else {
-        return BOOTSTRAP_DOCKER_IMAGE_URI_MAP.aws;
-      }
-    }
+    return this.getImageUriFromMap(BOOTSTRAP_DOCKER_IMAGE_URI_MAP, 'BootstrapImageMap');
   }
 }
 
