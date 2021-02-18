@@ -551,14 +551,14 @@ export class ContainerService extends cdk.Construct {
       props.database.connections.allowDefaultPortFrom(bast);
     }
   }
-  private getImageUriFromMap(map: dockerImageMap, cfnMapping: string): string {
+  private getImageUriFromMap(map: dockerImageMap, id: string): string {
     const stack = cdk.Stack.of(this);
     if (cdk.Token.isUnresolved(stack.region)) {
       const mapping: { [k1: string]: { [k2: string]: any } } = {};
       for (const [partition, uri] of Object.entries(map)) {
         mapping[partition] = { uri };
       }
-      const imageMap = new cdk.CfnMapping(this, cfnMapping, { mapping });
+      const imageMap = new cdk.CfnMapping(this, id, { mapping });
       return imageMap.findInMap(cdk.Aws.PARTITION, 'uri');
     } else {
       if (stack.region.startsWith('cn-')) {
