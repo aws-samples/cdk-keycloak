@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.0](https://github.com/pahud/cdk-keycloak/compare/v0.0.50...v0.1.0) (2021-02-18)
+
+
+### Features
+
+* support bootstrap image mirror in China ([4b8c1dd](https://github.com/pahud/cdk-keycloak/commit/4b8c1dd31e13fe35d67f9c1282622232dbae13bd))
+* support china ecr mirror ([1f22b38](https://github.com/pahud/cdk-keycloak/commit/1f22b38bab6406727c1b0d97eb5875c8494a34ec))
+* support docker image CfnMapping ([5be4ace](https://github.com/pahud/cdk-keycloak/commit/5be4acece7e3eee346e4c4351c5f645579a82625))
+* support ecs service autoscaling ([da8c4b7](https://github.com/pahud/cdk-keycloak/commit/da8c4b73c9a32aa1721c09d72a0096710785fa33))
+* support rds cluster ([1fa66cf](https://github.com/pahud/cdk-keycloak/commit/1fa66cf19405d61d6e83ebc25d82d7d97f8e6afe))
+
+
+### Bug Fixes
+
+* typo ([1739161](https://github.com/pahud/cdk-keycloak/commit/1739161458d6de22fe2b694ef9c4553d7b94a82b))
+
 ### [0.0.50](https://github.com/pahud/cdk-keycloak/compare/v0.0.49...v0.0.50) (2021-02-18)
 
 
