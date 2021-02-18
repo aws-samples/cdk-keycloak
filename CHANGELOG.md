@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.50](https://github.com/pahud/cdk-keycloak/compare/v0.0.49...v0.0.50) (2021-02-18)
+
+
+### Features
+
+* support bootstrap image mirror in China ([#81](https://github.com/pahud/cdk-keycloak/issues/81)) ([a028f67](https://github.com/pahud/cdk-keycloak/commit/a028f678863db73769ae4270db409a57755e3777)), closes [#80](https://github.com/pahud/cdk-keycloak/issues/80)
+
 ### [0.0.49](https://github.com/pahud/cdk-keycloak/compare/v0.0.48...v0.0.49) (2021-02-18)
 
 ### [0.0.48](https://github.com/pahud/cdk-keycloak/compare/v0.0.47...v0.0.48) (2021-02-18)
