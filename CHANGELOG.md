@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.49](https://github.com/pahud/cdk-keycloak/compare/v0.0.48...v0.0.49) (2021-02-18)
+
+### [0.0.48](https://github.com/pahud/cdk-keycloak/compare/v0.0.47...v0.0.48) (2021-02-18)
+
+### [0.0.47](https://github.com/pahud/cdk-keycloak/compare/v0.0.46...v0.0.47) (2021-02-17)
+
+### [0.0.46](https://github.com/pahud/cdk-keycloak/compare/v0.0.45...v0.0.46) (2021-02-16)
+
+### [0.0.45](https://github.com/pahud/cdk-keycloak/compare/v0.0.44...v0.0.45) (2021-02-15)
+
+### [0.0.44](https://github.com/pahud/cdk-keycloak/compare/v0.0.43...v0.0.44) (2021-02-14)
+
+### [0.0.43](https://github.com/pahud/cdk-keycloak/compare/v0.0.42...v0.0.43) (2021-02-13)
+
+### [0.0.42](https://github.com/pahud/cdk-keycloak/compare/v0.0.41...v0.0.42) (2021-02-12)
+
+### [0.0.41](https://github.com/pahud/cdk-keycloak/compare/v0.0.40...v0.0.41) (2021-02-11)
+
+### [0.0.40](https://github.com/pahud/cdk-keycloak/compare/v0.0.39...v0.0.40) (2021-02-10)
+
+
+### Bug Fixes
+
+* typo should be KeyCloadProps  ([#70](https://github.com/pahud/cdk-keycloak/issues/70)) ([1e27f75](https://github.com/pahud/cdk-keycloak/commit/1e27f75cfb06b8eec056c8421d97117a5a90dfe6))
+
 ### [0.0.39](https://github.com/pahud/cdk-keycloak/compare/v0.0.38...v0.0.39) (2021-02-10)
 
 ### [0.0.38](https://github.com/pahud/cdk-keycloak/compare/v0.0.37...v0.0.38) (2021-02-10)
