@@ -5,6 +5,7 @@ const AUTOMATION_TOKEN = 'PROJEN_GITHUB_TOKEN';
 const project = new AwsCdkConstructLibrary({
   author: 'Pahud Hsieh',
   authorAddress: 'pahudnet@gmail.com',
+  description: 'CDK construct library that allows you to create KeyCloak service on AWS in TypeScript or Python',
   cdkVersion: '1.73.0',
   jsiiFqn: 'projen.AwsCdkConstructLibrary',
   name: 'cdk-keycloak',

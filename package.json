@@ -1,5 +1,6 @@
 {
   "name": "cdk-keycloak",
+  "description": "CDK construct library that allows you to create KeyCloak service on AWS in TypeScript or Python",
   "repository": {
     "type": "git",
     "url": "https://github.com/pahud/cdk-keycloak.git"
