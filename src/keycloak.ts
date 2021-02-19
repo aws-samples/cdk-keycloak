@@ -321,6 +321,8 @@ export class Database extends cdk.Construct {
       engine: props.instanceEngine ?? rds.DatabaseInstanceEngine.mysql({
         version: rds.MysqlEngineVersion.VER_8_0_21,
       }),
+      storageEncrypted: true,
+      backupRetention: props.backupRetention ?? cdk.Duration.days(7),
       credentials: rds.Credentials.fromGeneratedSecret('admin'),
       instanceType: props.instanceType ?? new ec2.InstanceType('r5.large'),
       parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.mysql8.0'),
