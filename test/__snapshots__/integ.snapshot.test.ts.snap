@@ -34,6 +34,7 @@ Object {
     "KeyCloakDatabaseAuroraServerlessClusterDB73D16F": Object {
       "DeletionPolicy": "Delete",
       "Properties": Object {
+        "BackupRetentionPeriod": 7,
         "DBClusterParameterGroupName": "default.aurora-mysql5.7",
         "DBSubnetGroupName": Object {
           "Ref": "KeyCloakDatabaseAuroraServerlessClusterSubnets6166944B",
