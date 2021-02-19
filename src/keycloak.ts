@@ -142,6 +142,12 @@ export interface KeyCloakProps {
    */
   readonly singleDbInstance?: boolean;
   /**
+   * database backup retension
+   *
+   * @default - 7 days
+   */
+  readonly backupRetention?: cdk.Duration;
+  /**
    * The sticky session duration for the keycloak workload with ALB.
    *
    * @default - one day
@@ -177,6 +183,7 @@ export class KeyCloak extends cdk.Construct {
       clusterEngine: props.clusterEngine,
       auroraServerless: props.auroraServerless,
       singleDbInstance: props.singleDbInstance,
+      backupRetention: props.backupRetention,
     });
     this.addKeyCloakContainerService({
       database: this.db,
@@ -249,6 +256,12 @@ export interface DatabaseProps {
    * @default false
    */
   readonly singleDbInstance?: boolean;
+  /**
+   * database backup retension
+   *
+   * @default - 7 days
+   */
+  readonly backupRetention?: cdk.Duration;
 }
 
 /**
@@ -308,6 +321,8 @@ export class Database extends cdk.Construct {
       engine: props.instanceEngine ?? rds.DatabaseInstanceEngine.mysql({
         version: rds.MysqlEngineVersion.VER_8_0_21,
       }),
+      storageEncrypted: true,
+      backupRetention: props.backupRetention ?? cdk.Duration.days(7),
       credentials: rds.Credentials.fromGeneratedSecret('admin'),
       instanceType: props.instanceType ?? new ec2.InstanceType('r5.large'),
       parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.mysql8.0'),
@@ -333,6 +348,10 @@ export class Database extends cdk.Construct {
         instanceType: props.instanceType ?? new ec2.InstanceType('r5.large'),
       },
       parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.aurora-mysql5.7'),
+      backup: {
+        retention: props.backupRetention ?? cdk.Duration.days(7),
+      },
+      storageEncrypted: true,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
     return {
@@ -348,6 +367,7 @@ export class Database extends cdk.Construct {
       vpc: props.vpc,
       vpcSubnets: props.databaseSubnets,
       credentials: rds.Credentials.fromGeneratedSecret('admin'),
+      backupRetention: props.backupRetention ?? cdk.Duration.days(7),
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.aurora-mysql5.7'),
     });
