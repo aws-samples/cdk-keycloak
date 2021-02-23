@@ -109,3 +109,11 @@ new KeyCloak(stack, 'KeyCloak', {
 
 This library support AWS China regions `cn-north-1` and `cn-northwest-1` and will auto select local docker image mirror
 to accelerate the image pulling. You don't have to do anything.
+
+## Security
+
+See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
+
+## License
+
+This project is licensed under the Apache-2.0 License.
