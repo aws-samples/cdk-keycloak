@@ -3,7 +3,7 @@
   "description": "CDK construct library that allows you to create KeyCloak service on AWS in TypeScript or Python",
   "repository": {
     "type": "git",
-    "url": "https://github.com/pahud/cdk-keycloak.git"
+    "url": "https://github.com/aws-samples/cdk-keycloak.git"
   },
   "scripts": {
     "projen": "npx projen",
@@ -74,9 +74,12 @@
     "@aws-cdk/aws-logs": "^1.73.0",
     "@aws-cdk/aws-rds": "^1.73.0",
     "@aws-cdk/aws-secretsmanager": "^1.73.0",
-    "@aws-cdk/core": "^1.73.0"
+    "@aws-cdk/core": "^1.73.0",
+    "projen-automate-it": "^0.0.4"
   },
-  "bundledDependencies": [],
+  "bundledDependencies": [
+    "projen-automate-it"
+  ],
   "keywords": [
     "aws",
     "cdk",
