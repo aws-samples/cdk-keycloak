@@ -4,7 +4,7 @@
 
 # `cdk-keycloak`
 
-CDK construct library that allows you to create KeyCloak service on AWS in TypeScript or Python
+CDK construct library that allows you to create [KeyCloak](https://www.keycloak.org/) on AWS in TypeScript or Python
 
 # Sample
 
