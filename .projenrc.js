@@ -41,9 +41,8 @@ const project = new AwsCdkConstructLibrary({
 });
 
 
-// create a custom projen and yarn upgrade workflow
+// auto approve workflow
 autoApprove = project.github.addWorkflow('AutoApprove');
-
 
 autoApprove.on({
   pull_request_target: {
@@ -61,6 +60,37 @@ autoApprove.addJobs({
         if: "github.actor == 'pahud' || contains( github.event.pull_request.labels.*.name, 'auto-approve')",
         with: {
           'github-token': '${{ secrets.GITHUB_TOKEN }}',
+        },
+      },
+    ],
+  },
+});
+
+// auto merge workflow
+autoMerge = project.github.addWorkflow('AutoMerge');
+
+autoMerge.on({
+  pull_request: {
+    types: ['labeled', 'opened', 'reopened'],
+  },
+  check_suite: {
+    types: ['completed'],
+  },
+  status: {},
+});
+
+autoMerge.addJobs({
+  automerge: {
+    'runs-on': 'ubuntu-latest',
+    'steps':
+    [
+      {
+        name: 'automerge',
+        uses: 'pascalgn/automerge-action@v0.13.1',
+        env: {
+          MERGE_LABELS: 'auto-merge,!wip,!work in progress,!do-not-merge',
+          MERGE_RETRY_SLEEP: '60000',
+          MERGE_DELETE_BRANCH: 'true',
         },
       },
     ],
