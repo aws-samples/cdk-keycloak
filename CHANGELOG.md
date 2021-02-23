@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.5](https://github.com/pahud/cdk-keycloak/compare/v0.1.4...v0.1.5) (2021-02-21)
+
+### [0.1.4](https://github.com/pahud/cdk-keycloak/compare/v0.1.3...v0.1.4) (2021-02-20)
+
+### [0.1.3](https://github.com/pahud/cdk-keycloak/compare/v0.1.2...v0.1.3) (2021-02-19)
+
+### [0.1.2](https://github.com/pahud/cdk-keycloak/compare/v0.1.1...v0.1.2) (2021-02-19)
+
+
+### Features
+
+* support backup retention and storage encryption  ([#85](https://github.com/pahud/cdk-keycloak/issues/85)) ([44ee419](https://github.com/pahud/cdk-keycloak/commit/44ee4190d88f47ba43ba2b585c7cbd012a9eb994)), closes [#84](https://github.com/pahud/cdk-keycloak/issues/84) [#83](https://github.com/pahud/cdk-keycloak/issues/83)
+
 ### [0.1.1](https://github.com/pahud/cdk-keycloak/compare/v0.1.0...v0.1.1) (2021-02-18)
 
 ## [0.1.0](https://github.com/pahud/cdk-keycloak/compare/v0.0.50...v0.1.0) (2021-02-18)
