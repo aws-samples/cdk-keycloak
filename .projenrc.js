@@ -54,17 +54,17 @@ autoApprove.on({
 autoApprove.addJobs({
   'auto-approve': {
     'runs-on': 'ubuntu-latest',
-    steps:
+    'steps':
     [
       {
         uses: 'hmarr/auto-approve-action@v2.0.0',
         if: "github.actor == 'dependabot[bot]' || github.actor == 'dependabot-preview[bot]'",
         with: {
-          'github-token': "${{ secrets.GITHUB_TOKEN }}",
-        }
-      }
-    ]  
-  }
+          'github-token': '${{ secrets.GITHUB_TOKEN }}',
+        },
+      },
+    ],
+  },
 });
 
 // create a custom projen and yarn upgrade workflow
