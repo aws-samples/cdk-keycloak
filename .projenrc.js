@@ -58,7 +58,7 @@ autoApprove.addJobs({
     [
       {
         uses: 'hmarr/auto-approve-action@v2.0.0',
-        if: "github.actor == 'dependabot[bot]' || github.actor == 'dependabot-preview[bot]'",
+        if: "github.actor == 'pahud' || contains( github.event.pull_request.labels.*.name, 'auto-approve')",
         with: {
           'github-token': '${{ secrets.GITHUB_TOKEN }}',
         },
@@ -100,7 +100,7 @@ workflow.addJobs({
           'branch': 'auto/projen-upgrade',
           'title': 'chore: upgrade projen and yarn',
           'body': 'This PR upgrades projen and yarn upgrade to the latest version',
-          'labels': 'auto-merge',
+          'labels': 'auto-merge,auto-approve', 
         },
       },
     ],
