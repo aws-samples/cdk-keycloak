@@ -40,6 +40,33 @@ const project = new AwsCdkConstructLibrary({
   ],
 });
 
+
+// create a custom projen and yarn upgrade workflow
+autoApprove = project.github.addWorkflow('AutoApprove');
+
+
+autoApprove.on({
+  pull_request_target: {
+    types: ['assigned', 'opened', 'synchronize', 'reopened'],
+  },
+});
+
+autoApprove.addJobs({
+  'auto-approve': {
+    'runs-on': 'ubuntu-latest',
+    steps:
+    [
+      {
+        uses: 'hmarr/auto-approve-action@v2.0.0',
+        if: "github.actor == 'dependabot[bot]' || github.actor == 'dependabot-preview[bot]'",
+        with: {
+          'github-token': "${{ secrets.GITHUB_TOKEN }}",
+        }
+      }
+    ]  
+  }
+});
+
 // create a custom projen and yarn upgrade workflow
 workflow = project.github.addWorkflow('ProjenYarnUpgrade');
 
