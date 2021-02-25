@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.1](https://github.com/aws-samples/cdk-keycloak/compare/v0.2.0...v0.2.1) (2021-02-25)
+
+
+### Features
+
+* add auto-merge workflow ([64eb06c](https://github.com/aws-samples/cdk-keycloak/commit/64eb06c44675fab38fad457a4136f00b46e4c619))
+* add custom env [#14](https://github.com/aws-samples/cdk-keycloak/issues/14) ([32af858](https://github.com/aws-samples/cdk-keycloak/commit/32af8586ea0f891dda28c4ae8dba01928619469e))
+
 ## [0.2.0](https://github.com/pahud/cdk-keycloak/compare/v0.1.6...v0.2.0) (2021-02-23)
 
 ### 0.1.6 (2021-02-23)
