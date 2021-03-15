@@ -202,13 +202,9 @@ export class KeyCloak extends cdk.Construct {
       autoScaleTask: props.autoScaleTask,
       env: props.env,
     });
-    this._setStackDescription(this);
-  }
-  /**
-   * @internal
-   */
-  protected _setStackDescription(scope: cdk.Construct) {
-    cdk.Stack.of(scope).templateOptions.description = '(SO8021) - Deploy keycloak on AWS with cdk-keycloak construct library';
+    if (!cdk.Stack.of(this).templateOptions.description) {
+      cdk.Stack.of(this).templateOptions.description = '(SO8021) - Deploy keycloak on AWS with cdk-keycloak construct library';
+    }
   }
   public addDatabase(props: DatabaseProps): Database {
     return new Database(this, 'Database', props);
