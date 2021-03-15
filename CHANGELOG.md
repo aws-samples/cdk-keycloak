@@ -2,6 +2,58 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.1](https://github.com/aws-samples/cdk-keycloak/compare/v0.2.0...v0.2.1) (2021-02-25)
+
+
+### Features
+
+* add auto-merge workflow ([64eb06c](https://github.com/aws-samples/cdk-keycloak/commit/64eb06c44675fab38fad457a4136f00b46e4c619))
+* add custom env [#14](https://github.com/aws-samples/cdk-keycloak/issues/14) ([32af858](https://github.com/aws-samples/cdk-keycloak/commit/32af8586ea0f891dda28c4ae8dba01928619469e))
+
+## [0.2.0](https://github.com/pahud/cdk-keycloak/compare/v0.1.6...v0.2.0) (2021-02-23)
+
+### 0.1.6 (2021-02-23)
+
+
+### Features
+
+* bootstrap container support ([#9](https://github.com/pahud/cdk-keycloak/issues/9)) ([b5cf701](https://github.com/pahud/cdk-keycloak/commit/b5cf70180dfb2f3d3dd2840f125af03ba320e67b)), closes [#8](https://github.com/pahud/cdk-keycloak/issues/8)
+* expose database instanceType property ([38c1393](https://github.com/pahud/cdk-keycloak/commit/38c1393d13302911f63bbe389c2524f9cf8bad24))
+* expose database instanceType property ([#31](https://github.com/pahud/cdk-keycloak/issues/31)) ([96526fa](https://github.com/pahud/cdk-keycloak/commit/96526fafe8cdf1c4d6c1792804fe8a5c69ffc618)), closes [#30](https://github.com/pahud/cdk-keycloak/issues/30)
+* make circuit breaker optional ([cdf31d8](https://github.com/pahud/cdk-keycloak/commit/cdf31d806dfaf43139f3f60ec92d77f4596f4ed6))
+* optional node number ([43fa306](https://github.com/pahud/cdk-keycloak/commit/43fa306f0fd92ebb9849b4497f9426a9bc5583b0))
+* set default nodeCount to 2 ([9576800](https://github.com/pahud/cdk-keycloak/commit/957680063051d3487e968eabe61cd37973a22bc9))
+* support ALB. Closes [#1](https://github.com/pahud/cdk-keycloak/issues/1) ([4f9c5d1](https://github.com/pahud/cdk-keycloak/commit/4f9c5d120bf2bf353b6a4aa72481c31701b86fb3))
+* support aurora serverless ([2dae269](https://github.com/pahud/cdk-keycloak/commit/2dae269820847a8e158469eb17f1f76e0cc0d75e))
+* support AwsLogs. Closes: [#2](https://github.com/pahud/cdk-keycloak/issues/2) ([45d5327](https://github.com/pahud/cdk-keycloak/commit/45d53273f929070decdef11e2c5f00ff76d007b5))
+* support backup retention and storage encryption  ([#85](https://github.com/pahud/cdk-keycloak/issues/85)) ([44ee419](https://github.com/pahud/cdk-keycloak/commit/44ee4190d88f47ba43ba2b585c7cbd012a9eb994)), closes [#84](https://github.com/pahud/cdk-keycloak/issues/84) [#83](https://github.com/pahud/cdk-keycloak/issues/83)
+* support bootstrap image mirror in China ([4b8c1dd](https://github.com/pahud/cdk-keycloak/commit/4b8c1dd31e13fe35d67f9c1282622232dbae13bd))
+* support bootstrap image mirror in China ([#81](https://github.com/pahud/cdk-keycloak/issues/81)) ([a028f67](https://github.com/pahud/cdk-keycloak/commit/a028f678863db73769ae4270db409a57755e3777)), closes [#80](https://github.com/pahud/cdk-keycloak/issues/80)
+* support china ecr mirror ([1f22b38](https://github.com/pahud/cdk-keycloak/commit/1f22b38bab6406727c1b0d97eb5875c8494a34ec))
+* support docker image CfnMapping ([5be4ace](https://github.com/pahud/cdk-keycloak/commit/5be4acece7e3eee346e4c4351c5f645579a82625))
+* support ecr china mirror ([#63](https://github.com/pahud/cdk-keycloak/issues/63)) ([1f7f2dc](https://github.com/pahud/cdk-keycloak/commit/1f7f2dc87cbadcb14e50ce65459153dd6f52f49e)), closes [#62](https://github.com/pahud/cdk-keycloak/issues/62)
+* support ecs service autoscaling ([da8c4b7](https://github.com/pahud/cdk-keycloak/commit/da8c4b73c9a32aa1721c09d72a0096710785fa33))
+* support ecs service autoscaling ([#68](https://github.com/pahud/cdk-keycloak/issues/68)) ([0476ee7](https://github.com/pahud/cdk-keycloak/commit/0476ee7f0d60b013b989568e8bee35ea19028040)), closes [#67](https://github.com/pahud/cdk-keycloak/issues/67)
+* support ecs task role. Closes [#3](https://github.com/pahud/cdk-keycloak/issues/3) ([cd43c2e](https://github.com/pahud/cdk-keycloak/commit/cd43c2ea9c167f4cf1c4f0b6bafce51153d934c3))
+* support rds cluster ([1fa66cf](https://github.com/pahud/cdk-keycloak/commit/1fa66cf19405d61d6e83ebc25d82d7d97f8e6afe))
+* support rds cluster ([#60](https://github.com/pahud/cdk-keycloak/issues/60)) ([734705d](https://github.com/pahud/cdk-keycloak/commit/734705df914bcb0b183b1cae9668c3afcec92468)), closes [#59](https://github.com/pahud/cdk-keycloak/issues/59)
+* **database:** Aurora serverless support ([#34](https://github.com/pahud/cdk-keycloak/issues/34)) ([3a3bddd](https://github.com/pahud/cdk-keycloak/commit/3a3bddd2ed9e0996aad33d61fc421c1da04a090d)), closes [#33](https://github.com/pahud/cdk-keycloak/issues/33)
+* support slow start and sticky session ([8571453](https://github.com/pahud/cdk-keycloak/commit/8571453c203a38aa8f4eb65d2306b40063b7b496))
+* support VpcSubnets ([f815f5e](https://github.com/pahud/cdk-keycloak/commit/f815f5ee66458ac6ff4f50db5208e0e8f8550da3))
+* support VpcSubnets ([#19](https://github.com/pahud/cdk-keycloak/issues/19)) ([eec51b2](https://github.com/pahud/cdk-keycloak/commit/eec51b26ff65ae2acff5c7e7fb247f2b9b0d7234)), closes [#18](https://github.com/pahud/cdk-keycloak/issues/18)
+
+
+### Bug Fixes
+
+* ALB port mapping should go to 8443. Closes [#22](https://github.com/pahud/cdk-keycloak/issues/22) ([6393c61](https://github.com/pahud/cdk-keycloak/commit/6393c6177fbf6b85a3d6b7d70ddce1d11ebca26a))
+* default nodeCount should be 2 ([#27](https://github.com/pahud/cdk-keycloak/issues/27)) ([7533d3f](https://github.com/pahud/cdk-keycloak/commit/7533d3f692b3854c85358a656072f94cfc2d2911)), closes [#26](https://github.com/pahud/cdk-keycloak/issues/26)
+* KEYCLOAK_USER and Https port mapping ([#24](https://github.com/pahud/cdk-keycloak/issues/24)) ([cc190d9](https://github.com/pahud/cdk-keycloak/commit/cc190d940ee3921a2ab18e3667b6c87f16546c93)), closes [#21](https://github.com/pahud/cdk-keycloak/issues/21) [#22](https://github.com/pahud/cdk-keycloak/issues/22)
+* missing KEYCLOAK_USER in the env var. Closes [#21](https://github.com/pahud/cdk-keycloak/issues/21) ([9e45c12](https://github.com/pahud/cdk-keycloak/commit/9e45c126eb97f9a2382367fce7ff249f782e57a3))
+* raise error when reion is unresolved ([#37](https://github.com/pahud/cdk-keycloak/issues/37)) ([b5ce2ca](https://github.com/pahud/cdk-keycloak/commit/b5ce2ca2d2900c541ce985cbd936856f84e9296f))
+* remove port 8080 ([#25](https://github.com/pahud/cdk-keycloak/issues/25)) ([cd13e4f](https://github.com/pahud/cdk-keycloak/commit/cd13e4f339eac4032d7f7f2394ec949fbc39aa61)), closes [/github.com/pahud/cdk-keycloak/pull/24#pullrequestreview-578994559](https://github.com/pahud//github.com/pahud/cdk-keycloak/pull/24/issues/pullrequestreview-578994559)
+* typo ([1739161](https://github.com/pahud/cdk-keycloak/commit/1739161458d6de22fe2b694ef9c4553d7b94a82b))
+* typo should be KeyCloadProps  ([#70](https://github.com/pahud/cdk-keycloak/issues/70)) ([1e27f75](https://github.com/pahud/cdk-keycloak/commit/1e27f75cfb06b8eec056c8421d97117a5a90dfe6))
+
 ### [0.1.5](https://github.com/pahud/cdk-keycloak/compare/v0.1.4...v0.1.5) (2021-02-21)
 
 ### [0.1.4](https://github.com/pahud/cdk-keycloak/compare/v0.1.3...v0.1.4) (2021-02-20)

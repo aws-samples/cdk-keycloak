@@ -266,3 +266,204 @@ test('with single rds instance', () => {
     },
   });
 });
+
+test('with env', () => {
+  // GIVEN
+  const app = new App();
+  const stack = new Stack(app, 'testing-stack');
+
+  // WHEN
+  new kc.KeyCloak(stack, 'KeyCloak', {
+    certificateArn: 'MOCK_ARN',
+    env: {
+      JAVA_OPTS: '-DHelloWorld',
+    },
+  });
+
+  // THEN
+  expect(stack).toHaveResourceLike('AWS::ECS::TaskDefinition', {
+    ContainerDefinitions: [
+      {
+        Command: [
+          'sh',
+          '-c',
+          'mysql -u$DB_USER -p$DB_PASSWORD -h$DB_ADDR -e "CREATE DATABASE IF NOT EXISTS $DB_NAME"',
+        ],
+        Environment: [
+          {
+            Name: 'DB_NAME',
+            Value: 'keycloak',
+          },
+          {
+            Name: 'DB_USER',
+            Value: 'admin',
+          },
+          {
+            Name: 'DB_ADDR',
+            Value: {
+              'Fn::GetAtt': [
+                'KeyCloakDatabaseDBCluster06E9C0E1',
+                'Endpoint.Address',
+              ],
+            },
+          },
+        ],
+        Essential: false,
+        Image: {
+          'Fn::FindInMap': [
+            'KeyCloakKeyCloakContainerSerivceBootstrapImageMap1F3D33FC',
+            {
+              Ref: 'AWS::Partition',
+            },
+            'uri',
+          ],
+        },
+        LogConfiguration: {
+          LogDriver: 'awslogs',
+          Options: {
+            'awslogs-group': {
+              Ref: 'KeyCloakKeyCloakContainerSerivceLogGroup010F2AAE',
+            },
+            'awslogs-stream-prefix': 'bootstrap',
+            'awslogs-region': {
+              Ref: 'AWS::Region',
+            },
+          },
+        },
+        Name: 'bootstrap',
+        Secrets: [
+          {
+            Name: 'DB_PASSWORD',
+            ValueFrom: {
+              'Fn::Join': [
+                '',
+                [
+                  {
+                    Ref: 'KeyCloakDatabaseDBClusterSecretAttachment50401C92',
+                  },
+                  ':password::',
+                ],
+              ],
+            },
+          },
+        ],
+      },
+      {
+        DependsOn: [
+          {
+            Condition: 'SUCCESS',
+            ContainerName: 'bootstrap',
+          },
+        ],
+        Environment: [
+          {
+            Name: 'DB_ADDR',
+            Value: {
+              'Fn::GetAtt': [
+                'KeyCloakDatabaseDBCluster06E9C0E1',
+                'Endpoint.Address',
+              ],
+            },
+          },
+          {
+            Name: 'DB_DATABASE',
+            Value: 'keycloak',
+          },
+          {
+            Name: 'DB_PORT',
+            Value: '3306',
+          },
+          {
+            Name: 'DB_USER',
+            Value: 'admin',
+          },
+          {
+            Name: 'DB_VENDOR',
+            Value: 'mysql',
+          },
+          {
+            Name: 'JDBC_PARAMS',
+            Value: 'useSSL=false',
+          },
+          {
+            Name: 'JAVA_OPTS',
+            Value: '-DHelloWorld',
+          },
+        ],
+        Essential: true,
+        Image: {
+          'Fn::FindInMap': [
+            'KeyCloakKeyCloakContainerSerivceKeycloakImageMapF79EAEA3',
+            {
+              Ref: 'AWS::Partition',
+            },
+            'uri',
+          ],
+        },
+        LogConfiguration: {
+          LogDriver: 'awslogs',
+          Options: {
+            'awslogs-group': {
+              Ref: 'KeyCloakKeyCloakContainerSerivceLogGroup010F2AAE',
+            },
+            'awslogs-stream-prefix': 'keycloak',
+            'awslogs-region': {
+              Ref: 'AWS::Region',
+            },
+          },
+        },
+        Name: 'keycloak',
+        PortMappings: [
+          {
+            ContainerPort: 8443,
+            Protocol: 'tcp',
+          },
+        ],
+        Secrets: [
+          {
+            Name: 'DB_PASSWORD',
+            ValueFrom: {
+              'Fn::Join': [
+                '',
+                [
+                  {
+                    Ref: 'KeyCloakDatabaseDBClusterSecretAttachment50401C92',
+                  },
+                  ':password::',
+                ],
+              ],
+            },
+          },
+          {
+            Name: 'KEYCLOAK_USER',
+            ValueFrom: {
+              'Fn::Join': [
+                '',
+                [
+                  {
+                    Ref: 'KeyCloakKCSecretF8498E5C',
+                  },
+                  ':username::',
+                ],
+              ],
+            },
+          },
+          {
+            Name: 'KEYCLOAK_PASSWORD',
+            ValueFrom: {
+              'Fn::Join': [
+                '',
+                [
+                  {
+                    Ref: 'KeyCloakKCSecretF8498E5C',
+                  },
+                  ':password::',
+                ],
+              ],
+            },
+          },
+        ],
+      },
+    ],
+  });
+});

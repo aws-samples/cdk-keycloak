@@ -72,6 +72,10 @@ export interface AutoScaleTask {
 
 export interface KeyCloakProps {
   /**
+   * The environment variables to pass to the keycloak container
+   */
+  readonly env?: { [key: string]: string };
+  /**
    * VPC for the workload
    */
   readonly vpc?: ec2.IVpc;
@@ -196,6 +200,7 @@ export class KeyCloak extends cdk.Construct {
       nodeCount: props.nodeCount,
       stickinessCookieDuration: props.stickinessCookieDuration,
       autoScaleTask: props.autoScaleTask,
+      env: props.env,
     });
     this._setStackDescription(this);
   }
@@ -389,6 +394,10 @@ export class Database extends cdk.Construct {
 
 export interface ContainerServiceProps {
   /**
+   * The environment variables to pass to the keycloak container
+   */
+  readonly env?: { [key: string]: string };
+  /**
    * The VPC for the service
    */
   readonly vpc: ec2.IVpc;
@@ -490,14 +499,14 @@ export class ContainerService extends cdk.Construct {
     });
     const kc = taskDefinition.addContainer('keycloak', {
       image: ecs.ContainerImage.fromRegistry(this.getKeyCloakDockerImageUri()),
-      environment: {
+      environment: Object.assign({
         DB_ADDR: props.database.clusterEndpointHostname,
         DB_DATABASE: 'keycloak',
         DB_PORT: '3306',
         DB_USER: 'admin',
         DB_VENDOR: 'mysql',
         JDBC_PARAMS: 'useSSL=false',
-      },
+      }, props.env),
       secrets: {
         DB_PASSWORD: ecs.Secret.fromSecretsManager(props.database.secret, 'password'),
         KEYCLOAK_USER: ecs.Secret.fromSecretsManager(props.keycloakSecret, 'username'),
