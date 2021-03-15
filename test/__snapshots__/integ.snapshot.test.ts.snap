@@ -2,6 +2,7 @@
 
 exports[`integ snapshot validation 1`] = `
 Object {
+  "Description": "(SO8021) - Deploy keycloak on AWS with cdk-keycloak construct library",
   "Outputs": Object {
     "KeyCloakDatabaseDBSecretArn28BEB641": Object {
       "Value": Object {
