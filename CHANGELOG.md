@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.2](https://github.com/aws-samples/cdk-keycloak/compare/v0.2.1...v0.2.2) (2021-03-19)
+
+
+### Features
+
+* support backup retention ([bc2a8c1](https://github.com/aws-samples/cdk-keycloak/commit/bc2a8c16cff03761801b28c65f94259358597244))
+
 ### [0.2.1](https://github.com/aws-samples/cdk-keycloak/compare/v0.2.0...v0.2.1) (2021-02-25)
 
 
