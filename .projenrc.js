@@ -23,9 +23,6 @@ const project = new AwsCdkConstructLibrary({
     '@aws-cdk/aws-secretsmanager',
     '@aws-cdk/core',
   ],
-  devDeps: [
-    'xmldom@^0.5.0',
-  ],
   dependabot: false,
   catalog: {
     announce: false,
@@ -42,10 +39,7 @@ const project = new AwsCdkConstructLibrary({
     'keycloak',
     'aws',
   ],
-  deps: [
-    'projen-automate-it',
-  ],
-  bundledDeps: [
+  devDeps: [
     'projen-automate-it',
   ],
 });
