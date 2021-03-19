@@ -23,16 +23,12 @@ const project = new AwsCdkConstructLibrary({
     '@aws-cdk/aws-secretsmanager',
     '@aws-cdk/core',
   ],
-  devDeps: [
-    'xmldom@^0.5.0',
-  ],
   dependabot: false,
   catalog: {
     announce: false,
     twitter: 'pahudnet',
   },
-  releaseBranches: ['main'],
-  defaultReleaseBranch: ['main'],
+  defaultReleaseBranch: 'main',
   publishToPypi: {
     distName: 'cdk-keycloak',
     module: 'cdk_keycloak',
