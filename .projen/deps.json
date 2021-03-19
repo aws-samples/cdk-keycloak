@@ -68,8 +68,12 @@
       "type": "build"
     },
     {
+      "name": "projen-automate-it",
+      "type": "build"
+    },
+    {
       "name": "projen",
-      "version": "^0.17.16",
+      "version": "^0.16.42",
       "type": "build"
     },
     {
@@ -84,15 +88,6 @@
     {
       "name": "typescript",
       "type": "build"
-    },
-    {
-      "name": "xmldom",
-      "version": "^0.5.0",
-      "type": "build"
-    },
-    {
-      "name": "projen-automate-it",
-      "type": "bundled"
     },
     {
       "name": "@aws-cdk/aws-autoscaling",
@@ -197,10 +192,6 @@
     {
       "name": "@aws-cdk/core",
       "version": "^1.73.0",
-      "type": "runtime"
-    },
-    {
-      "name": "projen-automate-it",
       "type": "runtime"
     }
   ],

@@ -42,10 +42,7 @@ const project = new AwsCdkConstructLibrary({
     'keycloak',
     'aws',
   ],
-  deps: [
-    'projen-automate-it',
-  ],
-  bundledDeps: [
+  devDeps: [
     'projen-automate-it',
   ],
 });
