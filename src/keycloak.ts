@@ -29,7 +29,7 @@ const AURORA_SERVERLESS_SUPPORTED_REGIONS = [
   'cn-northwest-1',
 ];
 
-const KEYCLOAK_VERSION = '12.0.2';
+const KEYCLOAK_VERSION = '12.0.4';
 
 interface dockerImageMap {
   'aws': string;
