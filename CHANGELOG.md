@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.3](https://github.com/aws-samples/cdk-keycloak/compare/v0.2.2...v0.2.3) (2021-04-19)
+
+
+### Features
+
+* update keyloak new version ([#71](https://github.com/aws-samples/cdk-keycloak/issues/71)) ([d6aea06](https://github.com/aws-samples/cdk-keycloak/commit/d6aea0667708121e55736e0619ce8788e3dcce31))
+
 ### [0.2.2](https://github.com/aws-samples/cdk-keycloak/compare/v0.2.1...v0.2.2) (2021-03-19)
 
 
