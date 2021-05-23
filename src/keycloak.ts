@@ -563,7 +563,7 @@ export class ContainerService extends cdk.Construct {
       vpcSubnets: props.publicSubnets,
       internetFacing: true,
     });
-    printOutput(this, 'EndpointURL', alb.loadBalancerDnsName);
+    printOutput(this, 'EndpointURL', `https://${alb.loadBalancerDnsName}`);
 
     const listener = alb.addListener('HttpsListener', {
       protocol: elbv2.ApplicationProtocol.HTTPS,
