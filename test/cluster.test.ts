@@ -282,6 +282,7 @@ test('with env', () => {
 
   // THEN
   expect(stack).toHaveResourceLike('AWS::ECS::TaskDefinition', {
+
     ContainerDefinitions: [
       {
         Command: [
@@ -386,6 +387,10 @@ test('with env', () => {
             Value: 'useSSL=false',
           },
           {
+            Name: 'JGROUPS_DISCOVERY_PROTOCOL',
+            Value: 'JDBC_PING',
+          },
+          {
             Name: 'JAVA_OPTS',
             Value: '-DHelloWorld',
           },
@@ -417,6 +422,22 @@ test('with env', () => {
           {
             ContainerPort: 8443,
             Protocol: 'tcp',
+          },
+          {
+            ContainerPort: 7600,
+            Protocol: 'tcp',
+          },
+          {
+            ContainerPort: 57600,
+            Protocol: 'tcp',
+          },
+          {
+            ContainerPort: 55200,
+            Protocol: 'udp',
+          },
+          {
+            ContainerPort: 54200,
+            Protocol: 'udp',
           },
         ],
         Secrets: [
@@ -465,5 +486,24 @@ test('with env', () => {
         ],
       },
     ],
+    Cpu: '4096',
+    ExecutionRoleArn: {
+      'Fn::GetAtt': [
+        'KeyCloakKeyCloakContainerSerivceTaskRole0658CED2',
+        'Arn',
+      ],
+    },
+    Family: 'testingstackKeyCloakKeyCloakContainerSerivceTaskDef799BAD5B',
+    Memory: '30720',
+    NetworkMode: 'awsvpc',
+    RequiresCompatibilities: [
+      'FARGATE',
+    ],
+    TaskRoleArn: {
+      'Fn::GetAtt': [
+        'KeyCloakKeyCloakContainerSerivceTaskDefTaskRole0DC4D418',
+        'Arn',
+      ],
+    },
   });
 });

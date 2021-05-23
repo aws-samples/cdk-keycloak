@@ -501,7 +501,13 @@ export class ContainerService extends cdk.Construct {
         DB_PORT: '3306',
         DB_USER: 'admin',
         DB_VENDOR: 'mysql',
+        // KEYCLOAK_LOGLEVEL: 'DEBUG',
         JDBC_PARAMS: 'useSSL=false',
+        JGROUPS_DISCOVERY_PROTOCOL: 'JDBC_PING',
+        // We don't need to specify `initialize_sql` string into `JGROUPS_DISCOVERY_PROPERTIES` property,
+        // because the default `initialize_sql` is compatible with MySQL. (See: https://github.com/belaban/JGroups/blob/master/src/org/jgroups/protocols/JDBC_PING.java#L55-L60)
+        // But you need to specify `initialize_sql` for PostgreSQL, because `varbinary` schema is not supported. (See: https://github.com/keycloak/keycloak-containers/blob/d4ce446dde3026f89f66fa86b58c2d0d6132ce4d/docker-compose-examples/keycloak-postgres-jdbc-ping.yml#L49)
+        // JGROUPS_DISCOVERY_PROPERTIES: '',
       }, props.env),
       secrets: {
         DB_PASSWORD: ecs.Secret.fromSecretsManager(props.database.secret, 'password'),
@@ -514,9 +520,12 @@ export class ContainerService extends cdk.Construct {
       }),
     });
     kc.addPortMappings(
-      { containerPort: 8443 },
+      { containerPort: 8443 }, // HTTPS web port
+      { containerPort: 7600 }, // jgroups-tcp
+      { containerPort: 57600 }, // jgroups-tcp-fd
+      { containerPort: 55200, protocol: ecs.Protocol.UDP }, // jgroups-udp
+      { containerPort: 54200, protocol: ecs.Protocol.UDP }, // jgroups-udp-fd
     );
-
     kc.addContainerDependencies({
       container: bootstrap,
       condition: ecs.ContainerDependencyCondition.SUCCESS,
@@ -532,6 +541,11 @@ export class ContainerService extends cdk.Construct {
       desiredCount: props.nodeCount ?? 2,
       healthCheckGracePeriod: cdk.Duration.seconds(120),
     });
+    // we need to allow traffic from the same secret group for keycloak cluster with jdbc_ping
+    this.service.connections.allowFrom(this.service.connections, ec2.Port.tcp(7600), 'kc jgroups-tcp');
+    this.service.connections.allowFrom(this.service.connections, ec2.Port.tcp(57600), 'kc jgroups-tcp-fd');
+    this.service.connections.allowFrom(this.service.connections, ec2.Port.udp(55200), 'kc jgroups-udp');
+    this.service.connections.allowFrom(this.service.connections, ec2.Port.udp(54200), 'kc jgroups-udp-fd');
 
     if (props.autoScaleTask) {
       const minCapacity = props.autoScaleTask.min ?? props.nodeCount ?? 2;
@@ -549,7 +563,7 @@ export class ContainerService extends cdk.Construct {
       vpcSubnets: props.publicSubnets,
       internetFacing: true,
     });
-    printOutput(this, 'EndpointURL', alb.loadBalancerDnsName);
+    printOutput(this, 'EndpointURL', `https://${alb.loadBalancerDnsName}`);
 
     const listener = alb.addListener('HttpsListener', {
       protocol: elbv2.ApplicationProtocol.HTTPS,
