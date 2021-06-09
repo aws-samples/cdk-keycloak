@@ -48,6 +48,10 @@ const project = new AwsCdkConstructLibrary({
   ],
 });
 
+project.package.addField('resolutions', {
+  'trim-newlines': '3.0.1',
+});
+
 const common_exclude = ['cdk.out', 'cdk.context.json', 'images', 'yarn-error.log', 'dependabot.yml'];
 project.npmignore.exclude(...common_exclude);
 project.gitignore.exclude(...common_exclude);
