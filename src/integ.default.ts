@@ -1,5 +1,9 @@
+import * as path from 'path';
 import * as ec2 from '@aws-cdk/aws-ec2';
+import { DockerImageAsset } from '@aws-cdk/aws-ecr-assets';
+import * as ecs from '@aws-cdk/aws-ecs';
 import * as cdk from '@aws-cdk/core';
+
 import { KeyCloak } from './index';
 
 export class IntegTesting {
@@ -8,22 +12,50 @@ export class IntegTesting {
     const app = new cdk.App();
 
     const env = {
-      region: process.env.CDK_DEFAULT_REGION || 'us-east-1',
+      region: 'ap-east-1',
       account: process.env.CDK_DEFAULT_ACCOUNT,
     };
 
+    const stackvpc = new cdk.Stack(app, 'vpc-stack', { env });
+
+    new ec2.Vpc(stackvpc, 'MyVPC', {
+      subnetConfiguration: [
+        {
+          cidrMask: 24,
+          name: 'ingress',
+          subnetType: ec2.SubnetType.PUBLIC,
+        },
+        {
+          cidrMask: 24,
+          name: 'application',
+          subnetType: ec2.SubnetType.PRIVATE,
+        },
+        {
+          cidrMask: 28,
+          name: 'rds',
+          subnetType: ec2.SubnetType.ISOLATED,
+        },
+      ],
+    });
+
     const stack = new cdk.Stack(app, 'keycloak-demo', { env });
+
+    const kcbAsset = new DockerImageAsset(stack, 'KeycloakBenchmarkImage', {
+      directory: path.join(__dirname, 'docker'),
+    });
 
     // create a default keycloak workload with minimal required props
     new KeyCloak(stack, 'KeyCloak', {
-      certificateArn: stack.node.tryGetContext('ACM_CERT_ARN') || 'MOCK_ARN',
-      auroraServerless: true,
-      nodeCount: 2,
+      certificateArn: '*****',
+      auroraServerless: false,
+      nodeCount: 1,
       autoScaleTask: {
-        min: 2,
-        max: 10,
-        targetCpuUtilization: 60,
+        min: 1,
+        max: 1,
+        targetCpuUtilization: 50,
       },
+      vpc: ec2.Vpc.fromLookup(stack, 'Vpc', { vpcId: 'vpc-0b453730c7b902e87' }),
+      image: ecs.ContainerImage.fromDockerImageAsset(kcbAsset),
     });
 
     this.stack = [stack];

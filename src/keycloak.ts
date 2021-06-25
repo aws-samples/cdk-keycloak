@@ -163,6 +163,8 @@ export interface KeyCloakProps {
    * @default - no ecs service autoscaling
    */
   readonly autoScaleTask?: AutoScaleTask;
+
+  readonly image?: ecs.ContainerImage;
 }
 
 export class KeyCloak extends cdk.Construct {
@@ -201,6 +203,7 @@ export class KeyCloak extends cdk.Construct {
       stickinessCookieDuration: props.stickinessCookieDuration,
       autoScaleTask: props.autoScaleTask,
       env: props.env,
+      image: props.image,
     });
     if (!cdk.Stack.of(this).templateOptions.description) {
       cdk.Stack.of(this).templateOptions.description = '(SO8021) - Deploy keycloak on AWS with cdk-keycloak construct library';
@@ -446,6 +449,8 @@ export interface ContainerServiceProps {
    * @default - no ecs service autoscaling
    */
   readonly autoScaleTask?: AutoScaleTask;
+
+  readonly image?: ecs.ContainerImage;
 }
 
 export class ContainerService extends cdk.Construct {
@@ -494,7 +499,7 @@ export class ContainerService extends cdk.Construct {
       }),
     });
     const kc = taskDefinition.addContainer('keycloak', {
-      image: ecs.ContainerImage.fromRegistry(this.getKeyCloakDockerImageUri()),
+      image: props.image ?? ecs.ContainerImage.fromRegistry(this.getKeyCloakDockerImageUri()),
       environment: Object.assign({
         DB_ADDR: props.database.clusterEndpointHostname,
         DB_DATABASE: 'keycloak',

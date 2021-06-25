@@ -1,0 +1,4 @@
+export HOST="XXXXXXX"
+
+./bin/kcb.sh --server-url="$HOST" --scenario=keycloak.scenario.authentication.LoginUserPassword --realms=1 --users-per-realm=5000 --users-per-sec=200 --user-think-time=3 --clients-per-realm=50 --measurement=1800 --ramp-up=900
+./bin/kcb.sh --server-url="$HOST" --scenario=keycloak.scenario.authentication.LoginUserPassword --realms=1 --users-per-realm=5000 --users-per-sec=50 --user-think-time=3 --clients-per-realm=50 --measurement=1800 --ramp-up=300
