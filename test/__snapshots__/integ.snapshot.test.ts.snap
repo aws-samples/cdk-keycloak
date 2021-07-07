@@ -48,6 +48,7 @@ Object {
         "DBSubnetGroupName": Object {
           "Ref": "KeyCloakDatabaseAuroraServerlessClusterSubnets6166944B",
         },
+        "DatabaseName": "keycloak",
         "Engine": "aurora-mysql",
         "EngineMode": "serverless",
         "MasterUserPassword": Object {
@@ -581,67 +582,6 @@ Object {
       "Properties": Object {
         "ContainerDefinitions": Array [
           Object {
-            "Command": Array [
-              "sh",
-              "-c",
-              "mysql -u$DB_USER -p$DB_PASSWORD -h$DB_ADDR -e \\"CREATE DATABASE IF NOT EXISTS $DB_NAME\\"",
-            ],
-            "Environment": Array [
-              Object {
-                "Name": "DB_NAME",
-                "Value": "keycloak",
-              },
-              Object {
-                "Name": "DB_USER",
-                "Value": "admin",
-              },
-              Object {
-                "Name": "DB_ADDR",
-                "Value": Object {
-                  "Fn::GetAtt": Array [
-                    "KeyCloakDatabaseAuroraServerlessClusterDB73D16F",
-                    "Endpoint.Address",
-                  ],
-                },
-              },
-            ],
-            "Essential": false,
-            "Image": "public.ecr.aws/ubuntu/mysql:latest",
-            "LogConfiguration": Object {
-              "LogDriver": "awslogs",
-              "Options": Object {
-                "awslogs-group": Object {
-                  "Ref": "KeyCloakKeyCloakContainerSerivceLogGroup010F2AAE",
-                },
-                "awslogs-region": "us-east-1",
-                "awslogs-stream-prefix": "bootstrap",
-              },
-            },
-            "Name": "bootstrap",
-            "Secrets": Array [
-              Object {
-                "Name": "DB_PASSWORD",
-                "ValueFrom": Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Ref": "KeyCloakDatabaseAuroraServerlessClusterSecretAttachmentA32F9C7B",
-                      },
-                      ":password::",
-                    ],
-                  ],
-                },
-              },
-            ],
-          },
-          Object {
-            "DependsOn": Array [
-              Object {
-                "Condition": "SUCCESS",
-                "ContainerName": "bootstrap",
-              },
-            ],
             "Environment": Array [
               Object {
                 "Name": "DB_ADDR",

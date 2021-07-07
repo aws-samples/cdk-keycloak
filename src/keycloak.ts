@@ -41,11 +41,6 @@ const KEYCLOAK_DOCKER_IMAGE_URI_MAP: dockerImageMap = {
   'aws-cn': `048912060910.dkr.ecr.cn-northwest-1.amazonaws.com.cn/dockerhub/jboss/keycloak:${KEYCLOAK_VERSION}`,
 };
 
-const BOOTSTRAP_DOCKER_IMAGE_URI_MAP: dockerImageMap = {
-  'aws': 'public.ecr.aws/ubuntu/mysql:latest',
-  'aws-cn': '048912060910.dkr.ecr.cn-northwest-1.amazonaws.com.cn/dockerhub/mysql:latest',
-};
-
 /**
  * The ECS task autoscaling definition
  */
@@ -325,6 +320,7 @@ export class Database extends cdk.Construct {
   private _createRdsInstance(props: DatabaseProps): DatabaseCofig {
     const dbInstance = new rds.DatabaseInstance(this, 'DBInstance', {
       vpc: props.vpc,
+      databaseName: 'keycloak',
       vpcSubnets: props.databaseSubnets,
       engine: props.instanceEngine ?? rds.DatabaseInstanceEngine.mysql({
         version: rds.MysqlEngineVersion.VER_8_0_21,
@@ -349,6 +345,7 @@ export class Database extends cdk.Construct {
       engine: props.clusterEngine ?? rds.DatabaseClusterEngine.auroraMysql({
         version: rds.AuroraMysqlEngineVersion.VER_2_09_1,
       }),
+      defaultDatabaseName: 'keycloak',
       credentials: rds.Credentials.fromGeneratedSecret('admin'),
       instanceProps: {
         vpc: props.vpc,
@@ -373,6 +370,7 @@ export class Database extends cdk.Construct {
     const dbCluster = new rds.ServerlessCluster(this, 'AuroraServerlessCluster', {
       engine: rds.DatabaseClusterEngine.AURORA_MYSQL,
       vpc: props.vpc,
+      defaultDatabaseName: 'keycloak',
       vpcSubnets: props.databaseSubnets,
       credentials: rds.Credentials.fromGeneratedSecret('admin'),
       backupRetention: props.backupRetention ?? cdk.Duration.days(7),
@@ -472,27 +470,6 @@ export class ContainerService extends cdk.Construct {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
-    // bootstrap container that creates the database if not exist
-    const bootstrap = taskDefinition.addContainer('bootstrap', {
-      essential: false,
-      image: ecs.ContainerImage.fromRegistry(this.getBootstrapDockerImageUri()),
-      environment: {
-        DB_NAME: 'keycloak',
-        DB_USER: 'admin',
-        DB_ADDR: props.database.clusterEndpointHostname,
-      },
-      secrets: {
-        DB_PASSWORD: ecs.Secret.fromSecretsManager(props.database.secret, 'password'),
-      },
-      command: [
-        'sh', '-c',
-        'mysql -u$DB_USER -p$DB_PASSWORD -h$DB_ADDR -e "CREATE DATABASE IF NOT EXISTS $DB_NAME"',
-      ],
-      logging: ecs.LogDrivers.awsLogs({
-        streamPrefix: 'bootstrap',
-        logGroup,
-      }),
-    });
     const kc = taskDefinition.addContainer('keycloak', {
       image: ecs.ContainerImage.fromRegistry(this.getKeyCloakDockerImageUri()),
       environment: Object.assign({
@@ -526,10 +503,6 @@ export class ContainerService extends cdk.Construct {
       { containerPort: 55200, protocol: ecs.Protocol.UDP }, // jgroups-udp
       { containerPort: 54200, protocol: ecs.Protocol.UDP }, // jgroups-udp-fd
     );
-    kc.addContainerDependencies({
-      container: bootstrap,
-      condition: ecs.ContainerDependencyCondition.SUCCESS,
-    });
 
     // we need extra privileges to fetch keycloak docker images from China mirror site
     taskDefinition.executionRole?.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonEC2ContainerRegistryReadOnly'));
@@ -616,9 +589,6 @@ export class ContainerService extends cdk.Construct {
   }
   private getKeyCloakDockerImageUri(): string {
     return this.getImageUriFromMap(KEYCLOAK_DOCKER_IMAGE_URI_MAP, 'KeycloakImageMap' );
-  }
-  private getBootstrapDockerImageUri(): string {
-    return this.getImageUriFromMap(BOOTSTRAP_DOCKER_IMAGE_URI_MAP, 'BootstrapImageMap');
   }
 }
 
