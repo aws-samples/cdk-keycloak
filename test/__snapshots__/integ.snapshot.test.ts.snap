@@ -618,7 +618,7 @@ Object {
               },
             ],
             "Essential": true,
-            "Image": "jboss/keycloak:12.0.4",
+            "Image": "jboss/keycloak:15.0.2",
             "LogConfiguration": Object {
               "LogDriver": "awslogs",
               "Options": Object {
