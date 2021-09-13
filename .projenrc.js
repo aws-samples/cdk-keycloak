@@ -22,6 +22,7 @@ const project = new AwsCdkConstructLibrary({
     '@aws-cdk/aws-secretsmanager',
     '@aws-cdk/core',
   ],
+  minNodeVersion: '14.17.0',
   depsUpgrade: DependenciesUpgradeMechanism.githubWorkflow({
     ignoreProjen: false,
     workflowOptions: {
@@ -50,9 +51,8 @@ const project = new AwsCdkConstructLibrary({
 });
 
 project.package.addField('resolutions', {
-  xmldom: 'github:xmldom/xmldom#0.7.0',
+  'pac-resolver': '5.0.0',
 });
-
 
 const common_exclude = ['cdk.out', 'cdk.context.json', 'images', 'yarn-error.log', 'dependabot.yml'];
 project.npmignore.exclude(...common_exclude);
