@@ -1,6 +1,6 @@
 import * as ec2 from '@aws-cdk/aws-ec2';
 import * as cdk from '@aws-cdk/core';
-import { KeyCloak } from './index';
+import { KeyCloak, KeycloakVersion } from './index';
 
 export class IntegTesting {
   readonly stack: cdk.Stack[];
@@ -17,6 +17,7 @@ export class IntegTesting {
     // create a default keycloak workload with minimal required props
     new KeyCloak(stack, 'KeyCloak', {
       certificateArn: stack.node.tryGetContext('ACM_CERT_ARN') || 'MOCK_ARN',
+      keycloakVersion: KeycloakVersion.V15_0_2,
       auroraServerless: true,
       nodeCount: 2,
       autoScaleTask: {
@@ -45,6 +46,7 @@ export class IntegTestingExistingVpcSubnets {
 
     new KeyCloak(stack, 'KeyCloak', {
       certificateArn: stack.node.tryGetContext('ACM_CERT_ARN') || 'MOCK_ARN',
+      keycloakVersion: KeycloakVersion.V15_0_2,
       vpc: ec2.Vpc.fromLookup(stack, 'Vpc', { vpcId: 'vpc-0417e46d' }),
       publicSubnets: {
         subnets: [

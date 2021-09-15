@@ -29,7 +29,43 @@ const AURORA_SERVERLESS_SUPPORTED_REGIONS = [
   'cn-northwest-1',
 ];
 
-const KEYCLOAK_VERSION = '12.0.4';
+/**
+ * Keycloak  version
+ */
+ export class KeycloakVersion {
+  /**
+   * Keycloak version 12.0.4
+   */
+  public static readonly V12_0_4 = KeycloakVersion.of('12.0.4');
+
+  /**
+   * Keycloak version 15.0.0
+   */
+   public static readonly V15_0_0 = KeycloakVersion.of('15.0.0');
+
+  /**
+   * Keycloak version 15.0.1
+   */
+   public static readonly V15_0_1 = KeycloakVersion.of('15.0.1');
+
+  /**
+   * Keycloak version 15.0.2
+   */
+   public static readonly V15_0_2 = KeycloakVersion.of('15.0.2');
+
+  /**
+   * Custom cluster version
+   * @param version custom version number
+   */
+  public static of(version: string) { return new KeycloakVersion(version); }
+  /**
+   *
+   * @param version cluster version number
+   */
+  private constructor(public readonly version: string) { }
+}
+
+// const KEYCLOAK_VERSION = '12.0.4';
 
 interface dockerImageMap {
   'aws': string;
@@ -37,8 +73,8 @@ interface dockerImageMap {
 }
 
 const KEYCLOAK_DOCKER_IMAGE_URI_MAP: dockerImageMap = {
-  'aws': `jboss/keycloak:${KEYCLOAK_VERSION}`,
-  'aws-cn': `048912060910.dkr.ecr.cn-northwest-1.amazonaws.com.cn/dockerhub/jboss/keycloak:${KEYCLOAK_VERSION}`,
+  'aws': `jboss/keycloak:`,
+  'aws-cn': `048912060910.dkr.ecr.cn-northwest-1.amazonaws.com.cn/dockerhub/jboss/keycloak:`,
 };
 
 /**
@@ -66,6 +102,10 @@ export interface AutoScaleTask {
 }
 
 export interface KeyCloakProps {
+  /**
+   * The Keycloak version for the cluster.
+   */
+  readonly keycloakVersion: KeycloakVersion;
   /**
    * The environment variables to pass to the keycloak container
    */
@@ -187,6 +227,7 @@ export class KeyCloak extends cdk.Construct {
     this.addKeyCloakContainerService({
       database: this.db,
       vpc: this.vpc,
+      keycloakVersion: props.keycloakVersion,
       publicSubnets: props.publicSubnets,
       privateSubnets: props.privateSubnets,
       keycloakSecret: this._generateKeycloakSecret(),
@@ -392,6 +433,10 @@ export interface ContainerServiceProps {
    */
   readonly env?: { [key: string]: string };
   /**
+   * Keycloak version for the container image
+   */
+  readonly keycloakVersion: KeycloakVersion;
+  /**
    * The VPC for the service
    */
   readonly vpc: ec2.IVpc;
@@ -471,7 +516,7 @@ export class ContainerService extends cdk.Construct {
     });
 
     const kc = taskDefinition.addContainer('keycloak', {
-      image: ecs.ContainerImage.fromRegistry(this.getKeyCloakDockerImageUri()),
+      image: ecs.ContainerImage.fromRegistry(this.getKeyCloakDockerImageUri(props.keycloakVersion.version)),
       environment: Object.assign({
         DB_ADDR: props.database.clusterEndpointHostname,
         DB_DATABASE: 'keycloak',
@@ -570,25 +615,26 @@ export class ContainerService extends cdk.Construct {
       props.database.connections.allowDefaultPortFrom(bast);
     }
   }
-  private getImageUriFromMap(map: dockerImageMap, id: string): string {
+  private getImageUriFromMap(map: dockerImageMap, version: string, id: string): string {
     const stack = cdk.Stack.of(this);
     if (cdk.Token.isUnresolved(stack.region)) {
       const mapping: { [k1: string]: { [k2: string]: any } } = {};
-      for (const [partition, uri] of Object.entries(map)) {
+      for (let [partition, uri] of Object.entries(map)) {
+        uri += version
         mapping[partition] = { uri };
       }
       const imageMap = new cdk.CfnMapping(this, id, { mapping });
       return imageMap.findInMap(cdk.Aws.PARTITION, 'uri');
     } else {
       if (stack.region.startsWith('cn-')) {
-        return map['aws-cn'];
+        return map['aws-cn']+=version;
       } else {
-        return map.aws;
+        return map.aws+=version;
       }
     }
   }
-  private getKeyCloakDockerImageUri(): string {
-    return this.getImageUriFromMap(KEYCLOAK_DOCKER_IMAGE_URI_MAP, 'KeycloakImageMap' );
+  private getKeyCloakDockerImageUri(version: string): string {
+    return this.getImageUriFromMap(KEYCLOAK_DOCKER_IMAGE_URI_MAP, version, 'KeycloakImageMap' );
   }
 }
 

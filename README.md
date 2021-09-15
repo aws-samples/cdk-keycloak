@@ -21,8 +21,23 @@ const env = {
 const stack = new cdk.Stack(app, 'keycloak-demo', { env });
 new KeyCloak(stack, 'KeyCloak', {
   certificateArn: 'arn:aws:acm:us-east-1:123456789012:certificate/293cf875-ca98-4c2e-a797-e1cf6df2553c',
+  keycloakVersion,
 });
 ```
+
+# Keycloak version pinning
+
+Use `keycloakVersion` to specify the version.
+
+```ts
+new KeyCloak(stack, 'KeyCloak', {
+  certificateArn,
+  keycloakVersion: KeycloakVersion.V15_0_2,
+});
+```
+
+To specify any other verion not defined in the construct, use `KeycloakVersion.of('x.x.x')`. This allows you to specify any new version as soon as it's available. However, as new versions will not always be tested and validated with this construct library, make sure you fully backup and test before you use any new version in the production environment.
+
 
 # Aurora Serverless support
 
@@ -32,6 +47,7 @@ The `KeyCloak` construct provisions the **Amaozn RDS cluster for MySQL** with **
 new KeyCloak(stack, 'KeyCloak', {
   certificateArn,
   auroraServerless: true,
+  keycloakVersion,
 });
 ```
 
@@ -48,6 +64,7 @@ Plesae note this is not recommended for production environment.
 new KeyCloak(stack, 'KeyCloak', {
   certificateArn,
   singleDbInstance: true,
+  keycloakVersion,
 });
 
 ```
