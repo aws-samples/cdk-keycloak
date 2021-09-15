@@ -387,6 +387,7 @@ export class Database extends cdk.Construct {
         version: rds.AuroraMysqlEngineVersion.VER_2_09_1,
       }),
       defaultDatabaseName: 'keycloak',
+      deletionProtection: true,
       credentials: rds.Credentials.fromGeneratedSecret('admin'),
       instanceProps: {
         vpc: props.vpc,
@@ -398,7 +399,7 @@ export class Database extends cdk.Construct {
         retention: props.backupRetention ?? cdk.Duration.days(7),
       },
       storageEncrypted: true,
-      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      removalPolicy: cdk.RemovalPolicy.RETAIN,
     });
     return {
       connections: dbCluster.connections,
