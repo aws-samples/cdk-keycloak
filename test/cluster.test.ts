@@ -1,6 +1,7 @@
 import { App, Stack } from '@aws-cdk/core';
 import * as kc from '../src';
 import '@aws-cdk/assert/jest';
+import { KeycloakVersion } from '../src';
 test('create the default cluster', () => {
 
   // GIVEN
@@ -10,6 +11,7 @@ test('create the default cluster', () => {
   // WHEN
   new kc.KeyCloak(stack, 'KeyCloak', {
     certificateArn: 'MOCK_ARN',
+    keycloakVersion: KeycloakVersion.V15_0_2,
   });
 
   // THEN
@@ -105,6 +107,7 @@ test('with aurora serverless', () => {
   new kc.KeyCloak(stack, 'KeyCloak', {
     certificateArn: 'MOCK_ARN',
     auroraServerless: true,
+    keycloakVersion: KeycloakVersion.V15_0_2,
   });
 
   // THEN
@@ -176,6 +179,7 @@ test('with single rds instance', () => {
   new kc.KeyCloak(stack, 'KeyCloak', {
     certificateArn: 'MOCK_ARN',
     singleDbInstance: true,
+    keycloakVersion: KeycloakVersion.V15_0_2,
   });
 
   // THEN
@@ -274,6 +278,7 @@ test('with env', () => {
 
   // WHEN
   new kc.KeyCloak(stack, 'KeyCloak', {
+    keycloakVersion: KeycloakVersion.V15_0_2,
     certificateArn: 'MOCK_ARN',
     env: {
       JAVA_OPTS: '-DHelloWorld',

@@ -32,7 +32,7 @@ const AURORA_SERVERLESS_SUPPORTED_REGIONS = [
 /**
  * Keycloak  version
  */
- export class KeycloakVersion {
+export class KeycloakVersion {
   /**
    * Keycloak version 12.0.4
    */
@@ -41,17 +41,17 @@ const AURORA_SERVERLESS_SUPPORTED_REGIONS = [
   /**
    * Keycloak version 15.0.0
    */
-   public static readonly V15_0_0 = KeycloakVersion.of('15.0.0');
+  public static readonly V15_0_0 = KeycloakVersion.of('15.0.0');
 
   /**
    * Keycloak version 15.0.1
    */
-   public static readonly V15_0_1 = KeycloakVersion.of('15.0.1');
+  public static readonly V15_0_1 = KeycloakVersion.of('15.0.1');
 
   /**
    * Keycloak version 15.0.2
    */
-   public static readonly V15_0_2 = KeycloakVersion.of('15.0.2');
+  public static readonly V15_0_2 = KeycloakVersion.of('15.0.2');
 
   /**
    * Custom cluster version
@@ -73,8 +73,8 @@ interface dockerImageMap {
 }
 
 const KEYCLOAK_DOCKER_IMAGE_URI_MAP: dockerImageMap = {
-  'aws': `jboss/keycloak:`,
-  'aws-cn': `048912060910.dkr.ecr.cn-northwest-1.amazonaws.com.cn/dockerhub/jboss/keycloak:`,
+  'aws': 'jboss/keycloak:',
+  'aws-cn': '048912060910.dkr.ecr.cn-northwest-1.amazonaws.com.cn/dockerhub/jboss/keycloak:',
 };
 
 /**
@@ -620,7 +620,7 @@ export class ContainerService extends cdk.Construct {
     if (cdk.Token.isUnresolved(stack.region)) {
       const mapping: { [k1: string]: { [k2: string]: any } } = {};
       for (let [partition, uri] of Object.entries(map)) {
-        uri += version
+        uri += version;
         mapping[partition] = { uri };
       }
       const imageMap = new cdk.CfnMapping(this, id, { mapping });
