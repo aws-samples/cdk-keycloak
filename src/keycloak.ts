@@ -416,7 +416,7 @@ export class Database extends cdk.Construct {
       vpcSubnets: props.databaseSubnets,
       credentials: rds.Credentials.fromGeneratedSecret('admin'),
       backupRetention: props.backupRetention ?? cdk.Duration.days(7),
-      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      removalPolicy: cdk.RemovalPolicy.RETAIN,
       parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.aurora-mysql5.7'),
     });
     return {
@@ -513,7 +513,7 @@ export class ContainerService extends cdk.Construct {
 
     const logGroup = new logs.LogGroup(this, 'LogGroup', {
       retention: logs.RetentionDays.ONE_MONTH,
-      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      removalPolicy: cdk.RemovalPolicy.RETAIN,
     });
 
     const kc = taskDefinition.addContainer('keycloak', {
