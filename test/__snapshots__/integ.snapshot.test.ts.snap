@@ -41,7 +41,7 @@ Object {
   },
   "Resources": Object {
     "KeyCloakDatabaseAuroraServerlessClusterDB73D16F": Object {
-      "DeletionPolicy": "Delete",
+      "DeletionPolicy": "Retain",
       "Properties": Object {
         "BackupRetentionPeriod": 7,
         "DBClusterParameterGroupName": "default.aurora-mysql5.7",
@@ -49,6 +49,7 @@ Object {
           "Ref": "KeyCloakDatabaseAuroraServerlessClusterSubnets6166944B",
         },
         "DatabaseName": "keycloak",
+        "DeletionProtection": true,
         "Engine": "aurora-mysql",
         "EngineMode": "serverless",
         "MasterUserPassword": Object {
@@ -75,7 +76,7 @@ Object {
         ],
       },
       "Type": "AWS::RDS::DBCluster",
-      "UpdateReplacePolicy": "Delete",
+      "UpdateReplacePolicy": "Retain",
     },
     "KeyCloakDatabaseAuroraServerlessClusterSecretAttachmentA32F9C7B": Object {
       "Properties": Object {
@@ -186,6 +187,7 @@ Object {
       "Type": "AWS::EC2::SecurityGroupIngress",
     },
     "KeyCloakDatabaseAuroraServerlessClusterSubnets6166944B": Object {
+      "DeletionPolicy": "Retain",
       "Properties": Object {
         "DBSubnetGroupDescription": "Subnets for AuroraServerlessCluster database",
         "SubnetIds": Array [
@@ -198,6 +200,7 @@ Object {
         ],
       },
       "Type": "AWS::RDS::DBSubnetGroup",
+      "UpdateReplacePolicy": "Retain",
     },
     "KeyCloakKCSecretF8498E5C": Object {
       "Properties": Object {
@@ -338,12 +341,12 @@ Object {
       "Type": "AWS::ECS::Cluster",
     },
     "KeyCloakKeyCloakContainerSerivceLogGroup010F2AAE": Object {
-      "DeletionPolicy": "Delete",
+      "DeletionPolicy": "Retain",
       "Properties": Object {
         "RetentionInDays": 30,
       },
       "Type": "AWS::Logs::LogGroup",
-      "UpdateReplacePolicy": "Delete",
+      "UpdateReplacePolicy": "Retain",
     },
     "KeyCloakKeyCloakContainerSerivceService79D3F427": Object {
       "DependsOn": Array [
@@ -618,7 +621,7 @@ Object {
               },
             ],
             "Essential": true,
-            "Image": "jboss/keycloak:12.0.4",
+            "Image": "jboss/keycloak:15.0.215.0.2",
             "LogConfiguration": Object {
               "LogDriver": "awslogs",
               "Options": Object {

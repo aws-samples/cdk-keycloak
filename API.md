@@ -7,6 +7,7 @@ Name|Description
 [ContainerService](#cdk-keycloak-containerservice)|*No description*
 [Database](#cdk-keycloak-database)|Represents the database instance or database cluster.
 [KeyCloak](#cdk-keycloak-keycloak)|*No description*
+[KeycloakVersion](#cdk-keycloak-keycloakversion)|Keycloak  version.
 
 
 **Structs**
@@ -43,6 +44,7 @@ new ContainerService(scope: Construct, id: string, props: ContainerServiceProps)
   * **certificate** (<code>[ICertificate](#aws-cdk-aws-certificatemanager-icertificate)</code>)  The ACM certificate. 
   * **database** (<code>[Database](#cdk-keycloak-database)</code>)  The RDS database for the service. 
   * **keycloakSecret** (<code>[ISecret](#aws-cdk-aws-secretsmanager-isecret)</code>)  The secrets manager secret for the keycloak. 
+  * **keycloakVersion** (<code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code>)  Keycloak version for the container image. 
   * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  The VPC for the service. 
   * **autoScaleTask** (<code>[AutoScaleTask](#cdk-keycloak-autoscaletask)</code>)  Autoscaling for the ECS Service. __*Default*__: no ecs service autoscaling
   * **bastion** (<code>boolean</code>)  Whether to create the bastion host. __*Default*__: false
@@ -127,6 +129,7 @@ new KeyCloak(scope: Construct, id: string, props: KeyCloakProps)
 * **id** (<code>string</code>)  *No description*
 * **props** (<code>[KeyCloakProps](#cdk-keycloak-keycloakprops)</code>)  *No description*
   * **certificateArn** (<code>string</code>)  ACM certificate ARN to import. 
+  * **keycloakVersion** (<code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code>)  The Keycloak version for the cluster. 
   * **auroraServerless** (<code>boolean</code>)  Whether to use aurora serverless. __*Default*__: false
   * **autoScaleTask** (<code>[AutoScaleTask](#cdk-keycloak-autoscaletask)</code>)  Autoscaling for the ECS Service. __*Default*__: no ecs service autoscaling
   * **backupRetention** (<code>[Duration](#aws-cdk-core-duration)</code>)  database backup retension. __*Default*__: 7 days
@@ -189,6 +192,7 @@ addKeyCloakContainerService(props: ContainerServiceProps): ContainerService
   * **certificate** (<code>[ICertificate](#aws-cdk-aws-certificatemanager-icertificate)</code>)  The ACM certificate. 
   * **database** (<code>[Database](#cdk-keycloak-database)</code>)  The RDS database for the service. 
   * **keycloakSecret** (<code>[ISecret](#aws-cdk-aws-secretsmanager-isecret)</code>)  The secrets manager secret for the keycloak. 
+  * **keycloakVersion** (<code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code>)  Keycloak version for the container image. 
   * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  The VPC for the service. 
   * **autoScaleTask** (<code>[AutoScaleTask](#cdk-keycloak-autoscaletask)</code>)  Autoscaling for the ECS Service. __*Default*__: no ecs service autoscaling
   * **bastion** (<code>boolean</code>)  Whether to create the bastion host. __*Default*__: false
@@ -201,6 +205,41 @@ addKeyCloakContainerService(props: ContainerServiceProps): ContainerService
 
 __Returns__:
 * <code>[ContainerService](#cdk-keycloak-containerservice)</code>
+
+
+
+## class KeycloakVersion  <a id="cdk-keycloak-keycloakversion"></a>
+
+Keycloak  version.
+
+
+
+### Properties
+
+
+Name | Type | Description 
+-----|------|-------------
+**version** | <code>string</code> | cluster version number.
+*static* **V12_0_4** | <code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code> | Keycloak version 12.0.4.
+*static* **V15_0_0** | <code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code> | Keycloak version 15.0.0.
+*static* **V15_0_1** | <code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code> | Keycloak version 15.0.1.
+*static* **V15_0_2** | <code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code> | Keycloak version 15.0.2.
+
+### Methods
+
+
+#### *static* of(version) <a id="cdk-keycloak-keycloakversion-of"></a>
+
+Custom cluster version.
+
+```ts
+static of(version: string): KeycloakVersion
+```
+
+* **version** (<code>string</code>)  custom version number.
+
+__Returns__:
+* <code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code>
 
 
 
@@ -231,6 +270,7 @@ Name | Type | Description
 **certificate** | <code>[ICertificate](#aws-cdk-aws-certificatemanager-icertificate)</code> | The ACM certificate.
 **database** | <code>[Database](#cdk-keycloak-database)</code> | The RDS database for the service.
 **keycloakSecret** | <code>[ISecret](#aws-cdk-aws-secretsmanager-isecret)</code> | The secrets manager secret for the keycloak.
+**keycloakVersion** | <code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code> | Keycloak version for the container image.
 **vpc** | <code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code> | The VPC for the service.
 **autoScaleTask**? | <code>[AutoScaleTask](#cdk-keycloak-autoscaletask)</code> | Autoscaling for the ECS Service.<br/>__*Default*__: no ecs service autoscaling
 **bastion**? | <code>boolean</code> | Whether to create the bastion host.<br/>__*Default*__: false
@@ -289,6 +329,7 @@ Name | Type | Description
 Name | Type | Description 
 -----|------|-------------
 **certificateArn** | <code>string</code> | ACM certificate ARN to import.
+**keycloakVersion** | <code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code> | The Keycloak version for the cluster.
 **auroraServerless**? | <code>boolean</code> | Whether to use aurora serverless.<br/>__*Default*__: false
 **autoScaleTask**? | <code>[AutoScaleTask](#cdk-keycloak-autoscaletask)</code> | Autoscaling for the ECS Service.<br/>__*Default*__: no ecs service autoscaling
 **backupRetention**? | <code>[Duration](#aws-cdk-core-duration)</code> | database backup retension.<br/>__*Default*__: 7 days
