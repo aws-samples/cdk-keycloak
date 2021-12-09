@@ -101,6 +101,26 @@ export interface AutoScaleTask {
   readonly targetCpuUtilization ?: number;
 }
 
+export interface TaskResources {
+  /**
+   * The number of cpu units used by the keycloak Fargate task.
+   *
+   * Same restrictions apply as for FargateTaskDefinitionProps::cpu
+   *
+   * @default 4096
+   */
+  readonly cpu?: number;
+
+  /**
+   * The amount (in MiB) of memory used by the task
+   *
+   * Same restrictions apply as for FargateTaskDefinitionProps::memoryLimitMiB
+   *
+   * @default 30720
+   */
+  readonly memoryLimitMiB?: number;
+}
+
 export interface KeyCloakProps {
   /**
    * The Keycloak version for the cluster.
@@ -198,6 +218,11 @@ export interface KeyCloakProps {
    * @default - no ecs service autoscaling
    */
   readonly autoScaleTask?: AutoScaleTask;
+  /**
+   * ECS task resources requirements
+   * @default {cpu: 4096, memoryLimitMiB: 30720}
+   */
+  readonly taskResources?: TaskResources;
 }
 
 export class KeyCloak extends cdk.Construct {
@@ -237,6 +262,7 @@ export class KeyCloak extends cdk.Construct {
       stickinessCookieDuration: props.stickinessCookieDuration,
       autoScaleTask: props.autoScaleTask,
       env: props.env,
+      taskResources: props.taskResources,
     });
     if (!cdk.Stack.of(this).templateOptions.description) {
       cdk.Stack.of(this).templateOptions.description = '(SO8021) - Deploy keycloak on AWS with cdk-keycloak construct library';
@@ -492,6 +518,11 @@ export interface ContainerServiceProps {
    * @default - no ecs service autoscaling
    */
   readonly autoScaleTask?: AutoScaleTask;
+  /**
+   * ECS task resources requirements
+   * @default {cpu: 4096, memoryLimitMiB: 30720}
+   */
+  readonly taskResources?: TaskResources;
 }
 
 export class ContainerService extends cdk.Construct {
@@ -507,9 +538,10 @@ export class ContainerService extends cdk.Construct {
         new iam.ServicePrincipal('ecs-tasks.amazonaws.com'),
       ),
     });
+    const taskMemoryLimitMiB = props.taskResources?.memoryLimitMiB || 30720;
     const taskDefinition = new ecs.FargateTaskDefinition(this, 'TaskDef', {
-      cpu: 4096,
-      memoryLimitMiB: 30720,
+      cpu: props.taskResources?.cpu || 4096,
+      memoryLimitMiB: taskMemoryLimitMiB,
       executionRole: taskRole,
     });
 
@@ -533,6 +565,9 @@ export class ContainerService extends cdk.Construct {
         // because the default `initialize_sql` is compatible with MySQL. (See: https://github.com/belaban/JGroups/blob/master/src/org/jgroups/protocols/JDBC_PING.java#L55-L60)
         // But you need to specify `initialize_sql` for PostgreSQL, because `varbinary` schema is not supported. (See: https://github.com/keycloak/keycloak-containers/blob/d4ce446dde3026f89f66fa86b58c2d0d6132ce4d/docker-compose-examples/keycloak-postgres-jdbc-ping.yml#L49)
         // JGROUPS_DISCOVERY_PROPERTIES: '',
+
+        // Don't use maximum heap - we still need to leave some space for jvm; arbitrary choosen 128 less
+        JAVA_OPTS_APPEND: `-Xms${taskMemoryLimitMiB/2}m -Xmx${taskMemoryLimitMiB-128}m`,
       }, props.env),
       secrets: {
         DB_PASSWORD: ecs.Secret.fromSecretsManager(props.database.secret, 'password'),
