@@ -1,7 +1,10 @@
+import { stringLike } from '@aws-cdk/assert';
 import { App, Stack } from '@aws-cdk/core';
-import * as kc from '../src';
 import '@aws-cdk/assert/jest';
+
+import * as kc from '../src';
 import { KeycloakVersion } from '../src';
+
 test('create the default cluster', () => {
 
   // GIVEN
@@ -38,7 +41,7 @@ test('create the default cluster', () => {
     VpcSecurityGroupIds: [
       {
         'Fn::GetAtt': [
-          'KeyCloakDatabaseDBClusterSecurityGroup843B4392',
+          stringLike('KeyCloakDatabaseDBClusterSecurityGroup*'),
           'GroupId',
         ],
       },
@@ -51,7 +54,7 @@ test('create the default cluster', () => {
   // we should have ecs service
   expect(stack).toHaveResource('AWS::ECS::Service', {
     Cluster: {
-      Ref: 'KeyCloakKeyCloakContainerSerivceClusterA18E44FF',
+      Ref: stringLike('KeyCloakKeyCloakContainerServiceCluster*'),
     },
     DeploymentConfiguration: {
       MaximumPercent: 200,
@@ -66,7 +69,7 @@ test('create the default cluster', () => {
         ContainerName: 'keycloak',
         ContainerPort: 8443,
         TargetGroupArn: {
-          Ref: 'KeyCloakKeyCloakContainerSerivceALBHttpsListenerECSTargetGroupCE3EF52C',
+          Ref: stringLike('KeyCloakKeyCloakContainerServiceALBHttpsListenerECSTargetGroup*'),
         },
       },
     ],
@@ -76,23 +79,23 @@ test('create the default cluster', () => {
         SecurityGroups: [
           {
             'Fn::GetAtt': [
-              'KeyCloakKeyCloakContainerSerivceServiceSecurityGroup4C80023D',
+              stringLike('KeyCloakKeyCloakContainerServiceSecurityGroup*'),
               'GroupId',
             ],
           },
         ],
         Subnets: [
           {
-            Ref: 'KeyCloakVpcPrivateSubnet1SubnetA692DFFF',
+            Ref: stringLike('KeyCloakVpcPrivateSubnet1Subnet*'),
           },
           {
-            Ref: 'KeyCloakVpcPrivateSubnet2SubnetC8682D75',
+            Ref: stringLike('KeyCloakVpcPrivateSubnet2Subnet*'),
           },
         ],
       },
     },
     TaskDefinition: {
-      Ref: 'KeyCloakKeyCloakContainerSerivceTaskDef30C9533A',
+      Ref: stringLike('KeyCloakKeyCloakContainerServiceTaskDef*'),
     },
   });
 });
@@ -123,7 +126,7 @@ test('with aurora serverless', () => {
   // we should have ecs service
   expect(stack).toHaveResource('AWS::ECS::Service', {
     Cluster: {
-      Ref: 'KeyCloakKeyCloakContainerSerivceClusterA18E44FF',
+      Ref: stringLike('KeyCloakKeyCloakContainerServiceCluster*'),
     },
     DeploymentConfiguration: {
       MaximumPercent: 200,
@@ -138,7 +141,7 @@ test('with aurora serverless', () => {
         ContainerName: 'keycloak',
         ContainerPort: 8443,
         TargetGroupArn: {
-          Ref: 'KeyCloakKeyCloakContainerSerivceALBHttpsListenerECSTargetGroupCE3EF52C',
+          Ref: stringLike('KeyCloakKeyCloakContainerServiceALBHttpsListenerECSTargetGroup*'),
         },
       },
     ],
@@ -148,23 +151,23 @@ test('with aurora serverless', () => {
         SecurityGroups: [
           {
             'Fn::GetAtt': [
-              'KeyCloakKeyCloakContainerSerivceServiceSecurityGroup4C80023D',
+              stringLike('KeyCloakKeyCloakContainerServiceSecurityGroup*'),
               'GroupId',
             ],
           },
         ],
         Subnets: [
           {
-            Ref: 'KeyCloakVpcPrivateSubnet1SubnetA692DFFF',
+            Ref: stringLike('KeyCloakVpcPrivateSubnet1Subnet*'),
           },
           {
-            Ref: 'KeyCloakVpcPrivateSubnet2SubnetC8682D75',
+            Ref: stringLike('KeyCloakVpcPrivateSubnet2Subnet*'),
           },
         ],
       },
     },
     TaskDefinition: {
-      Ref: 'KeyCloakKeyCloakContainerSerivceTaskDef30C9533A',
+      Ref: stringLike('KeyCloakKeyCloakContainerServiceTaskDef*'),
     },
   });
 });
@@ -193,7 +196,7 @@ test('with single rds instance', () => {
     CopyTagsToSnapshot: true,
     DBParameterGroupName: 'default.mysql8.0',
     DBSubnetGroupName: {
-      Ref: 'KeyCloakDatabaseDBInstanceSubnetGroup71BF616F',
+      Ref: stringLike('KeyCloakDatabaseDBInstanceSubnetGroup*'),
     },
     Engine: 'mysql',
     EngineVersion: '8.0.21',
@@ -214,7 +217,7 @@ test('with single rds instance', () => {
     VPCSecurityGroups: [
       {
         'Fn::GetAtt': [
-          'KeyCloakDatabaseDBInstanceSecurityGroupC897947D',
+          stringLike('KeyCloakDatabaseDBInstanceSecurityGroup*'),
           'GroupId',
         ],
       },
@@ -225,7 +228,7 @@ test('with single rds instance', () => {
   // we should have ecs service
   expect(stack).toHaveResource('AWS::ECS::Service', {
     Cluster: {
-      Ref: 'KeyCloakKeyCloakContainerSerivceClusterA18E44FF',
+      Ref: stringLike('KeyCloakKeyCloakContainerServiceCluster*'),
     },
     DeploymentConfiguration: {
       MaximumPercent: 200,
@@ -240,7 +243,7 @@ test('with single rds instance', () => {
         ContainerName: 'keycloak',
         ContainerPort: 8443,
         TargetGroupArn: {
-          Ref: 'KeyCloakKeyCloakContainerSerivceALBHttpsListenerECSTargetGroupCE3EF52C',
+          Ref: stringLike('KeyCloakKeyCloakContainerServiceALBHttpsListenerECSTargetGroup*'),
         },
       },
     ],
@@ -250,23 +253,23 @@ test('with single rds instance', () => {
         SecurityGroups: [
           {
             'Fn::GetAtt': [
-              'KeyCloakKeyCloakContainerSerivceServiceSecurityGroup4C80023D',
+              stringLike('KeyCloakKeyCloakContainerServiceSecurityGroup*'),
               'GroupId',
             ],
           },
         ],
         Subnets: [
           {
-            Ref: 'KeyCloakVpcPrivateSubnet1SubnetA692DFFF',
+            Ref: stringLike('KeyCloakVpcPrivateSubnet1Subnet*'),
           },
           {
-            Ref: 'KeyCloakVpcPrivateSubnet2SubnetC8682D75',
+            Ref: stringLike('KeyCloakVpcPrivateSubnet2Subnet*'),
           },
         ],
       },
     },
     TaskDefinition: {
-      Ref: 'KeyCloakKeyCloakContainerSerivceTaskDef30C9533A',
+      Ref: stringLike('KeyCloakKeyCloakContainerServiceTaskDef*'),
     },
   });
 });
@@ -295,7 +298,7 @@ test('with env', () => {
             Name: 'DB_ADDR',
             Value: {
               'Fn::GetAtt': [
-                'KeyCloakDatabaseDBCluster06E9C0E1',
+                stringLike('KeyCloakDatabaseDBCluster*'),
                 'Endpoint.Address',
               ],
             },
@@ -332,7 +335,7 @@ test('with env', () => {
         Essential: true,
         Image: {
           'Fn::FindInMap': [
-            'KeyCloakKeyCloakContainerSerivceKeycloakImageMapF79EAEA3',
+            stringLike('KeyCloakKeyCloakContainerServiceKeycloakImageMap*'),
             {
               Ref: 'AWS::Partition',
             },
@@ -343,7 +346,7 @@ test('with env', () => {
           LogDriver: 'awslogs',
           Options: {
             'awslogs-group': {
-              Ref: 'KeyCloakKeyCloakContainerSerivceLogGroup010F2AAE',
+              Ref: stringLike('KeyCloakKeyCloakContainerServiceLogGroup*'),
             },
             'awslogs-stream-prefix': 'keycloak',
             'awslogs-region': {
@@ -382,7 +385,7 @@ test('with env', () => {
                 '',
                 [
                   {
-                    Ref: 'KeyCloakDatabaseDBClusterSecretAttachment50401C92',
+                    Ref: stringLike('KeyCloakDatabaseDBClusterSecretAttachment*'),
                   },
                   ':password::',
                 ],
@@ -396,7 +399,7 @@ test('with env', () => {
                 '',
                 [
                   {
-                    Ref: 'KeyCloakKCSecretF8498E5C',
+                    Ref: stringLike('KeyCloakKCSecret*'),
                   },
                   ':username::',
                 ],
@@ -410,7 +413,7 @@ test('with env', () => {
                 '',
                 [
                   {
-                    Ref: 'KeyCloakKCSecretF8498E5C',
+                    Ref: stringLike('KeyCloakKCSecret*'),
                   },
                   ':password::',
                 ],
@@ -423,11 +426,11 @@ test('with env', () => {
     Cpu: '4096',
     ExecutionRoleArn: {
       'Fn::GetAtt': [
-        'KeyCloakKeyCloakContainerSerivceTaskRole0658CED2',
+        stringLike('KeyCloakKeyCloakContainerServiceTaskRole*'),
         'Arn',
       ],
     },
-    Family: 'testingstackKeyCloakKeyCloakContainerSerivceTaskDef799BAD5B',
+    Family: stringLike('testingstackKeyCloakKeyCloakContainerServiceTaskDef*'),
     Memory: '30720',
     NetworkMode: 'awsvpc',
     RequiresCompatibilities: [
@@ -435,7 +438,7 @@ test('with env', () => {
     ],
     TaskRoleArn: {
       'Fn::GetAtt': [
-        'KeyCloakKeyCloakContainerSerivceTaskDefTaskRole0DC4D418',
+        stringLike('KeyCloakKeyCloakContainerServiceTaskDefTaskRole*'),
         'Arn',
       ],
     },

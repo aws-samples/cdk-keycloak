@@ -22,7 +22,7 @@ Object {
         "Ref": "KeyCloakDatabaseAuroraServerlessClusterDB73D16F",
       },
     },
-    "KeyCloakKeyCloakContainerSerivceEndpointURL9C81E19A": Object {
+    "KeyCloakKeyCloakContainerServiceEndpointURL80FE66F9": Object {
       "Value": Object {
         "Fn::Join": Array [
           "",
@@ -30,7 +30,7 @@ Object {
             "https://",
             Object {
               "Fn::GetAtt": Array [
-                "KeyCloakKeyCloakContainerSerivceALBE100B67D",
+                "KeyCloakKeyCloakContainerServiceALBF769E7D3",
                 "DNSName",
               ],
             },
@@ -155,9 +155,9 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupIngress",
     },
-    "KeyCloakDatabaseAuroraServerlessClusterSecurityGroupfromkeycloakdemoKeyCloakKeyCloakContainerSerivceServiceSecurityGroup4DE99C4FIndirectPortF24A4E85": Object {
+    "KeyCloakDatabaseAuroraServerlessClusterSecurityGroupfromkeycloakdemoKeyCloakKeyCloakContainerServiceSecurityGroup17E82FEDIndirectPortCEAF978C": Object {
       "Properties": Object {
-        "Description": "from keycloakdemoKeyCloakKeyCloakContainerSerivceServiceSecurityGroup4DE99C4F:{IndirectPort}",
+        "Description": "from keycloakdemoKeyCloakKeyCloakContainerServiceSecurityGroup17E82FED:{IndirectPort}",
         "FromPort": Object {
           "Fn::GetAtt": Array [
             "KeyCloakDatabaseAuroraServerlessClusterDB73D16F",
@@ -173,7 +173,7 @@ Object {
         "IpProtocol": "tcp",
         "SourceSecurityGroupId": Object {
           "Fn::GetAtt": Array [
-            "KeyCloakKeyCloakContainerSerivceServiceSecurityGroup4C80023D",
+            "KeyCloakKeyCloakContainerServiceSecurityGroup7433DA3A",
             "GroupId",
           ],
         },
@@ -213,7 +213,7 @@ Object {
       },
       "Type": "AWS::SecretsManager::Secret",
     },
-    "KeyCloakKeyCloakContainerSerivceALBE100B67D": Object {
+    "KeyCloakKeyCloakContainerServiceALBF769E7D3": Object {
       "DependsOn": Array [
         "KeyCloakVpcPublicSubnet1DefaultRoute438FBE69",
         "KeyCloakVpcPublicSubnet2DefaultRouteCFC19404",
@@ -229,7 +229,7 @@ Object {
         "SecurityGroups": Array [
           Object {
             "Fn::GetAtt": Array [
-              "KeyCloakKeyCloakContainerSerivceALBSecurityGroup8F5103C6",
+              "KeyCloakKeyCloakContainerServiceALBSecurityGroup70C4484F",
               "GroupId",
             ],
           },
@@ -246,7 +246,7 @@ Object {
       },
       "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
     },
-    "KeyCloakKeyCloakContainerSerivceALBHttpsListener140F85B9": Object {
+    "KeyCloakKeyCloakContainerServiceALBHttpsListener6BFECEEA": Object {
       "Properties": Object {
         "Certificates": Array [
           Object {
@@ -256,20 +256,20 @@ Object {
         "DefaultActions": Array [
           Object {
             "TargetGroupArn": Object {
-              "Ref": "KeyCloakKeyCloakContainerSerivceALBHttpsListenerECSTargetGroupCE3EF52C",
+              "Ref": "KeyCloakKeyCloakContainerServiceALBHttpsListenerECSTargetGroup65B43774",
             },
             "Type": "forward",
           },
         ],
         "LoadBalancerArn": Object {
-          "Ref": "KeyCloakKeyCloakContainerSerivceALBE100B67D",
+          "Ref": "KeyCloakKeyCloakContainerServiceALBF769E7D3",
         },
         "Port": 443,
         "Protocol": "HTTPS",
       },
       "Type": "AWS::ElasticLoadBalancingV2::Listener",
     },
-    "KeyCloakKeyCloakContainerSerivceALBHttpsListenerECSTargetGroupCE3EF52C": Object {
+    "KeyCloakKeyCloakContainerServiceALBHttpsListenerECSTargetGroup65B43774": Object {
       "Properties": Object {
         "Port": 8443,
         "Protocol": "HTTPS",
@@ -298,9 +298,9 @@ Object {
       },
       "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
     },
-    "KeyCloakKeyCloakContainerSerivceALBSecurityGroup8F5103C6": Object {
+    "KeyCloakKeyCloakContainerServiceALBSecurityGroup70C4484F": Object {
       "Properties": Object {
-        "GroupDescription": "Automatically created Security Group for ELB keycloakdemoKeyCloakKeyCloakContainerSerivceALBA5C1F684",
+        "GroupDescription": "Automatically created Security Group for ELB keycloakdemoKeyCloakKeyCloakContainerServiceALBB2622B2D",
         "SecurityGroupIngress": Array [
           Object {
             "CidrIp": "0.0.0.0/0",
@@ -316,19 +316,19 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "KeyCloakKeyCloakContainerSerivceALBSecurityGrouptokeycloakdemoKeyCloakKeyCloakContainerSerivceServiceSecurityGroup4DE99C4F84431D27BEE9": Object {
+    "KeyCloakKeyCloakContainerServiceALBSecurityGrouptokeycloakdemoKeyCloakKeyCloakContainerServiceSecurityGroup17E82FED8443B9DE516C": Object {
       "Properties": Object {
         "Description": "Load balancer to target",
         "DestinationSecurityGroupId": Object {
           "Fn::GetAtt": Array [
-            "KeyCloakKeyCloakContainerSerivceServiceSecurityGroup4C80023D",
+            "KeyCloakKeyCloakContainerServiceSecurityGroup7433DA3A",
             "GroupId",
           ],
         },
         "FromPort": 8443,
         "GroupId": Object {
           "Fn::GetAtt": Array [
-            "KeyCloakKeyCloakContainerSerivceALBSecurityGroup8F5103C6",
+            "KeyCloakKeyCloakContainerServiceALBSecurityGroup70C4484F",
             "GroupId",
           ],
         },
@@ -337,25 +337,14 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
-    "KeyCloakKeyCloakContainerSerivceClusterA18E44FF": Object {
-      "Type": "AWS::ECS::Cluster",
-    },
-    "KeyCloakKeyCloakContainerSerivceLogGroup010F2AAE": Object {
-      "DeletionPolicy": "Retain",
-      "Properties": Object {
-        "RetentionInDays": 30,
-      },
-      "Type": "AWS::Logs::LogGroup",
-      "UpdateReplacePolicy": "Retain",
-    },
-    "KeyCloakKeyCloakContainerSerivceService79D3F427": Object {
+    "KeyCloakKeyCloakContainerServiceB78EDF48": Object {
       "DependsOn": Array [
-        "KeyCloakKeyCloakContainerSerivceALBHttpsListenerECSTargetGroupCE3EF52C",
-        "KeyCloakKeyCloakContainerSerivceALBHttpsListener140F85B9",
+        "KeyCloakKeyCloakContainerServiceALBHttpsListenerECSTargetGroup65B43774",
+        "KeyCloakKeyCloakContainerServiceALBHttpsListener6BFECEEA",
       ],
       "Properties": Object {
         "Cluster": Object {
-          "Ref": "KeyCloakKeyCloakContainerSerivceClusterA18E44FF",
+          "Ref": "KeyCloakKeyCloakContainerServiceCluster4583BCAE",
         },
         "DeploymentConfiguration": Object {
           "MaximumPercent": 200,
@@ -370,7 +359,7 @@ Object {
             "ContainerName": "keycloak",
             "ContainerPort": 8443,
             "TargetGroupArn": Object {
-              "Ref": "KeyCloakKeyCloakContainerSerivceALBHttpsListenerECSTargetGroupCE3EF52C",
+              "Ref": "KeyCloakKeyCloakContainerServiceALBHttpsListenerECSTargetGroup65B43774",
             },
           },
         ],
@@ -380,7 +369,7 @@ Object {
             "SecurityGroups": Array [
               Object {
                 "Fn::GetAtt": Array [
-                  "KeyCloakKeyCloakContainerSerivceServiceSecurityGroup4C80023D",
+                  "KeyCloakKeyCloakContainerServiceSecurityGroup7433DA3A",
                   "GroupId",
                 ],
               },
@@ -396,14 +385,25 @@ Object {
           },
         },
         "TaskDefinition": Object {
-          "Ref": "KeyCloakKeyCloakContainerSerivceTaskDef30C9533A",
+          "Ref": "KeyCloakKeyCloakContainerServiceTaskDef6AD61714",
         },
       },
       "Type": "AWS::ECS::Service",
     },
-    "KeyCloakKeyCloakContainerSerivceServiceSecurityGroup4C80023D": Object {
+    "KeyCloakKeyCloakContainerServiceCluster4583BCAE": Object {
+      "Type": "AWS::ECS::Cluster",
+    },
+    "KeyCloakKeyCloakContainerServiceLogGroup770A4A22": Object {
+      "DeletionPolicy": "Retain",
       "Properties": Object {
-        "GroupDescription": "keycloak-demo/KeyCloak/KeyCloakContainerSerivce/Service/SecurityGroup",
+        "RetentionInDays": 30,
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "KeyCloakKeyCloakContainerServiceSecurityGroup7433DA3A": Object {
+      "Properties": Object {
+        "GroupDescription": "keycloak-demo/KeyCloak/KeyCloakContainerService/Service/SecurityGroup",
         "SecurityGroupEgress": Array [
           Object {
             "CidrIp": "0.0.0.0/0",
@@ -417,20 +417,20 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "KeyCloakKeyCloakContainerSerivceServiceSecurityGroupfromkeycloakdemoKeyCloakKeyCloakContainerSerivceALBSecurityGroup2467C3338443866EBF70": Object {
+    "KeyCloakKeyCloakContainerServiceSecurityGroupfromkeycloakdemoKeyCloakKeyCloakContainerServiceALBSecurityGroup67E092F7844342691A3B": Object {
       "Properties": Object {
         "Description": "Load balancer to target",
         "FromPort": 8443,
         "GroupId": Object {
           "Fn::GetAtt": Array [
-            "KeyCloakKeyCloakContainerSerivceServiceSecurityGroup4C80023D",
+            "KeyCloakKeyCloakContainerServiceSecurityGroup7433DA3A",
             "GroupId",
           ],
         },
         "IpProtocol": "tcp",
         "SourceSecurityGroupId": Object {
           "Fn::GetAtt": Array [
-            "KeyCloakKeyCloakContainerSerivceALBSecurityGroup8F5103C6",
+            "KeyCloakKeyCloakContainerServiceALBSecurityGroup70C4484F",
             "GroupId",
           ],
         },
@@ -438,20 +438,20 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupIngress",
     },
-    "KeyCloakKeyCloakContainerSerivceServiceSecurityGroupfromkeycloakdemoKeyCloakKeyCloakContainerSerivceServiceSecurityGroup4DE99C4F57600A05C613E": Object {
+    "KeyCloakKeyCloakContainerServiceSecurityGroupfromkeycloakdemoKeyCloakKeyCloakContainerServiceSecurityGroup17E82FED576009361FCC7": Object {
       "Properties": Object {
         "Description": "kc jgroups-tcp-fd",
         "FromPort": 57600,
         "GroupId": Object {
           "Fn::GetAtt": Array [
-            "KeyCloakKeyCloakContainerSerivceServiceSecurityGroup4C80023D",
+            "KeyCloakKeyCloakContainerServiceSecurityGroup7433DA3A",
             "GroupId",
           ],
         },
         "IpProtocol": "tcp",
         "SourceSecurityGroupId": Object {
           "Fn::GetAtt": Array [
-            "KeyCloakKeyCloakContainerSerivceServiceSecurityGroup4C80023D",
+            "KeyCloakKeyCloakContainerServiceSecurityGroup7433DA3A",
             "GroupId",
           ],
         },
@@ -459,20 +459,20 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupIngress",
     },
-    "KeyCloakKeyCloakContainerSerivceServiceSecurityGroupfromkeycloakdemoKeyCloakKeyCloakContainerSerivceServiceSecurityGroup4DE99C4F76000EB755EF": Object {
+    "KeyCloakKeyCloakContainerServiceSecurityGroupfromkeycloakdemoKeyCloakKeyCloakContainerServiceSecurityGroup17E82FED760084F83EAB": Object {
       "Properties": Object {
         "Description": "kc jgroups-tcp",
         "FromPort": 7600,
         "GroupId": Object {
           "Fn::GetAtt": Array [
-            "KeyCloakKeyCloakContainerSerivceServiceSecurityGroup4C80023D",
+            "KeyCloakKeyCloakContainerServiceSecurityGroup7433DA3A",
             "GroupId",
           ],
         },
         "IpProtocol": "tcp",
         "SourceSecurityGroupId": Object {
           "Fn::GetAtt": Array [
-            "KeyCloakKeyCloakContainerSerivceServiceSecurityGroup4C80023D",
+            "KeyCloakKeyCloakContainerServiceSecurityGroup7433DA3A",
             "GroupId",
           ],
         },
@@ -480,20 +480,20 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupIngress",
     },
-    "KeyCloakKeyCloakContainerSerivceServiceSecurityGroupfromkeycloakdemoKeyCloakKeyCloakContainerSerivceServiceSecurityGroup4DE99C4FUDP5420084C20A28": Object {
+    "KeyCloakKeyCloakContainerServiceSecurityGroupfromkeycloakdemoKeyCloakKeyCloakContainerServiceSecurityGroup17E82FEDUDP54200C13840AE": Object {
       "Properties": Object {
         "Description": "kc jgroups-udp-fd",
         "FromPort": 54200,
         "GroupId": Object {
           "Fn::GetAtt": Array [
-            "KeyCloakKeyCloakContainerSerivceServiceSecurityGroup4C80023D",
+            "KeyCloakKeyCloakContainerServiceSecurityGroup7433DA3A",
             "GroupId",
           ],
         },
         "IpProtocol": "udp",
         "SourceSecurityGroupId": Object {
           "Fn::GetAtt": Array [
-            "KeyCloakKeyCloakContainerSerivceServiceSecurityGroup4C80023D",
+            "KeyCloakKeyCloakContainerServiceSecurityGroup7433DA3A",
             "GroupId",
           ],
         },
@@ -501,20 +501,20 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupIngress",
     },
-    "KeyCloakKeyCloakContainerSerivceServiceSecurityGroupfromkeycloakdemoKeyCloakKeyCloakContainerSerivceServiceSecurityGroup4DE99C4FUDP552001CE4EB13": Object {
+    "KeyCloakKeyCloakContainerServiceSecurityGroupfromkeycloakdemoKeyCloakKeyCloakContainerServiceSecurityGroup17E82FEDUDP55200DCB1BF9D": Object {
       "Properties": Object {
         "Description": "kc jgroups-udp",
         "FromPort": 55200,
         "GroupId": Object {
           "Fn::GetAtt": Array [
-            "KeyCloakKeyCloakContainerSerivceServiceSecurityGroup4C80023D",
+            "KeyCloakKeyCloakContainerServiceSecurityGroup7433DA3A",
             "GroupId",
           ],
         },
         "IpProtocol": "udp",
         "SourceSecurityGroupId": Object {
           "Fn::GetAtt": Array [
-            "KeyCloakKeyCloakContainerSerivceServiceSecurityGroup4C80023D",
+            "KeyCloakKeyCloakContainerServiceSecurityGroup7433DA3A",
             "GroupId",
           ],
         },
@@ -522,7 +522,7 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupIngress",
     },
-    "KeyCloakKeyCloakContainerSerivceServiceTaskCountTarget0EDF86B3": Object {
+    "KeyCloakKeyCloakContainerServiceTaskCountTarget95167BD4": Object {
       "Properties": Object {
         "MaxCapacity": 10,
         "MinCapacity": 2,
@@ -532,12 +532,12 @@ Object {
             Array [
               "service/",
               Object {
-                "Ref": "KeyCloakKeyCloakContainerSerivceClusterA18E44FF",
+                "Ref": "KeyCloakKeyCloakContainerServiceCluster4583BCAE",
               },
               "/",
               Object {
                 "Fn::GetAtt": Array [
-                  "KeyCloakKeyCloakContainerSerivceService79D3F427",
+                  "KeyCloakKeyCloakContainerServiceB78EDF48",
                   "Name",
                 ],
               },
@@ -565,12 +565,12 @@ Object {
       },
       "Type": "AWS::ApplicationAutoScaling::ScalableTarget",
     },
-    "KeyCloakKeyCloakContainerSerivceServiceTaskCountTargetCpuScaling1480DC0B": Object {
+    "KeyCloakKeyCloakContainerServiceTaskCountTargetCpuScalingB44CF87F": Object {
       "Properties": Object {
-        "PolicyName": "keycloakdemoKeyCloakKeyCloakContainerSerivceServiceTaskCountTargetCpuScaling6EF32B2A",
+        "PolicyName": "keycloakdemoKeyCloakKeyCloakContainerServiceTaskCountTargetCpuScaling8EE194F1",
         "PolicyType": "TargetTrackingScaling",
         "ScalingTargetId": Object {
-          "Ref": "KeyCloakKeyCloakContainerSerivceServiceTaskCountTarget0EDF86B3",
+          "Ref": "KeyCloakKeyCloakContainerServiceTaskCountTarget95167BD4",
         },
         "TargetTrackingScalingPolicyConfiguration": Object {
           "PredefinedMetricSpecification": Object {
@@ -581,7 +581,7 @@ Object {
       },
       "Type": "AWS::ApplicationAutoScaling::ScalingPolicy",
     },
-    "KeyCloakKeyCloakContainerSerivceTaskDef30C9533A": Object {
+    "KeyCloakKeyCloakContainerServiceTaskDef6AD61714": Object {
       "Properties": Object {
         "ContainerDefinitions": Array [
           Object {
@@ -626,7 +626,7 @@ Object {
               "LogDriver": "awslogs",
               "Options": Object {
                 "awslogs-group": Object {
-                  "Ref": "KeyCloakKeyCloakContainerSerivceLogGroup010F2AAE",
+                  "Ref": "KeyCloakKeyCloakContainerServiceLogGroup770A4A22",
                 },
                 "awslogs-region": "us-east-1",
                 "awslogs-stream-prefix": "keycloak",
@@ -704,11 +704,11 @@ Object {
         "Cpu": "4096",
         "ExecutionRoleArn": Object {
           "Fn::GetAtt": Array [
-            "KeyCloakKeyCloakContainerSerivceTaskRole0658CED2",
+            "KeyCloakKeyCloakContainerServiceTaskRoleE227375A",
             "Arn",
           ],
         },
-        "Family": "keycloakdemoKeyCloakKeyCloakContainerSerivceTaskDef486F1059",
+        "Family": "keycloakdemoKeyCloakKeyCloakContainerServiceTaskDef3C4C2CF7",
         "Memory": "30720",
         "NetworkMode": "awsvpc",
         "RequiresCompatibilities": Array [
@@ -716,14 +716,14 @@ Object {
         ],
         "TaskRoleArn": Object {
           "Fn::GetAtt": Array [
-            "KeyCloakKeyCloakContainerSerivceTaskDefTaskRole0DC4D418",
+            "KeyCloakKeyCloakContainerServiceTaskDefTaskRole509DDBD7",
             "Arn",
           ],
         },
       },
       "Type": "AWS::ECS::TaskDefinition",
     },
-    "KeyCloakKeyCloakContainerSerivceTaskDefTaskRole0DC4D418": Object {
+    "KeyCloakKeyCloakContainerServiceTaskDefTaskRole509DDBD7": Object {
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
           "Statement": Array [
@@ -740,7 +740,56 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "KeyCloakKeyCloakContainerSerivceTaskRole0658CED2": Object {
+    "KeyCloakKeyCloakContainerServiceTaskRoleDefaultPolicy41C39151": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "KeyCloakKeyCloakContainerServiceLogGroup770A4A22",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:DescribeSecret",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Ref": "KeyCloakDatabaseAuroraServerlessClusterSecretAttachmentA32F9C7B",
+              },
+            },
+            Object {
+              "Action": Array [
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:DescribeSecret",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Ref": "KeyCloakKCSecretF8498E5C",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "KeyCloakKeyCloakContainerServiceTaskRoleDefaultPolicy41C39151",
+        "Roles": Array [
+          Object {
+            "Ref": "KeyCloakKeyCloakContainerServiceTaskRoleE227375A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "KeyCloakKeyCloakContainerServiceTaskRoleE227375A": Object {
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
           "Statement": Array [
@@ -773,55 +822,6 @@ Object {
         ],
       },
       "Type": "AWS::IAM::Role",
-    },
-    "KeyCloakKeyCloakContainerSerivceTaskRoleDefaultPolicyA2321E87": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": Array [
-                "logs:CreateLogStream",
-                "logs:PutLogEvents",
-              ],
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "KeyCloakKeyCloakContainerSerivceLogGroup010F2AAE",
-                  "Arn",
-                ],
-              },
-            },
-            Object {
-              "Action": Array [
-                "secretsmanager:GetSecretValue",
-                "secretsmanager:DescribeSecret",
-              ],
-              "Effect": "Allow",
-              "Resource": Object {
-                "Ref": "KeyCloakDatabaseAuroraServerlessClusterSecretAttachmentA32F9C7B",
-              },
-            },
-            Object {
-              "Action": Array [
-                "secretsmanager:GetSecretValue",
-                "secretsmanager:DescribeSecret",
-              ],
-              "Effect": "Allow",
-              "Resource": Object {
-                "Ref": "KeyCloakKCSecretF8498E5C",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "KeyCloakKeyCloakContainerSerivceTaskRoleDefaultPolicyA2321E87",
-        "Roles": Array [
-          Object {
-            "Ref": "KeyCloakKeyCloakContainerSerivceTaskRole0658CED2",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
     },
     "KeyCloakVpcF3901B3A": Object {
       "Properties": Object {
