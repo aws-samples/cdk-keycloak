@@ -36,12 +36,12 @@ new KeyCloak(stack, 'KeyCloak', {
 });
 ```
 
-To specify any other verion not defined in the construct, use `KeycloakVersion.of('x.x.x')`. This allows you to specify any new version as soon as it's available. However, as new versions will not always be tested and validated with this construct library, make sure you fully backup and test before you use any new version in the production environment.
+To specify any other version not defined in the construct, use `KeycloakVersion.of('x.x.x')`. This allows you to specify any new version as soon as it's available. However, as new versions will not always be tested and validated with this construct library, make sure you fully backup and test before you use any new version in the production environment.
 
 
 # Aurora Serverless support
 
-The `KeyCloak` construct provisions the **Amaozn RDS cluster for MySQL** with **2** database instances under the hood, to opt in **Amazon Aurora Serverless**, use `auroraServerless` to opt in Amazon Aurora Serverless cluster. Please note only some regions are supported, check [Supported features in Amazon Aurora by AWS Region and Aurora DB engine](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Concepts.AuroraFeaturesRegionsDBEngines.grids.html) for availability.
+The `KeyCloak` construct provisions the **Amazon RDS cluster for MySQL** with **2** database instances under the hood, to opt in **Amazon Aurora Serverless**, use `auroraServerless` to opt in Amazon Aurora Serverless cluster. Please note only some regions are supported, check [Supported features in Amazon Aurora by AWS Region and Aurora DB engine](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Concepts.AuroraFeaturesRegionsDBEngines.grids.html) for availability.
 
 ```ts
 new KeyCloak(stack, 'KeyCloak', {
@@ -58,7 +58,7 @@ Behind the scene, a default RDS cluster for MySQL with 2 database instances will
 To create single RDS instance for your testing or development environment, use `singleDbInstance` to turn on the
 single db instance deployment.
 
-Plesae note this is not recommended for production environment.
+Please note this is not recommended for production environment.
 
 ```ts
 new KeyCloak(stack, 'KeyCloak', {

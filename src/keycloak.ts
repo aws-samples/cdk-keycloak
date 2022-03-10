@@ -181,7 +181,7 @@ export interface KeyCloakProps {
    */
   readonly singleDbInstance?: boolean;
   /**
-   * database backup retension
+   * database backup retention
    *
    * @default - 7 days
    */
@@ -246,7 +246,7 @@ export class KeyCloak extends cdk.Construct {
     return new Database(this, 'Database', props);
   }
   public addKeyCloakContainerService(props: ContainerServiceProps) {
-    return new ContainerService(this, 'KeyCloakContainerSerivce', props);
+    return new ContainerService(this, 'KeyCloakContainerService', props);
   }
   private _generateKeycloakSecret(): secretsmanager.ISecret {
     return new secretsmanager.Secret(this, 'KCSecret', {
@@ -301,7 +301,7 @@ export interface DatabaseProps {
    */
   readonly singleDbInstance?: boolean;
   /**
-   * database backup retension
+   * database backup retention
    *
    * @default - 7 days
    */
@@ -311,13 +311,13 @@ export interface DatabaseProps {
 /**
  * Database configuration
  */
-export interface DatabaseCofig {
+export interface DatabaseConfig {
   /**
    * The database secret.
    */
   readonly secret: secretsmanager.ISecret;
   /**
-   * The database connnections.
+   * The database connections.
    */
   readonly connections: ec2.Connections;
   /**
@@ -325,7 +325,7 @@ export interface DatabaseCofig {
    */
   readonly endpoint: string;
   /**
-   * The databasae identifier.
+   * The database identifier.
    */
   readonly identifier: string;
 }
@@ -358,7 +358,7 @@ export class Database extends cdk.Construct {
     printOutput(this, 'clusterEndpointHostname', this.clusterEndpointHostname);
     printOutput(this, 'clusterIdentifier', this.clusterIdentifier);
   }
-  private _createRdsInstance(props: DatabaseProps): DatabaseCofig {
+  private _createRdsInstance(props: DatabaseProps): DatabaseConfig {
     const dbInstance = new rds.DatabaseInstance(this, 'DBInstance', {
       vpc: props.vpc,
       databaseName: 'keycloak',
@@ -382,7 +382,7 @@ export class Database extends cdk.Construct {
     };
   }
   // create a RDS for MySQL DB cluster
-  private _createRdsCluster(props: DatabaseProps): DatabaseCofig {
+  private _createRdsCluster(props: DatabaseProps): DatabaseConfig {
     const dbCluster = new rds.DatabaseCluster(this, 'DBCluster', {
       engine: props.clusterEngine ?? rds.DatabaseClusterEngine.auroraMysql({
         version: rds.AuroraMysqlEngineVersion.VER_2_09_1,
@@ -409,7 +409,7 @@ export class Database extends cdk.Construct {
       secret: dbCluster.secret!,
     };
   }
-  private _createServerlessCluster(props: DatabaseProps): DatabaseCofig {
+  private _createServerlessCluster(props: DatabaseProps): DatabaseConfig {
     const dbCluster = new rds.ServerlessCluster(this, 'AuroraServerlessCluster', {
       engine: rds.DatabaseClusterEngine.AURORA_MYSQL,
       vpc: props.vpc,
