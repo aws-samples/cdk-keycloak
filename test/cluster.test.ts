@@ -420,7 +420,7 @@ test('with env', () => {
         ],
       },
     ],
-    Cpu: '4096',
+    Cpu: '1024',
     ExecutionRoleArn: {
       'Fn::GetAtt': [
         'KeyCloakKeyCloakContainerSerivceTaskRole0658CED2',
@@ -428,7 +428,7 @@ test('with env', () => {
       ],
     },
     Family: 'testingstackKeyCloakKeyCloakContainerSerivceTaskDef799BAD5B',
-    Memory: '30720',
+    Memory: '2048',
     NetworkMode: 'awsvpc',
     RequiresCompatibilities: [
       'FARGATE',

@@ -22,6 +22,10 @@ const project = new AwsCdkConstructLibrary({
     '@aws-cdk/aws-secretsmanager',
     '@aws-cdk/core',
   ],
+  devDeps: [
+    '@types/prettier@<2.6.0',
+  ],
+  // jestOptions: { jestVersion: '^28.0.0' },
   depsUpgradeOptions: {
     ignoreProjen: false,
     workflowOptions: {
