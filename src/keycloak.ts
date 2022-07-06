@@ -508,8 +508,8 @@ export class ContainerService extends cdk.Construct {
       ),
     });
     const taskDefinition = new ecs.FargateTaskDefinition(this, 'TaskDef', {
-      cpu: 4096,
-      memoryLimitMiB: 30720,
+      cpu: 1024,
+      memoryLimitMiB: 2048,
       executionRole: taskRole,
     });
 

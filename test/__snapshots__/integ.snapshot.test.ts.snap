@@ -701,7 +701,7 @@ Object {
             ],
           },
         ],
-        "Cpu": "4096",
+        "Cpu": "1024",
         "ExecutionRoleArn": Object {
           "Fn::GetAtt": Array [
             "KeyCloakKeyCloakContainerSerivceTaskRole0658CED2",
@@ -709,7 +709,7 @@ Object {
           ],
         },
         "Family": "keycloakdemoKeyCloakKeyCloakContainerSerivceTaskDef486F1059",
-        "Memory": "30720",
+        "Memory": "2048",
         "NetworkMode": "awsvpc",
         "RequiresCompatibilities": Array [
           "FARGATE",
