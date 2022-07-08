@@ -39,6 +39,13 @@ Object {
       },
     },
   },
+  "Parameters": Object {
+    "BootstrapVersion": Object {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
   "Resources": Object {
     "KeyCloakDatabaseAuroraServerlessClusterDB73D16F": Object {
       "DeletionPolicy": "Retain",
@@ -203,6 +210,7 @@ Object {
       "UpdateReplacePolicy": "Retain",
     },
     "KeyCloakKCSecretF8498E5C": Object {
+      "DeletionPolicy": "Delete",
       "Properties": Object {
         "GenerateSecretString": Object {
           "ExcludePunctuation": true,
@@ -212,6 +220,7 @@ Object {
         },
       },
       "Type": "AWS::SecretsManager::Secret",
+      "UpdateReplacePolicy": "Delete",
     },
     "KeyCloakKeyCloakContainerSerivceALBE100B67D": Object {
       "DependsOn": Array [
@@ -1175,6 +1184,7 @@ Object {
       "Type": "AWS::EC2::VPCGatewayAttachment",
     },
     "keycloakdemoKeyCloakDatabaseAuroraServerlessClusterSecretBBC2EF3A3fdaad7efa858a3daf9490cf0a702aeb": Object {
+      "DeletionPolicy": "Delete",
       "Properties": Object {
         "Description": Object {
           "Fn::Join": Array [
@@ -1195,6 +1205,34 @@ Object {
         },
       },
       "Type": "AWS::SecretsManager::Secret",
+      "UpdateReplacePolicy": "Delete",
+    },
+  },
+  "Rules": Object {
+    "CheckBootstrapVersion": Object {
+      "Assertions": Array [
+        Object {
+          "Assert": Object {
+            "Fn::Not": Array [
+              Object {
+                "Fn::Contains": Array [
+                  Array [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  Object {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
     },
   },
 }

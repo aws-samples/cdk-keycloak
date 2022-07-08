@@ -1,5 +1,8 @@
-import * as ec2 from '@aws-cdk/aws-ec2';
-import * as cdk from '@aws-cdk/core';
+import {
+  aws_ec2 as ec2,
+} from 'aws-cdk-lib';
+import * as cdk from 'aws-cdk-lib';
+
 import { KeyCloak, KeycloakVersion } from './index';
 
 export class IntegTesting {
