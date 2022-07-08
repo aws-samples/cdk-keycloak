@@ -1,6 +1,6 @@
-import { App, Stack, assertions } from 'aws-cdk-lib';
+import { App, Stack } from '@aws-cdk/core';
 import * as kc from '../src';
-// import '@aws-cdk/assert/jest';
+import '@aws-cdk/assert/jest';
 import { KeycloakVersion } from '../src';
 test('create the default cluster', () => {
 
@@ -15,8 +15,7 @@ test('create the default cluster', () => {
   });
 
   // THEN
-  const t = assertions.Template.fromStack(stack);
-  t.hasResourceProperties('AWS::RDS::DBCluster', {
+  expect(stack).toHaveResource('AWS::RDS::DBCluster', {
     Engine: 'aurora-mysql',
     DBClusterParameterGroupName: 'default.aurora-mysql5.7',
     DBSubnetGroupName: {
@@ -46,11 +45,11 @@ test('create the default cluster', () => {
     ],
   });
   // we should have 2 db instances in the cluster
-  t.resourceCountIs('AWS::RDS::DBInstance', 2);
+  expect(stack).toCountResources('AWS::RDS::DBInstance', 2);
   // we should have 2 secrets
-  t.resourceCountIs('AWS::SecretsManager::Secret', 2);
+  expect(stack).toCountResources('AWS::SecretsManager::Secret', 2);
   // we should have ecs service
-  t.hasResourceProperties('AWS::ECS::Service', {
+  expect(stack).toHaveResource('AWS::ECS::Service', {
     Cluster: {
       Ref: 'KeyCloakKeyCloakContainerSerivceClusterA18E44FF',
     },
@@ -112,18 +111,17 @@ test('with aurora serverless', () => {
   });
 
   // THEN
-  const t = assertions.Template.fromStack(stack);
-  t.hasResourceProperties('AWS::RDS::DBCluster', {
+  expect(stack).toHaveResource('AWS::RDS::DBCluster', {
     Engine: 'aurora-mysql',
     DBClusterParameterGroupName: 'default.aurora-mysql5.7',
     EngineMode: 'serverless',
   });
   // we should have 0 db instance in the cluster
-  t.resourceCountIs('AWS::RDS::DBInstance', 0);
+  expect(stack).toCountResources('AWS::RDS::DBInstance', 0);
   // we should have 2 secrets
-  t.resourceCountIs('AWS::SecretsManager::Secret', 2);
+  expect(stack).toCountResources('AWS::SecretsManager::Secret', 2);
   // we should have ecs service
-  t.hasResourceProperties('AWS::ECS::Service', {
+  expect(stack).toHaveResource('AWS::ECS::Service', {
     Cluster: {
       Ref: 'KeyCloakKeyCloakContainerSerivceClusterA18E44FF',
     },
@@ -289,12 +287,11 @@ test('with single rds instance', () => {
   });
 
   // THEN
-  const t = assertions.Template.fromStack(stack);
   // we should have no cluster
-  t.resourceCountIs('AWS::RDS::DBCluster', 0);
+  expect(stack).toCountResources('AWS::RDS::DBCluster', 0);
   // we should have 1 db instance in the cluster
-  t.resourceCountIs('AWS::RDS::DBInstance', 1);
-  t.hasResourceProperties('AWS::RDS::DBInstance', {
+  expect(stack).toCountResources('AWS::RDS::DBInstance', 1);
+  expect(stack).toHaveResource('AWS::RDS::DBInstance', {
     DBInstanceClass: 'db.r5.large',
     AllocatedStorage: '100',
     CopyTagsToSnapshot: true,
@@ -328,9 +325,9 @@ test('with single rds instance', () => {
     ],
   });
   // we should have 2 secrets
-  t.resourceCountIs('AWS::SecretsManager::Secret', 2);
+  expect(stack).toCountResources('AWS::SecretsManager::Secret', 2);
   // we should have ecs service
-  t.hasResourceProperties('AWS::ECS::Service', {
+  expect(stack).toHaveResource('AWS::ECS::Service', {
     Cluster: {
       Ref: 'KeyCloakKeyCloakContainerSerivceClusterA18E44FF',
     },
@@ -393,8 +390,7 @@ test('with env', () => {
   });
 
   // THEN
-  const t = assertions.Template.fromStack(stack);
-  t.hasResourceProperties('AWS::ECS::TaskDefinition', {
+  expect(stack).toHaveResourceLike('AWS::ECS::TaskDefinition', {
 
     ContainerDefinitions: [
       {
