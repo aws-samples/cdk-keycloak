@@ -80,8 +80,7 @@
     "@aws-cdk/aws-logs": "^1.73.0",
     "@aws-cdk/aws-rds": "^1.73.0",
     "@aws-cdk/aws-secretsmanager": "^1.73.0",
-    "@aws-cdk/core": "^1.73.0",
-    "pac-resolver": "^5.0.0"
+    "@aws-cdk/core": "^1.73.0"
   },
   "bundledDependencies": [],
   "keywords": [
