@@ -317,6 +317,10 @@ test('with env', () => {
             Value: 'mysql',
           },
           {
+            Name: 'PROXY_ADDRESS_FORWARDING',
+            Value: 'true',
+          },
+          {
             Name: 'JDBC_PARAMS',
             Value: 'useSSL=false',
           },
@@ -420,7 +424,7 @@ test('with env', () => {
         ],
       },
     ],
-    Cpu: '1024',
+    Cpu: '4096',
     ExecutionRoleArn: {
       'Fn::GetAtt': [
         'KeyCloakKeyCloakContainerSerivceTaskRole0658CED2',
@@ -428,7 +432,7 @@ test('with env', () => {
       ],
     },
     Family: 'testingstackKeyCloakKeyCloakContainerSerivceTaskDef799BAD5B',
-    Memory: '2048',
+    Memory: '8192',
     NetworkMode: 'awsvpc',
     RequiresCompatibilities: [
       'FARGATE',
