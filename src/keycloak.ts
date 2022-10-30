@@ -92,13 +92,13 @@ export interface AutoScaleTask {
    *
    * @default - min + 5
    */
-  readonly max ?: number;
+  readonly max?: number;
   /**
    * The target cpu utilization for the service autoscaling
    *
    * @default 75
    */
-  readonly targetCpuUtilization ?: number;
+  readonly targetCpuUtilization?: number;
 }
 
 export interface KeyCloakProps {
@@ -501,6 +501,7 @@ export class ContainerService extends cdk.Construct {
 
     const vpc = props.vpc;
     const cluster = new ecs.Cluster(this, 'Cluster', { vpc });
+    cluster.node.addDependency(props.database);
     const taskRole = new iam.Role(this, 'TaskRole', {
       assumedBy: new iam.CompositePrincipal(
         new iam.ServicePrincipal('ecs.amazonaws.com'),
@@ -508,8 +509,8 @@ export class ContainerService extends cdk.Construct {
       ),
     });
     const taskDefinition = new ecs.FargateTaskDefinition(this, 'TaskDef', {
-      cpu: 1024,
-      memoryLimitMiB: 2048,
+      cpu: 4096,
+      memoryLimitMiB: 8192,
       executionRole: taskRole,
     });
 
@@ -527,6 +528,7 @@ export class ContainerService extends cdk.Construct {
         DB_USER: 'admin',
         DB_VENDOR: 'mysql',
         // KEYCLOAK_LOGLEVEL: 'DEBUG',
+        PROXY_ADDRESS_FORWARDING: 'true',
         JDBC_PARAMS: 'useSSL=false',
         JGROUPS_DISCOVERY_PROTOCOL: 'JDBC_PING',
         // We don't need to specify `initialize_sql` string into `JGROUPS_DISCOVERY_PROPERTIES` property,
@@ -572,7 +574,7 @@ export class ContainerService extends cdk.Construct {
       const minCapacity = props.autoScaleTask.min ?? props.nodeCount ?? 2;
       const scaling = this.service.autoScaleTaskCount({
         minCapacity,
-        maxCapacity: props.autoScaleTask.max ?? minCapacity+5,
+        maxCapacity: props.autoScaleTask.max ?? minCapacity + 5,
       });
       scaling.scaleOnCpuUtilization('CpuScaling', {
         targetUtilizationPercent: props.autoScaleTask.targetCpuUtilization ?? 75,
@@ -593,6 +595,9 @@ export class ContainerService extends cdk.Construct {
 
     listener.addTargets('ECSTarget', {
       targets: [this.service],
+      healthCheck: {
+        healthyThresholdCount: 3,
+      },
       // set slow_start.duration_seconds to 60
       // see https://docs.aws.amazon.com/cli/latest/reference/elbv2/modify-target-group-attributes.html
       slowStart: cdk.Duration.seconds(60),
@@ -630,14 +635,14 @@ export class ContainerService extends cdk.Construct {
       return imageMap.findInMap(cdk.Aws.PARTITION, 'uri');
     } else {
       if (stack.region.startsWith('cn-')) {
-        return map['aws-cn']+=version;
+        return map['aws-cn'] += version;
       } else {
-        return map.aws+=version;
+        return map.aws += version;
       }
     }
   }
   private getKeyCloakDockerImageUri(version: string): string {
-    return this.getImageUriFromMap(KEYCLOAK_DOCKER_IMAGE_URI_MAP, version, 'KeycloakImageMap' );
+    return this.getImageUriFromMap(KEYCLOAK_DOCKER_IMAGE_URI_MAP, version, 'KeycloakImageMap');
   }
 }
 

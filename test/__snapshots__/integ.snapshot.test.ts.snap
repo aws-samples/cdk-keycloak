@@ -271,6 +271,7 @@ Object {
     },
     "KeyCloakKeyCloakContainerSerivceALBHttpsListenerECSTargetGroupCE3EF52C": Object {
       "Properties": Object {
+        "HealthyThresholdCount": 3,
         "Port": 8443,
         "Protocol": "HTTPS",
         "TargetGroupAttributes": Array [
@@ -338,6 +339,15 @@ Object {
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
     "KeyCloakKeyCloakContainerSerivceClusterA18E44FF": Object {
+      "DependsOn": Array [
+        "KeyCloakDatabaseAuroraServerlessClusterDB73D16F",
+        "KeyCloakDatabaseAuroraServerlessClusterSecretAttachmentA32F9C7B",
+        "keycloakdemoKeyCloakDatabaseAuroraServerlessClusterSecretBBC2EF3A3fdaad7efa858a3daf9490cf0a702aeb",
+        "KeyCloakDatabaseAuroraServerlessClusterSecurityGroupfromkeycloakdemoKeyCloakDatabaseAuroraServerlessClusterSecurityGroup1CF1B8093306AB9B4528",
+        "KeyCloakDatabaseAuroraServerlessClusterSecurityGroupfromkeycloakdemoKeyCloakKeyCloakContainerSerivceServiceSecurityGroup4DE99C4FIndirectPortF24A4E85",
+        "KeyCloakDatabaseAuroraServerlessClusterSecurityGroupF0CB4641",
+        "KeyCloakDatabaseAuroraServerlessClusterSubnets6166944B",
+      ],
       "Type": "AWS::ECS::Cluster",
     },
     "KeyCloakKeyCloakContainerSerivceLogGroup010F2AAE": Object {
@@ -612,6 +622,10 @@ Object {
                 "Value": "mysql",
               },
               Object {
+                "Name": "PROXY_ADDRESS_FORWARDING",
+                "Value": "true",
+              },
+              Object {
                 "Name": "JDBC_PARAMS",
                 "Value": "useSSL=false",
               },
@@ -701,7 +715,7 @@ Object {
             ],
           },
         ],
-        "Cpu": "1024",
+        "Cpu": "4096",
         "ExecutionRoleArn": Object {
           "Fn::GetAtt": Array [
             "KeyCloakKeyCloakContainerSerivceTaskRole0658CED2",
@@ -709,7 +723,7 @@ Object {
           ],
         },
         "Family": "keycloakdemoKeyCloakKeyCloakContainerSerivceTaskDef486F1059",
-        "Memory": "2048",
+        "Memory": "8192",
         "NetworkMode": "awsvpc",
         "RequiresCompatibilities": Array [
           "FARGATE",
