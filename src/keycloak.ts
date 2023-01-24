@@ -175,6 +175,13 @@ export interface KeyCloakProps {
    */
   readonly auroraServerless?: boolean;
   /**
+   * Whether to use aurora serverless v2. When enabled, the `databaseInstanceType` and
+   * `engine` will be ignored.
+   *
+   * @default false
+   */
+  readonly auroraServerlessV2?: boolean;
+  /**
    * Whether to use single RDS instance rather than RDS cluster. Not recommended for production.
    *
    * @default false
@@ -221,6 +228,7 @@ export class KeyCloak extends cdk.Construct {
       instanceEngine: props.instanceEngine,
       clusterEngine: props.clusterEngine,
       auroraServerless: props.auroraServerless,
+      auroraServerlessV2: props.auroraServerlessV2,
       singleDbInstance: props.singleDbInstance,
       backupRetention: props.backupRetention,
     });
@@ -293,6 +301,12 @@ export interface DatabaseProps {
    * @default false
    */
   readonly auroraServerless?: boolean;
+  /**
+   * enable aurora serverless v2
+   *
+   * @default false
+   */
+  readonly auroraServerlessV2?: boolean;
 
   /**
    * Whether to use single RDS instance rather than RDS cluster. Not recommended for production.
@@ -344,8 +358,16 @@ export class Database extends cdk.Construct {
   constructor(scope: cdk.Construct, id: string, props: DatabaseProps) {
     super(scope, id);
     this.vpc = props.vpc;
-    const config = props.auroraServerless ? this._createServerlessCluster(props)
-      : props.singleDbInstance ? this._createRdsInstance(props) : this._createRdsCluster(props);
+    let config;
+    if (props.auroraServerless) {
+      config = this._createServerlessCluster(props);
+    } else if (props.auroraServerlessV2) {
+      config = this._createServerlessV2Cluster(props);
+    } else if (props.singleDbInstance) {
+      config = this._createRdsInstance(props);
+    } else {
+      config = this._createRdsCluster(props);
+    }
     this.secret = config.secret;
     // allow internally from the same security group
     config.connections.allowInternally(ec2.Port.tcp(this._mysqlListenerPort));
@@ -421,6 +443,46 @@ export class Database extends cdk.Construct {
       removalPolicy: cdk.RemovalPolicy.RETAIN,
       parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.aurora-mysql5.7'),
     });
+    return {
+      connections: dbCluster.connections,
+      endpoint: dbCluster.clusterEndpoint.hostname,
+      identifier: dbCluster.clusterIdentifier,
+      secret: dbCluster.secret!,
+    };
+  }
+  // create a RDS for MySQL DB cluster with Aurora Serverless v2
+  private _createServerlessV2Cluster(props: DatabaseProps): DatabaseCofig {
+    const dbCluster = new rds.DatabaseCluster(this, 'DBCluster', {
+      engine: rds.DatabaseClusterEngine.auroraMysql({
+        // Engine Version Manually Specified since Aurora MySQL 3.02.0 is not listed in CDK v1 currently
+        version: { auroraMysqlFullVersion: '8.0.mysql_aurora.3.02.0', auroraMysqlMajorVersion: '8.0', _combineImportAndExportRoles: true } as rds.AuroraMysqlEngineVersion,
+      }),
+      defaultDatabaseName: 'keycloak',
+      deletionProtection: true,
+      credentials: rds.Credentials.fromGeneratedSecret('admin'),
+      instanceProps: {
+        vpc: props.vpc,
+        vpcSubnets: props.databaseSubnets,
+        // Specify serverless Instance Type
+        instanceType: new ec2.InstanceType('serverless'),
+      },
+      // Set default parameter group for Aurora MySQL 8.0
+      parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.aurora-mysql8.0'),
+      backup: {
+        retention: props.backupRetention ?? cdk.Duration.days(7),
+      },
+      storageEncrypted: true,
+      removalPolicy: cdk.RemovalPolicy.RETAIN,
+    });
+    // Set Serverless V2 Scaling Configuration
+    // TODO: Use cleaner way to set scaling configuration.
+    // https://github.com/aws/aws-cdk/issues/20197
+    (
+      dbCluster.node.findChild('Resource') as rds.CfnDBCluster
+    ).serverlessV2ScalingConfiguration = {
+      minCapacity: 0.5,
+      maxCapacity: 10,
+    };
     return {
       connections: dbCluster.connections,
       endpoint: dbCluster.clusterEndpoint.hostname,
