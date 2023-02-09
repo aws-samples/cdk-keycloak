@@ -44,9 +44,17 @@ To specify any other verion not defined in the construct, use `KeycloakVersion.o
 The `KeyCloak` construct provisions the **Amaozn RDS cluster for MySQL** with **2** database instances under the hood, to opt in **Amazon Aurora Serverless**, use `auroraServerless` to opt in Amazon Aurora Serverless cluster. Please note only some regions are supported, check [Supported features in Amazon Aurora by AWS Region and Aurora DB engine](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Concepts.AuroraFeaturesRegionsDBEngines.grids.html) for availability.
 
 ```ts
+// Aurora Serverless v1
 new KeyCloak(stack, 'KeyCloak', {
   certificateArn,
   auroraServerless: true,
+  keycloakVersion,
+});
+
+// Aurora Serverless v2
+new KeyCloak(stack, 'KeyCloak', {
+  certificateArn,
+  auroraServerlessV2: true,
   keycloakVersion,
 });
 ```

@@ -169,6 +169,110 @@ test('with aurora serverless', () => {
   });
 });
 
+test('with aurora serverless v2', () => {
+
+  // GIVEN
+  const app = new App();
+  const stack = new Stack(app, 'testing-stack');
+
+  // WHEN
+  new kc.KeyCloak(stack, 'KeyCloak', {
+    certificateArn: 'MOCK_ARN',
+    auroraServerlessV2: true,
+    keycloakVersion: KeycloakVersion.V15_0_2,
+  });
+
+  // THEN
+  expect(stack).toHaveResource('AWS::RDS::DBCluster', {
+    Engine: 'aurora-mysql',
+    DBClusterParameterGroupName: 'default.aurora-mysql8.0',
+    DBSubnetGroupName: {
+      Ref: 'KeyCloakDatabaseDBClusterSubnetsE36F1B1B',
+    },
+    EngineVersion: '8.0.mysql_aurora.3.02.0',
+    MasterUsername: 'admin',
+    MasterUserPassword: {
+      'Fn::Join': [
+        '',
+        [
+          '{{resolve:secretsmanager:',
+          {
+            Ref: 'testingstackKeyCloakDatabaseDBClusterSecret754146743fdaad7efa858a3daf9490cf0a702aeb',
+          },
+          ':SecretString:password::}}',
+        ],
+      ],
+    },
+    ServerlessV2ScalingConfiguration: {
+      MaxCapacity: 10,
+      MinCapacity: 0.5,
+    },
+    VpcSecurityGroupIds: [
+      {
+        'Fn::GetAtt': [
+          'KeyCloakDatabaseDBClusterSecurityGroup843B4392',
+          'GroupId',
+        ],
+      },
+    ],
+  });
+  // we should have 2 db instances in the cluster
+  expect(stack).toCountResources('AWS::RDS::DBInstance', 2);
+  // we should have db instance with db.serverless instance class
+  expect(stack).toHaveResource('AWS::RDS::DBInstance', {
+    DBInstanceClass: 'db.serverless',
+  });
+  // we should have 2 secrets
+  expect(stack).toCountResources('AWS::SecretsManager::Secret', 2);
+  // we should have ecs service
+  expect(stack).toHaveResource('AWS::ECS::Service', {
+    Cluster: {
+      Ref: 'KeyCloakKeyCloakContainerSerivceClusterA18E44FF',
+    },
+    DeploymentConfiguration: {
+      MaximumPercent: 200,
+      MinimumHealthyPercent: 50,
+    },
+    DesiredCount: 2,
+    EnableECSManagedTags: false,
+    HealthCheckGracePeriodSeconds: 120,
+    LaunchType: 'FARGATE',
+    LoadBalancers: [
+      {
+        ContainerName: 'keycloak',
+        ContainerPort: 8443,
+        TargetGroupArn: {
+          Ref: 'KeyCloakKeyCloakContainerSerivceALBHttpsListenerECSTargetGroupCE3EF52C',
+        },
+      },
+    ],
+    NetworkConfiguration: {
+      AwsvpcConfiguration: {
+        AssignPublicIp: 'DISABLED',
+        SecurityGroups: [
+          {
+            'Fn::GetAtt': [
+              'KeyCloakKeyCloakContainerSerivceServiceSecurityGroup4C80023D',
+              'GroupId',
+            ],
+          },
+        ],
+        Subnets: [
+          {
+            Ref: 'KeyCloakVpcPrivateSubnet1SubnetA692DFFF',
+          },
+          {
+            Ref: 'KeyCloakVpcPrivateSubnet2SubnetC8682D75',
+          },
+        ],
+      },
+    },
+    TaskDefinition: {
+      Ref: 'KeyCloakKeyCloakContainerSerivceTaskDef30C9533A',
+    },
+  });
+});
+
 test('with single rds instance', () => {
 
   // GIVEN

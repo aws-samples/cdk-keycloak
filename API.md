@@ -87,6 +87,7 @@ new Database(scope: Construct, id: string, props: DatabaseProps)
 * **props** (<code>[DatabaseProps](#cdk-keycloak-databaseprops)</code>)  *No description*
   * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  The VPC for the database. 
   * **auroraServerless** (<code>boolean</code>)  enable aurora serverless. __*Default*__: false
+  * **auroraServerlessV2** (<code>boolean</code>)  enable aurora serverless v2. __*Default*__: false
   * **backupRetention** (<code>[Duration](#aws-cdk-core-duration)</code>)  database backup retension. __*Default*__: 7 days
   * **clusterEngine** (<code>[IClusterEngine](#aws-cdk-aws-rds-iclusterengine)</code>)  The database cluster engine. __*Default*__: rds.AuroraMysqlEngineVersion.VER_2_09_1
   * **databaseSubnets** (<code>[SubnetSelection](#aws-cdk-aws-ec2-subnetselection)</code>)  VPC subnets for database. __*Optional*__
@@ -131,6 +132,7 @@ new KeyCloak(scope: Construct, id: string, props: KeyCloakProps)
   * **certificateArn** (<code>string</code>)  ACM certificate ARN to import. 
   * **keycloakVersion** (<code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code>)  The Keycloak version for the cluster. 
   * **auroraServerless** (<code>boolean</code>)  Whether to use aurora serverless. __*Default*__: false
+  * **auroraServerlessV2** (<code>boolean</code>)  Whether to use aurora serverless v2. __*Default*__: false
   * **autoScaleTask** (<code>[AutoScaleTask](#cdk-keycloak-autoscaletask)</code>)  Autoscaling for the ECS Service. __*Default*__: no ecs service autoscaling
   * **backupRetention** (<code>[Duration](#aws-cdk-core-duration)</code>)  database backup retension. __*Default*__: 7 days
   * **bastion** (<code>boolean</code>)  Create a bastion host for debugging or trouble-shooting. __*Default*__: false
@@ -170,6 +172,7 @@ addDatabase(props: DatabaseProps): Database
 * **props** (<code>[DatabaseProps](#cdk-keycloak-databaseprops)</code>)  *No description*
   * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  The VPC for the database. 
   * **auroraServerless** (<code>boolean</code>)  enable aurora serverless. __*Default*__: false
+  * **auroraServerlessV2** (<code>boolean</code>)  enable aurora serverless v2. __*Default*__: false
   * **backupRetention** (<code>[Duration](#aws-cdk-core-duration)</code>)  database backup retension. __*Default*__: 7 days
   * **clusterEngine** (<code>[IClusterEngine](#aws-cdk-aws-rds-iclusterengine)</code>)  The database cluster engine. __*Default*__: rds.AuroraMysqlEngineVersion.VER_2_09_1
   * **databaseSubnets** (<code>[SubnetSelection](#aws-cdk-aws-ec2-subnetselection)</code>)  VPC subnets for database. __*Optional*__
@@ -310,6 +313,7 @@ Name | Type | Description
 -----|------|-------------
 **vpc** | <code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code> | The VPC for the database.
 **auroraServerless**? | <code>boolean</code> | enable aurora serverless.<br/>__*Default*__: false
+**auroraServerlessV2**? | <code>boolean</code> | enable aurora serverless v2.<br/>__*Default*__: false
 **backupRetention**? | <code>[Duration](#aws-cdk-core-duration)</code> | database backup retension.<br/>__*Default*__: 7 days
 **clusterEngine**? | <code>[IClusterEngine](#aws-cdk-aws-rds-iclusterengine)</code> | The database cluster engine.<br/>__*Default*__: rds.AuroraMysqlEngineVersion.VER_2_09_1
 **databaseSubnets**? | <code>[SubnetSelection](#aws-cdk-aws-ec2-subnetselection)</code> | VPC subnets for database.<br/>__*Optional*__
@@ -331,6 +335,7 @@ Name | Type | Description
 **certificateArn** | <code>string</code> | ACM certificate ARN to import.
 **keycloakVersion** | <code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code> | The Keycloak version for the cluster.
 **auroraServerless**? | <code>boolean</code> | Whether to use aurora serverless.<br/>__*Default*__: false
+**auroraServerlessV2**? | <code>boolean</code> | Whether to use aurora serverless v2.<br/>__*Default*__: false
 **autoScaleTask**? | <code>[AutoScaleTask](#cdk-keycloak-autoscaletask)</code> | Autoscaling for the ECS Service.<br/>__*Default*__: no ecs service autoscaling
 **backupRetention**? | <code>[Duration](#aws-cdk-core-duration)</code> | database backup retension.<br/>__*Default*__: 7 days
 **bastion**? | <code>boolean</code> | Create a bastion host for debugging or trouble-shooting.<br/>__*Default*__: false
