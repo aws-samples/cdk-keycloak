@@ -178,8 +178,7 @@ export interface KeyCloakProps {
    */
   readonly auroraServerless?: boolean;
   /**
-   * Whether to use aurora serverless v2. When enabled, the `databaseInstanceType` and
-   * `engine` will be ignored.
+   * Whether to use aurora serverless v2. When enabled, the `databaseInstanceType` will be ignored.
    *
    * @default false
    */
@@ -456,9 +455,8 @@ export class Database extends Construct {
   // create a RDS for MySQL DB cluster with Aurora Serverless v2
   private _createServerlessV2Cluster(props: DatabaseProps): DatabaseCofig {
     const dbCluster = new rds.DatabaseCluster(this, 'DBCluster', {
-      engine: rds.DatabaseClusterEngine.auroraMysql({
-        // Engine Version Manually Specified since Aurora MySQL 3.02.0 is not listed in CDK v1 currently
-        version: { auroraMysqlFullVersion: '8.0.mysql_aurora.3.02.0', auroraMysqlMajorVersion: '8.0', _combineImportAndExportRoles: true } as rds.AuroraMysqlEngineVersion,
+      engine: props.clusterEngine ?? rds.DatabaseClusterEngine.auroraMysql({
+        version: rds.AuroraMysqlEngineVersion.VER_3_02_0,
       }),
       defaultDatabaseName: 'keycloak',
       deletionProtection: true,

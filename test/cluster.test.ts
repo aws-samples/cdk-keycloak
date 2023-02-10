@@ -185,7 +185,8 @@ test('with aurora serverless v2', () => {
   });
 
   // THEN
-  expect(stack).toHaveResource('AWS::RDS::DBCluster', {
+  const t = assertions.Template.fromStack(stack);
+  t.hasResourceProperties('AWS::RDS::DBCluster', {
     Engine: 'aurora-mysql',
     DBClusterParameterGroupName: 'default.aurora-mysql8.0',
     DBSubnetGroupName: {
@@ -219,15 +220,15 @@ test('with aurora serverless v2', () => {
     ],
   });
   // we should have 2 db instances in the cluster
-  expect(stack).toCountResources('AWS::RDS::DBInstance', 2);
+  t.resourceCountIs('AWS::RDS::DBInstance', 2);
   // we should have db instance with db.serverless instance class
-  expect(stack).toHaveResource('AWS::RDS::DBInstance', {
+  t.hasResourceProperties('AWS::RDS::DBInstance', {
     DBInstanceClass: 'db.serverless',
   });
   // we should have 2 secrets
-  expect(stack).toCountResources('AWS::SecretsManager::Secret', 2);
+  t.resourceCountIs('AWS::SecretsManager::Secret', 2);
   // we should have ecs service
-  expect(stack).toHaveResource('AWS::ECS::Service', {
+  t.hasResourceProperties('AWS::ECS::Service', {
     Cluster: {
       Ref: 'KeyCloakKeyCloakContainerSerivceClusterA18E44FF',
     },

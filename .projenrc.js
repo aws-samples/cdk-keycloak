@@ -6,9 +6,10 @@ const project = new awscdk.AwsCdkConstructLibrary({
   author: 'Pahud Hsieh',
   authorAddress: 'pahudnet@gmail.com',
   description: 'CDK construct library that allows you to create KeyCloak service on AWS in TypeScript or Python',
-  cdkVersion: '2.1.0',
+  cdkVersion: '2.64.0',
   jsiiFqn: 'projen.AwsCdkConstructLibrary',
   name: 'cdk-keycloak',
+  majorVersion: 2,
   repositoryUrl: 'https://github.com/aws-samples/cdk-keycloak.git',
   // devDeps: [
   //   '@types/prettier@<2.6.0',
