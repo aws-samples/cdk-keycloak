@@ -6,6 +6,12 @@
 
 CDK construct library that allows you to create [KeyCloak](https://www.keycloak.org/) on AWS in TypeScript or Python
 
+> **Note**
+> 
+> This project has been migrated to CDK v2.
+> 
+> CDK v1 compatible version is deprecated now.
+
 # Sample
 
 ```ts

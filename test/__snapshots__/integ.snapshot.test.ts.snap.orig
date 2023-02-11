@@ -39,19 +39,11 @@ Object {
       },
     },
   },
-  "Parameters": Object {
-    "BootstrapVersion": Object {
-      "Default": "/cdk-bootstrap/hnb659fds/version",
-      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
-      "Type": "AWS::SSM::Parameter::Value<String>",
-    },
-  },
   "Resources": Object {
     "KeyCloakDatabaseAuroraServerlessClusterDB73D16F": Object {
       "DeletionPolicy": "Retain",
       "Properties": Object {
         "BackupRetentionPeriod": 7,
-        "CopyTagsToSnapshot": true,
         "DBClusterParameterGroupName": "default.aurora-mysql5.7",
         "DBSubnetGroupName": Object {
           "Ref": "KeyCloakDatabaseAuroraServerlessClusterSubnets6166944B",
@@ -226,9 +218,7 @@ Object {
     "KeyCloakKeyCloakContainerSerivceALBE100B67D": Object {
       "DependsOn": Array [
         "KeyCloakVpcPublicSubnet1DefaultRoute438FBE69",
-        "KeyCloakVpcPublicSubnet1RouteTableAssociationFF91B678",
         "KeyCloakVpcPublicSubnet2DefaultRouteCFC19404",
-        "KeyCloakVpcPublicSubnet2RouteTableAssociation3117C73A",
       ],
       "Properties": Object {
         "LoadBalancerAttributes": Array [
@@ -1045,10 +1035,6 @@ Object {
       "Type": "AWS::EC2::EIP",
     },
     "KeyCloakVpcPublicSubnet1NATGateway923A52EE": Object {
-      "DependsOn": Array [
-        "KeyCloakVpcPublicSubnet1DefaultRoute438FBE69",
-        "KeyCloakVpcPublicSubnet1RouteTableAssociationFF91B678",
-      ],
       "Properties": Object {
         "AllocationId": Object {
           "Fn::GetAtt": Array [
@@ -1231,33 +1217,6 @@ Object {
       },
       "Type": "AWS::SecretsManager::Secret",
       "UpdateReplacePolicy": "Delete",
-    },
-  },
-  "Rules": Object {
-    "CheckBootstrapVersion": Object {
-      "Assertions": Array [
-        Object {
-          "Assert": Object {
-            "Fn::Not": Array [
-              Object {
-                "Fn::Contains": Array [
-                  Array [
-                    "1",
-                    "2",
-                    "3",
-                    "4",
-                    "5",
-                  ],
-                  Object {
-                    "Ref": "BootstrapVersion",
-                  },
-                ],
-              },
-            ],
-          },
-          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
-        },
-      ],
     },
   },
 }

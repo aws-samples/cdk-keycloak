@@ -1,15 +1,12 @@
-import {
-  aws_certificatemanager as certmgr,
-  aws_ec2 as ec2,
-  aws_elasticloadbalancingv2 as elbv2,
-  aws_iam as iam,
-  aws_logs as logs,
-  aws_rds as rds,
-  aws_ecs as ecs,
-  aws_secretsmanager as secretsmanager,
-} from 'aws-cdk-lib';
-import * as cdk from 'aws-cdk-lib';
-import { Construct } from 'constructs';
+import * as certmgr from '@aws-cdk/aws-certificatemanager';
+import * as ec2 from '@aws-cdk/aws-ec2';
+import * as ecs from '@aws-cdk/aws-ecs';
+import * as elbv2 from '@aws-cdk/aws-elasticloadbalancingv2';
+import * as iam from '@aws-cdk/aws-iam';
+import * as logs from '@aws-cdk/aws-logs';
+import * as rds from '@aws-cdk/aws-rds';
+import * as secretsmanager from '@aws-cdk/aws-secretsmanager';
+import * as cdk from '@aws-cdk/core';
 
 
 // regional availibility for aurora serverless
@@ -178,7 +175,8 @@ export interface KeyCloakProps {
    */
   readonly auroraServerless?: boolean;
   /**
-   * Whether to use aurora serverless v2. When enabled, the `databaseInstanceType` will be ignored.
+   * Whether to use aurora serverless v2. When enabled, the `databaseInstanceType` and
+   * `engine` will be ignored.
    *
    * @default false
    */
@@ -209,10 +207,10 @@ export interface KeyCloakProps {
   readonly autoScaleTask?: AutoScaleTask;
 }
 
-export class KeyCloak extends Construct {
+export class KeyCloak extends cdk.Construct {
   readonly vpc: ec2.IVpc;
   readonly db?: Database;
-  constructor(scope: Construct, id: string, props: KeyCloakProps) {
+  constructor(scope: cdk.Construct, id: string, props: KeyCloakProps) {
     super(scope, id);
 
     const region = cdk.Stack.of(this).region;
@@ -349,7 +347,7 @@ export interface DatabaseCofig {
 /**
  * Represents the database instance or database cluster
  */
-export class Database extends Construct {
+export class Database extends cdk.Construct {
   readonly vpc: ec2.IVpc;
   readonly clusterEndpointHostname: string;
   readonly clusterIdentifier: string;
@@ -357,7 +355,7 @@ export class Database extends Construct {
   readonly connections: ec2.Connections;
   private readonly _mysqlListenerPort: number = 3306;
 
-  constructor(scope: Construct, id: string, props: DatabaseProps) {
+  constructor(scope: cdk.Construct, id: string, props: DatabaseProps) {
     super(scope, id);
     this.vpc = props.vpc;
     let config;
@@ -455,8 +453,9 @@ export class Database extends Construct {
   // create a RDS for MySQL DB cluster with Aurora Serverless v2
   private _createServerlessV2Cluster(props: DatabaseProps): DatabaseCofig {
     const dbCluster = new rds.DatabaseCluster(this, 'DBCluster', {
-      engine: props.clusterEngine ?? rds.DatabaseClusterEngine.auroraMysql({
-        version: rds.AuroraMysqlEngineVersion.VER_3_02_0,
+      engine: rds.DatabaseClusterEngine.auroraMysql({
+        // Engine Version Manually Specified since Aurora MySQL 3.02.0 is not listed in CDK v1 currently
+        version: { auroraMysqlFullVersion: '8.0.mysql_aurora.3.02.0', auroraMysqlMajorVersion: '8.0', _combineImportAndExportRoles: true } as rds.AuroraMysqlEngineVersion,
       }),
       defaultDatabaseName: 'keycloak',
       deletionProtection: true,
@@ -557,9 +556,9 @@ export interface ContainerServiceProps {
   readonly autoScaleTask?: AutoScaleTask;
 }
 
-export class ContainerService extends Construct {
+export class ContainerService extends cdk.Construct {
   readonly service: ecs.FargateService;
-  constructor(scope: Construct, id: string, props: ContainerServiceProps) {
+  constructor(scope: cdk.Construct, id: string, props: ContainerServiceProps) {
     super(scope, id);
 
     const vpc = props.vpc;
@@ -713,7 +712,7 @@ export class ContainerService extends Construct {
  * Create or import VPC
  * @param scope the cdk scope
  */
-function getOrCreateVpc(scope: Construct): ec2.IVpc {
+function getOrCreateVpc(scope: cdk.Construct): ec2.IVpc {
   // use an existing vpc or create a new one
   return scope.node.tryGetContext('use_default_vpc') === '1' ?
     ec2.Vpc.fromLookup(scope, 'Vpc', { isDefault: true }) :
@@ -722,6 +721,6 @@ function getOrCreateVpc(scope: Construct): ec2.IVpc {
       new ec2.Vpc(scope, 'Vpc', { maxAzs: 3, natGateways: 1 });
 }
 
-function printOutput(scope: Construct, id: string, key: string | number) {
+function printOutput(scope: cdk.Construct, id: string, key: string | number) {
   new cdk.CfnOutput(scope, id, { value: String(key) });
 }
