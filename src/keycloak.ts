@@ -1,14 +1,11 @@
+import * as cdk from 'aws-cdk-lib';
 import {
   aws_certificatemanager as certmgr,
-  aws_ec2 as ec2,
-  aws_elasticloadbalancingv2 as elbv2,
+  aws_ec2 as ec2, aws_ecs as ecs, aws_elasticloadbalancingv2 as elbv2,
   aws_iam as iam,
   aws_logs as logs,
-  aws_rds as rds,
-  aws_ecs as ecs,
-  aws_secretsmanager as secretsmanager,
+  aws_rds as rds, aws_secretsmanager as secretsmanager,
 } from 'aws-cdk-lib';
-import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
 
@@ -207,6 +204,13 @@ export interface KeyCloakProps {
    * @default - no ecs service autoscaling
    */
   readonly autoScaleTask?: AutoScaleTask;
+
+  /**
+   * Whether to put the put the load balancer in the public or private subnets
+   *
+   * @default true
+   */
+  readonly internetFacing?: boolean;
 }
 
 export class KeyCloak extends Construct {
@@ -247,6 +251,7 @@ export class KeyCloak extends Construct {
       stickinessCookieDuration: props.stickinessCookieDuration,
       autoScaleTask: props.autoScaleTask,
       env: props.env,
+      internetFacing: props.internetFacing == null ? true : props.internetFacing,
     });
     if (!cdk.Stack.of(this).templateOptions.description) {
       cdk.Stack.of(this).templateOptions.description = '(SO8021) - Deploy keycloak on AWS with cdk-keycloak construct library';
@@ -555,6 +560,13 @@ export interface ContainerServiceProps {
    * @default - no ecs service autoscaling
    */
   readonly autoScaleTask?: AutoScaleTask;
+
+  /**
+   * Whether to put the put the load balancer in the public or private subnets
+   *
+   * @default true
+   */
+  readonly internetFacing?: boolean;
 }
 
 export class ContainerService extends Construct {
@@ -646,8 +658,8 @@ export class ContainerService extends Construct {
 
     const alb = new elbv2.ApplicationLoadBalancer(this, 'ALB', {
       vpc,
-      vpcSubnets: props.publicSubnets,
-      internetFacing: true,
+      vpcSubnets: props.internetFacing ? props.publicSubnets : props.privateSubnets,
+      internetFacing: props.internetFacing,
     });
     printOutput(this, 'EndpointURL', `https://${alb.loadBalancerDnsName}`);
 
