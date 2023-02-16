@@ -1,14 +1,11 @@
+import * as cdk from 'aws-cdk-lib';
 import {
   aws_certificatemanager as certmgr,
-  aws_ec2 as ec2,
-  aws_elasticloadbalancingv2 as elbv2,
+  aws_ec2 as ec2, aws_ecs as ecs, aws_elasticloadbalancingv2 as elbv2,
   aws_iam as iam,
   aws_logs as logs,
-  aws_rds as rds,
-  aws_ecs as ecs,
-  aws_secretsmanager as secretsmanager,
+  aws_rds as rds, aws_secretsmanager as secretsmanager,
 } from 'aws-cdk-lib';
-import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
 
@@ -212,6 +209,8 @@ export interface KeyCloakProps {
 export class KeyCloak extends Construct {
   readonly vpc: ec2.IVpc;
   readonly db?: Database;
+  readonly applicationLoadBalancer: elbv2.ApplicationLoadBalancer;
+  readonly keycloakSecret: secretsmanager.ISecret;
   constructor(scope: Construct, id: string, props: KeyCloakProps) {
     super(scope, id);
 
@@ -222,6 +221,7 @@ export class KeyCloak extends Construct {
       throw new Error(`Aurora serverless is not supported in ${region}`);
     }
 
+    this.keycloakSecret = this._generateKeycloakSecret();
     this.vpc = props.vpc ?? getOrCreateVpc(this);
     this.db = this.addDatabase({
       vpc: this.vpc,
@@ -234,13 +234,13 @@ export class KeyCloak extends Construct {
       singleDbInstance: props.singleDbInstance,
       backupRetention: props.backupRetention,
     });
-    this.addKeyCloakContainerService({
+    const keycloakContainerService = this.addKeyCloakContainerService({
       database: this.db,
       vpc: this.vpc,
       keycloakVersion: props.keycloakVersion,
       publicSubnets: props.publicSubnets,
       privateSubnets: props.privateSubnets,
-      keycloakSecret: this._generateKeycloakSecret(),
+      keycloakSecret: this.keycloakSecret,
       certificate: certmgr.Certificate.fromCertificateArn(this, 'ACMCert', props.certificateArn),
       bastion: props.bastion,
       nodeCount: props.nodeCount,
@@ -248,6 +248,7 @@ export class KeyCloak extends Construct {
       autoScaleTask: props.autoScaleTask,
       env: props.env,
     });
+    this.applicationLoadBalancer = keycloakContainerService.applicationLoadBalancer;
     if (!cdk.Stack.of(this).templateOptions.description) {
       cdk.Stack.of(this).templateOptions.description = '(SO8021) - Deploy keycloak on AWS with cdk-keycloak construct library';
     }
@@ -559,6 +560,7 @@ export interface ContainerServiceProps {
 
 export class ContainerService extends Construct {
   readonly service: ecs.FargateService;
+  readonly applicationLoadBalancer: elbv2.ApplicationLoadBalancer;
   constructor(scope: Construct, id: string, props: ContainerServiceProps) {
     super(scope, id);
 
@@ -644,14 +646,14 @@ export class ContainerService extends Construct {
       });
     };
 
-    const alb = new elbv2.ApplicationLoadBalancer(this, 'ALB', {
+    this.applicationLoadBalancer = new elbv2.ApplicationLoadBalancer(this, 'ALB', {
       vpc,
       vpcSubnets: props.publicSubnets,
       internetFacing: true,
     });
-    printOutput(this, 'EndpointURL', `https://${alb.loadBalancerDnsName}`);
+    printOutput(this, 'EndpointURL', `https://${this.applicationLoadBalancer.loadBalancerDnsName}`);
 
-    const listener = alb.addListener('HttpsListener', {
+    const listener = this.applicationLoadBalancer.addListener('HttpsListener', {
       protocol: elbv2.ApplicationProtocol.HTTPS,
       certificates: [{ certificateArn: props.certificate.certificateArn }],
     });
