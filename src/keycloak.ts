@@ -1,14 +1,11 @@
+import * as cdk from 'aws-cdk-lib';
 import {
   aws_certificatemanager as certmgr,
-  aws_ec2 as ec2,
-  aws_elasticloadbalancingv2 as elbv2,
+  aws_ec2 as ec2, aws_ecs as ecs, aws_elasticloadbalancingv2 as elbv2,
   aws_iam as iam,
   aws_logs as logs,
-  aws_rds as rds,
-  aws_ecs as ecs,
-  aws_secretsmanager as secretsmanager,
+  aws_rds as rds, aws_secretsmanager as secretsmanager
 } from 'aws-cdk-lib';
-import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
 
@@ -57,6 +54,11 @@ export class KeycloakVersion {
   public static readonly V15_0_2 = KeycloakVersion.of('15.0.2');
 
   /**
+   * Keycloak version 16.1.1
+   */
+  public static readonly V16_1_1 = KeycloakVersion.of('16.1.1');
+
+  /**
    * Custom cluster version
    * @param version custom version number
    */
@@ -67,8 +69,6 @@ export class KeycloakVersion {
    */
   private constructor(public readonly version: string) { }
 }
-
-// const KEYCLOAK_VERSION = '12.0.4';
 
 interface dockerImageMap {
   'aws': string;
