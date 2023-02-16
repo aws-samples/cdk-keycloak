@@ -1,35 +1,34 @@
+import * as cdk from "aws-cdk-lib";
 import {
   aws_certificatemanager as certmgr,
   aws_ec2 as ec2,
+  aws_ecs as ecs,
   aws_elasticloadbalancingv2 as elbv2,
   aws_iam as iam,
   aws_logs as logs,
   aws_rds as rds,
-  aws_ecs as ecs,
   aws_secretsmanager as secretsmanager,
-} from 'aws-cdk-lib';
-import * as cdk from 'aws-cdk-lib';
-import { Construct } from 'constructs';
-
+} from "aws-cdk-lib";
+import { Construct } from "constructs";
 
 // regional availibility for aurora serverless
 // see https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Concepts.AuroraFeaturesRegionsDBEngines.grids.html
 const AURORA_SERVERLESS_SUPPORTED_REGIONS = [
-  'us-east-1',
-  'us-east-2',
-  'us-west-1',
-  'us-west-2',
-  'ap-south-1',
-  'ap-northeast-1',
-  'ap-northeast-2',
-  'ap-southeast-1',
-  'ap-southeast-2',
-  'ca-central-1',
-  'eu-central-1',
-  'eu-west-1',
-  'eu-west-2',
-  'eu-west-3',
-  'cn-northwest-1',
+  "us-east-1",
+  "us-east-2",
+  "us-west-1",
+  "us-west-2",
+  "ap-south-1",
+  "ap-northeast-1",
+  "ap-northeast-2",
+  "ap-southeast-1",
+  "ap-southeast-2",
+  "ca-central-1",
+  "eu-central-1",
+  "eu-west-1",
+  "eu-west-2",
+  "eu-west-3",
+  "cn-northwest-1",
 ];
 
 /**
@@ -39,45 +38,52 @@ export class KeycloakVersion {
   /**
    * Keycloak version 12.0.4
    */
-  public static readonly V12_0_4 = KeycloakVersion.of('12.0.4');
+  public static readonly V12_0_4 = KeycloakVersion.of("12.0.4");
 
   /**
    * Keycloak version 15.0.0
    */
-  public static readonly V15_0_0 = KeycloakVersion.of('15.0.0');
+  public static readonly V15_0_0 = KeycloakVersion.of("15.0.0");
 
   /**
    * Keycloak version 15.0.1
    */
-  public static readonly V15_0_1 = KeycloakVersion.of('15.0.1');
+  public static readonly V15_0_1 = KeycloakVersion.of("15.0.1");
 
   /**
    * Keycloak version 15.0.2
    */
-  public static readonly V15_0_2 = KeycloakVersion.of('15.0.2');
+  public static readonly V15_0_2 = KeycloakVersion.of("15.0.2");
+
+  /**
+   * Keycloak version 15.0.2
+   */
+  public static readonly V16_0_1 = KeycloakVersion.of("16.1.1");
 
   /**
    * Custom cluster version
    * @param version custom version number
    */
-  public static of(version: string) { return new KeycloakVersion(version); }
+  public static of(version: string) {
+    return new KeycloakVersion(version);
+  }
   /**
    *
    * @param version cluster version number
    */
-  private constructor(public readonly version: string) { }
+  private constructor(public readonly version: string) {}
 }
 
 // const KEYCLOAK_VERSION = '12.0.4';
 
 interface dockerImageMap {
-  'aws': string;
-  'aws-cn': string;
+  aws: string;
+  "aws-cn": string;
 }
 
 const KEYCLOAK_DOCKER_IMAGE_URI_MAP: dockerImageMap = {
-  'aws': 'jboss/keycloak:',
-  'aws-cn': '048912060910.dkr.ecr.cn-northwest-1.amazonaws.com.cn/dockerhub/jboss/keycloak:',
+  aws: "jboss/keycloak:",
+  "aws-cn": "048912060910.dkr.ecr.cn-northwest-1.amazonaws.com.cn/dockerhub/jboss/keycloak:",
 };
 
 /**
@@ -218,7 +224,11 @@ export class KeyCloak extends Construct {
     const region = cdk.Stack.of(this).region;
     const regionIsResolved = !cdk.Token.isUnresolved(region);
 
-    if (props.auroraServerless && regionIsResolved && !AURORA_SERVERLESS_SUPPORTED_REGIONS.includes(region)) {
+    if (
+      props.auroraServerless &&
+      regionIsResolved &&
+      !AURORA_SERVERLESS_SUPPORTED_REGIONS.includes(region)
+    ) {
       throw new Error(`Aurora serverless is not supported in ${region}`);
     }
 
@@ -241,7 +251,7 @@ export class KeyCloak extends Construct {
       publicSubnets: props.publicSubnets,
       privateSubnets: props.privateSubnets,
       keycloakSecret: this._generateKeycloakSecret(),
-      certificate: certmgr.Certificate.fromCertificateArn(this, 'ACMCert', props.certificateArn),
+      certificate: certmgr.Certificate.fromCertificateArn(this, "ACMCert", props.certificateArn),
       bastion: props.bastion,
       nodeCount: props.nodeCount,
       stickinessCookieDuration: props.stickinessCookieDuration,
@@ -249,22 +259,23 @@ export class KeyCloak extends Construct {
       env: props.env,
     });
     if (!cdk.Stack.of(this).templateOptions.description) {
-      cdk.Stack.of(this).templateOptions.description = '(SO8021) - Deploy keycloak on AWS with cdk-keycloak construct library';
+      cdk.Stack.of(this).templateOptions.description =
+        "(SO8021) - Deploy keycloak on AWS with cdk-keycloak construct library";
     }
   }
   public addDatabase(props: DatabaseProps): Database {
-    return new Database(this, 'Database', props);
+    return new Database(this, "Database", props);
   }
   public addKeyCloakContainerService(props: ContainerServiceProps) {
-    return new ContainerService(this, 'KeyCloakContainerSerivce', props);
+    return new ContainerService(this, "KeyCloakContainerSerivce", props);
   }
   private _generateKeycloakSecret(): secretsmanager.ISecret {
-    return new secretsmanager.Secret(this, 'KCSecret', {
+    return new secretsmanager.Secret(this, "KCSecret", {
       generateSecretString: {
-        generateStringKey: 'password',
+        generateStringKey: "password",
         excludePunctuation: true,
         passwordLength: 12,
-        secretStringTemplate: JSON.stringify({ username: 'keycloak' }),
+        secretStringTemplate: JSON.stringify({ username: "keycloak" }),
       },
     });
   }
@@ -374,27 +385,36 @@ export class Database extends Construct {
     // allow internally from the same security group
     config.connections.allowInternally(ec2.Port.tcp(this._mysqlListenerPort));
     // allow from the whole vpc cidr
-    config.connections.allowFrom(ec2.Peer.ipv4(props.vpc.vpcCidrBlock), ec2.Port.tcp(this._mysqlListenerPort));
+    config.connections.allowFrom(
+      ec2.Peer.ipv4(props.vpc.vpcCidrBlock),
+      ec2.Port.tcp(this._mysqlListenerPort)
+    );
     this.clusterEndpointHostname = config.endpoint;
     this.clusterIdentifier = config.identifier;
     this.connections = config.connections;
-    printOutput(this, 'DBSecretArn', config.secret.secretArn);
-    printOutput(this, 'clusterEndpointHostname', this.clusterEndpointHostname);
-    printOutput(this, 'clusterIdentifier', this.clusterIdentifier);
+    printOutput(this, "DBSecretArn", config.secret.secretArn);
+    printOutput(this, "clusterEndpointHostname", this.clusterEndpointHostname);
+    printOutput(this, "clusterIdentifier", this.clusterIdentifier);
   }
   private _createRdsInstance(props: DatabaseProps): DatabaseCofig {
-    const dbInstance = new rds.DatabaseInstance(this, 'DBInstance', {
+    const dbInstance = new rds.DatabaseInstance(this, "DBInstance", {
       vpc: props.vpc,
-      databaseName: 'keycloak',
+      databaseName: "keycloak",
       vpcSubnets: props.databaseSubnets,
-      engine: props.instanceEngine ?? rds.DatabaseInstanceEngine.mysql({
-        version: rds.MysqlEngineVersion.VER_8_0_21,
-      }),
+      engine:
+        props.instanceEngine ??
+        rds.DatabaseInstanceEngine.mysql({
+          version: rds.MysqlEngineVersion.VER_8_0_21,
+        }),
       storageEncrypted: true,
       backupRetention: props.backupRetention ?? cdk.Duration.days(7),
-      credentials: rds.Credentials.fromGeneratedSecret('admin'),
-      instanceType: props.instanceType ?? new ec2.InstanceType('r5.large'),
-      parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.mysql8.0'),
+      credentials: rds.Credentials.fromGeneratedSecret("admin"),
+      instanceType: props.instanceType ?? new ec2.InstanceType("r5.large"),
+      parameterGroup: rds.ParameterGroup.fromParameterGroupName(
+        this,
+        "ParameterGroup",
+        "default.mysql8.0"
+      ),
       deletionProtection: true,
       removalPolicy: cdk.RemovalPolicy.RETAIN,
     });
@@ -407,19 +427,25 @@ export class Database extends Construct {
   }
   // create a RDS for MySQL DB cluster
   private _createRdsCluster(props: DatabaseProps): DatabaseCofig {
-    const dbCluster = new rds.DatabaseCluster(this, 'DBCluster', {
-      engine: props.clusterEngine ?? rds.DatabaseClusterEngine.auroraMysql({
-        version: rds.AuroraMysqlEngineVersion.VER_2_09_1,
-      }),
-      defaultDatabaseName: 'keycloak',
+    const dbCluster = new rds.DatabaseCluster(this, "DBCluster", {
+      engine:
+        props.clusterEngine ??
+        rds.DatabaseClusterEngine.auroraMysql({
+          version: rds.AuroraMysqlEngineVersion.VER_2_09_1,
+        }),
+      defaultDatabaseName: "keycloak",
       deletionProtection: true,
-      credentials: rds.Credentials.fromGeneratedSecret('admin'),
+      credentials: rds.Credentials.fromGeneratedSecret("admin"),
       instanceProps: {
         vpc: props.vpc,
         vpcSubnets: props.databaseSubnets,
-        instanceType: props.instanceType ?? new ec2.InstanceType('r5.large'),
+        instanceType: props.instanceType ?? new ec2.InstanceType("r5.large"),
       },
-      parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.aurora-mysql5.7'),
+      parameterGroup: rds.ParameterGroup.fromParameterGroupName(
+        this,
+        "ParameterGroup",
+        "default.aurora-mysql5.7"
+      ),
       backup: {
         retention: props.backupRetention ?? cdk.Duration.days(7),
       },
@@ -434,16 +460,20 @@ export class Database extends Construct {
     };
   }
   private _createServerlessCluster(props: DatabaseProps): DatabaseCofig {
-    const dbCluster = new rds.ServerlessCluster(this, 'AuroraServerlessCluster', {
+    const dbCluster = new rds.ServerlessCluster(this, "AuroraServerlessCluster", {
       engine: rds.DatabaseClusterEngine.AURORA_MYSQL,
       vpc: props.vpc,
-      defaultDatabaseName: 'keycloak',
+      defaultDatabaseName: "keycloak",
       vpcSubnets: props.databaseSubnets,
-      credentials: rds.Credentials.fromGeneratedSecret('admin'),
+      credentials: rds.Credentials.fromGeneratedSecret("admin"),
       backupRetention: props.backupRetention ?? cdk.Duration.days(7),
       deletionProtection: true,
       removalPolicy: cdk.RemovalPolicy.RETAIN,
-      parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.aurora-mysql5.7'),
+      parameterGroup: rds.ParameterGroup.fromParameterGroupName(
+        this,
+        "ParameterGroup",
+        "default.aurora-mysql5.7"
+      ),
     });
     return {
       connections: dbCluster.connections,
@@ -454,21 +484,27 @@ export class Database extends Construct {
   }
   // create a RDS for MySQL DB cluster with Aurora Serverless v2
   private _createServerlessV2Cluster(props: DatabaseProps): DatabaseCofig {
-    const dbCluster = new rds.DatabaseCluster(this, 'DBCluster', {
-      engine: props.clusterEngine ?? rds.DatabaseClusterEngine.auroraMysql({
-        version: rds.AuroraMysqlEngineVersion.VER_3_02_0,
-      }),
-      defaultDatabaseName: 'keycloak',
+    const dbCluster = new rds.DatabaseCluster(this, "DBCluster", {
+      engine:
+        props.clusterEngine ??
+        rds.DatabaseClusterEngine.auroraMysql({
+          version: rds.AuroraMysqlEngineVersion.VER_3_02_0,
+        }),
+      defaultDatabaseName: "keycloak",
       deletionProtection: true,
-      credentials: rds.Credentials.fromGeneratedSecret('admin'),
+      credentials: rds.Credentials.fromGeneratedSecret("admin"),
       instanceProps: {
         vpc: props.vpc,
         vpcSubnets: props.databaseSubnets,
         // Specify serverless Instance Type
-        instanceType: new ec2.InstanceType('serverless'),
+        instanceType: new ec2.InstanceType("serverless"),
       },
       // Set default parameter group for Aurora MySQL 8.0
-      parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.aurora-mysql8.0'),
+      parameterGroup: rds.ParameterGroup.fromParameterGroupName(
+        this,
+        "ParameterGroup",
+        "default.aurora-mysql8.0"
+      ),
       backup: {
         retention: props.backupRetention ?? cdk.Duration.days(7),
       },
@@ -478,9 +514,7 @@ export class Database extends Construct {
     // Set Serverless V2 Scaling Configuration
     // TODO: Use cleaner way to set scaling configuration.
     // https://github.com/aws/aws-cdk/issues/20197
-    (
-      dbCluster.node.findChild('Resource') as rds.CfnDBCluster
-    ).serverlessV2ScalingConfiguration = {
+    (dbCluster.node.findChild("Resource") as rds.CfnDBCluster).serverlessV2ScalingConfiguration = {
       minCapacity: 0.5,
       maxCapacity: 10,
     };
@@ -563,49 +597,54 @@ export class ContainerService extends Construct {
     super(scope, id);
 
     const vpc = props.vpc;
-    const cluster = new ecs.Cluster(this, 'Cluster', { vpc });
+    const cluster = new ecs.Cluster(this, "Cluster", { vpc });
     cluster.node.addDependency(props.database);
-    const taskRole = new iam.Role(this, 'TaskRole', {
+    const taskRole = new iam.Role(this, "TaskRole", {
       assumedBy: new iam.CompositePrincipal(
-        new iam.ServicePrincipal('ecs.amazonaws.com'),
-        new iam.ServicePrincipal('ecs-tasks.amazonaws.com'),
+        new iam.ServicePrincipal("ecs.amazonaws.com"),
+        new iam.ServicePrincipal("ecs-tasks.amazonaws.com")
       ),
     });
-    const taskDefinition = new ecs.FargateTaskDefinition(this, 'TaskDef', {
+    const taskDefinition = new ecs.FargateTaskDefinition(this, "TaskDef", {
       cpu: 4096,
       memoryLimitMiB: 8192,
       executionRole: taskRole,
     });
 
-    const logGroup = new logs.LogGroup(this, 'LogGroup', {
+    const logGroup = new logs.LogGroup(this, "LogGroup", {
       retention: logs.RetentionDays.ONE_MONTH,
       removalPolicy: cdk.RemovalPolicy.RETAIN,
     });
 
-    const kc = taskDefinition.addContainer('keycloak', {
-      image: ecs.ContainerImage.fromRegistry(this.getKeyCloakDockerImageUri(props.keycloakVersion.version)),
-      environment: Object.assign({
-        DB_ADDR: props.database.clusterEndpointHostname,
-        DB_DATABASE: 'keycloak',
-        DB_PORT: '3306',
-        DB_USER: 'admin',
-        DB_VENDOR: 'mysql',
-        // KEYCLOAK_LOGLEVEL: 'DEBUG',
-        PROXY_ADDRESS_FORWARDING: 'true',
-        JDBC_PARAMS: 'useSSL=false',
-        JGROUPS_DISCOVERY_PROTOCOL: 'JDBC_PING',
-        // We don't need to specify `initialize_sql` string into `JGROUPS_DISCOVERY_PROPERTIES` property,
-        // because the default `initialize_sql` is compatible with MySQL. (See: https://github.com/belaban/JGroups/blob/master/src/org/jgroups/protocols/JDBC_PING.java#L55-L60)
-        // But you need to specify `initialize_sql` for PostgreSQL, because `varbinary` schema is not supported. (See: https://github.com/keycloak/keycloak-containers/blob/d4ce446dde3026f89f66fa86b58c2d0d6132ce4d/docker-compose-examples/keycloak-postgres-jdbc-ping.yml#L49)
-        // JGROUPS_DISCOVERY_PROPERTIES: '',
-      }, props.env),
+    const kc = taskDefinition.addContainer("keycloak", {
+      image: ecs.ContainerImage.fromRegistry(
+        this.getKeyCloakDockerImageUri(props.keycloakVersion.version)
+      ),
+      environment: Object.assign(
+        {
+          DB_ADDR: props.database.clusterEndpointHostname,
+          DB_DATABASE: "keycloak",
+          DB_PORT: "3306",
+          DB_USER: "admin",
+          DB_VENDOR: "mysql",
+          // KEYCLOAK_LOGLEVEL: 'DEBUG',
+          PROXY_ADDRESS_FORWARDING: "true",
+          JDBC_PARAMS: "useSSL=false",
+          JGROUPS_DISCOVERY_PROTOCOL: "JDBC_PING",
+          // We don't need to specify `initialize_sql` string into `JGROUPS_DISCOVERY_PROPERTIES` property,
+          // because the default `initialize_sql` is compatible with MySQL. (See: https://github.com/belaban/JGroups/blob/master/src/org/jgroups/protocols/JDBC_PING.java#L55-L60)
+          // But you need to specify `initialize_sql` for PostgreSQL, because `varbinary` schema is not supported. (See: https://github.com/keycloak/keycloak-containers/blob/d4ce446dde3026f89f66fa86b58c2d0d6132ce4d/docker-compose-examples/keycloak-postgres-jdbc-ping.yml#L49)
+          // JGROUPS_DISCOVERY_PROPERTIES: '',
+        },
+        props.env
+      ),
       secrets: {
-        DB_PASSWORD: ecs.Secret.fromSecretsManager(props.database.secret, 'password'),
-        KEYCLOAK_USER: ecs.Secret.fromSecretsManager(props.keycloakSecret, 'username'),
-        KEYCLOAK_PASSWORD: ecs.Secret.fromSecretsManager(props.keycloakSecret, 'password'),
+        DB_PASSWORD: ecs.Secret.fromSecretsManager(props.database.secret, "password"),
+        KEYCLOAK_USER: ecs.Secret.fromSecretsManager(props.keycloakSecret, "username"),
+        KEYCLOAK_PASSWORD: ecs.Secret.fromSecretsManager(props.keycloakSecret, "password"),
       },
       logging: ecs.LogDrivers.awsLogs({
-        streamPrefix: 'keycloak',
+        streamPrefix: "keycloak",
         logGroup,
       }),
     });
@@ -614,13 +653,15 @@ export class ContainerService extends Construct {
       { containerPort: 7600 }, // jgroups-tcp
       { containerPort: 57600 }, // jgroups-tcp-fd
       { containerPort: 55200, protocol: ecs.Protocol.UDP }, // jgroups-udp
-      { containerPort: 54200, protocol: ecs.Protocol.UDP }, // jgroups-udp-fd
+      { containerPort: 54200, protocol: ecs.Protocol.UDP } // jgroups-udp-fd
     );
 
     // we need extra privileges to fetch keycloak docker images from China mirror site
-    taskDefinition.executionRole?.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonEC2ContainerRegistryReadOnly'));
+    taskDefinition.executionRole?.addManagedPolicy(
+      iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonEC2ContainerRegistryReadOnly")
+    );
 
-    this.service = new ecs.FargateService(this, 'Service', {
+    this.service = new ecs.FargateService(this, "Service", {
       cluster,
       taskDefinition,
       circuitBreaker: props.circuitBreaker ? { rollback: true } : undefined,
@@ -628,10 +669,26 @@ export class ContainerService extends Construct {
       healthCheckGracePeriod: cdk.Duration.seconds(120),
     });
     // we need to allow traffic from the same secret group for keycloak cluster with jdbc_ping
-    this.service.connections.allowFrom(this.service.connections, ec2.Port.tcp(7600), 'kc jgroups-tcp');
-    this.service.connections.allowFrom(this.service.connections, ec2.Port.tcp(57600), 'kc jgroups-tcp-fd');
-    this.service.connections.allowFrom(this.service.connections, ec2.Port.udp(55200), 'kc jgroups-udp');
-    this.service.connections.allowFrom(this.service.connections, ec2.Port.udp(54200), 'kc jgroups-udp-fd');
+    this.service.connections.allowFrom(
+      this.service.connections,
+      ec2.Port.tcp(7600),
+      "kc jgroups-tcp"
+    );
+    this.service.connections.allowFrom(
+      this.service.connections,
+      ec2.Port.tcp(57600),
+      "kc jgroups-tcp-fd"
+    );
+    this.service.connections.allowFrom(
+      this.service.connections,
+      ec2.Port.udp(55200),
+      "kc jgroups-udp"
+    );
+    this.service.connections.allowFrom(
+      this.service.connections,
+      ec2.Port.udp(54200),
+      "kc jgroups-udp-fd"
+    );
 
     if (props.autoScaleTask) {
       const minCapacity = props.autoScaleTask.min ?? props.nodeCount ?? 2;
@@ -639,24 +696,24 @@ export class ContainerService extends Construct {
         minCapacity,
         maxCapacity: props.autoScaleTask.max ?? minCapacity + 5,
       });
-      scaling.scaleOnCpuUtilization('CpuScaling', {
+      scaling.scaleOnCpuUtilization("CpuScaling", {
         targetUtilizationPercent: props.autoScaleTask.targetCpuUtilization ?? 75,
       });
-    };
+    }
 
-    const alb = new elbv2.ApplicationLoadBalancer(this, 'ALB', {
+    const alb = new elbv2.ApplicationLoadBalancer(this, "ALB", {
       vpc,
       vpcSubnets: props.publicSubnets,
       internetFacing: true,
     });
-    printOutput(this, 'EndpointURL', `https://${alb.loadBalancerDnsName}`);
+    printOutput(this, "EndpointURL", `https://${alb.loadBalancerDnsName}`);
 
-    const listener = alb.addListener('HttpsListener', {
+    const listener = alb.addListener("HttpsListener", {
       protocol: elbv2.ApplicationProtocol.HTTPS,
       certificates: [{ certificateArn: props.certificate.certificateArn }],
     });
 
-    listener.addTargets('ECSTarget', {
+    listener.addTargets("ECSTarget", {
       targets: [this.service],
       healthCheck: {
         healthyThresholdCount: 3,
@@ -676,12 +733,11 @@ export class ContainerService extends Construct {
     // allow ecs task connect to database
     props.database.connections.allowDefaultPortFrom(this.service);
 
-
     // create a bastion host
     if (props.bastion === true) {
-      const bast = new ec2.BastionHostLinux(this, 'Bast', {
+      const bast = new ec2.BastionHostLinux(this, "Bast", {
         vpc,
-        instanceType: new ec2.InstanceType('m5.large'),
+        instanceType: new ec2.InstanceType("m5.large"),
       });
       props.database.connections.allowDefaultPortFrom(bast);
     }
@@ -695,17 +751,17 @@ export class ContainerService extends Construct {
         mapping[partition] = { uri };
       }
       const imageMap = new cdk.CfnMapping(this, id, { mapping });
-      return imageMap.findInMap(cdk.Aws.PARTITION, 'uri');
+      return imageMap.findInMap(cdk.Aws.PARTITION, "uri");
     } else {
-      if (stack.region.startsWith('cn-')) {
-        return map['aws-cn'] += version;
+      if (stack.region.startsWith("cn-")) {
+        return (map["aws-cn"] += version);
       } else {
-        return map.aws += version;
+        return (map.aws += version);
       }
     }
   }
   private getKeyCloakDockerImageUri(version: string): string {
-    return this.getImageUriFromMap(KEYCLOAK_DOCKER_IMAGE_URI_MAP, version, 'KeycloakImageMap');
+    return this.getImageUriFromMap(KEYCLOAK_DOCKER_IMAGE_URI_MAP, version, "KeycloakImageMap");
   }
 }
 
@@ -715,11 +771,11 @@ export class ContainerService extends Construct {
  */
 function getOrCreateVpc(scope: Construct): ec2.IVpc {
   // use an existing vpc or create a new one
-  return scope.node.tryGetContext('use_default_vpc') === '1' ?
-    ec2.Vpc.fromLookup(scope, 'Vpc', { isDefault: true }) :
-    scope.node.tryGetContext('use_vpc_id') ?
-      ec2.Vpc.fromLookup(scope, 'Vpc', { vpcId: scope.node.tryGetContext('use_vpc_id') }) :
-      new ec2.Vpc(scope, 'Vpc', { maxAzs: 3, natGateways: 1 });
+  return scope.node.tryGetContext("use_default_vpc") === "1"
+    ? ec2.Vpc.fromLookup(scope, "Vpc", { isDefault: true })
+    : scope.node.tryGetContext("use_vpc_id")
+    ? ec2.Vpc.fromLookup(scope, "Vpc", { vpcId: scope.node.tryGetContext("use_vpc_id") })
+    : new ec2.Vpc(scope, "Vpc", { maxAzs: 3, natGateways: 1 });
 }
 
 function printOutput(scope: Construct, id: string, key: string | number) {
