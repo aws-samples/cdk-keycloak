@@ -360,6 +360,14 @@ Object {
         "KeyCloakDatabaseAuroraServerlessClusterSecurityGroupF0CB4641",
         "KeyCloakDatabaseAuroraServerlessClusterSubnets6166944B",
       ],
+      "Properties": Object {
+        "ClusterSettings": Array [
+          Object {
+            "Name": "containerInsights",
+            "Value": "enabled",
+          },
+        ],
+      },
       "Type": "AWS::ECS::Cluster",
     },
     "KeyCloakKeyCloakContainerSerivceLogGroup010F2AAE": Object {

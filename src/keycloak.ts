@@ -583,7 +583,7 @@ export class ContainerService extends Construct {
     super(scope, id);
 
     const vpc = props.vpc;
-    const cluster = new ecs.Cluster(this, 'Cluster', { vpc });
+    const cluster = new ecs.Cluster(this, 'Cluster', { vpc, containerInsights: true });
     cluster.node.addDependency(props.database);
     const taskRole = new iam.Role(this, 'TaskRole', {
       assumedBy: new iam.CompositePrincipal(
