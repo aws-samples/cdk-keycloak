@@ -207,6 +207,13 @@ export interface KeyCloakProps {
    * @default - no ecs service autoscaling
    */
   readonly autoScaleTask?: AutoScaleTask;
+
+  /**
+   * Whether to put the put the load balancer in the public or private subnets
+   *
+   * @default true
+   */
+  readonly internetFacing?: boolean;
 }
 
 export class KeyCloak extends Construct {
@@ -247,6 +254,7 @@ export class KeyCloak extends Construct {
       stickinessCookieDuration: props.stickinessCookieDuration,
       autoScaleTask: props.autoScaleTask,
       env: props.env,
+      internetFacing: props.internetFacing ?? true,
     });
     if (!cdk.Stack.of(this).templateOptions.description) {
       cdk.Stack.of(this).templateOptions.description = '(SO8021) - Deploy keycloak on AWS with cdk-keycloak construct library';
@@ -555,6 +563,13 @@ export interface ContainerServiceProps {
    * @default - no ecs service autoscaling
    */
   readonly autoScaleTask?: AutoScaleTask;
+
+  /**
+   * Whether to put the put the load balancer in the public or private subnets
+   *
+   * @default true
+   */
+  readonly internetFacing?: boolean;
 }
 
 export class ContainerService extends Construct {
@@ -646,8 +661,8 @@ export class ContainerService extends Construct {
 
     const alb = new elbv2.ApplicationLoadBalancer(this, 'ALB', {
       vpc,
-      vpcSubnets: props.publicSubnets,
-      internetFacing: true,
+      vpcSubnets: props.internetFacing ? props.publicSubnets : props.privateSubnets,
+      internetFacing: props.internetFacing,
     });
     printOutput(this, 'EndpointURL', `https://${alb.loadBalancerDnsName}`);
 
