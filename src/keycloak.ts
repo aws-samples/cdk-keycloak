@@ -251,7 +251,7 @@ export class KeyCloak extends Construct {
       stickinessCookieDuration: props.stickinessCookieDuration,
       autoScaleTask: props.autoScaleTask,
       env: props.env,
-      internetFacing: props.internetFacing == null ? true : props.internetFacing,
+      internetFacing: props.internetFacing ?? true,
     });
     if (!cdk.Stack.of(this).templateOptions.description) {
       cdk.Stack.of(this).templateOptions.description = '(SO8021) - Deploy keycloak on AWS with cdk-keycloak construct library';
