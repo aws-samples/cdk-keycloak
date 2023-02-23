@@ -16,7 +16,7 @@ Name|Description
 ----|-----------
 [AutoScaleTask](#cdk-keycloak-autoscaletask)|The ECS task autoscaling definition.
 [ContainerServiceProps](#cdk-keycloak-containerserviceprops)|*No description*
-[DatabaseCofig](#cdk-keycloak-databasecofig)|Database configuration.
+[DatabaseConfig](#cdk-keycloak-databaseconfig)|Database configuration.
 [DatabaseProps](#cdk-keycloak-databaseprops)|*No description*
 [KeyCloakProps](#cdk-keycloak-keycloakprops)|*No description*
 
@@ -95,6 +95,8 @@ new Database(scope: Construct, id: string, props: DatabaseProps)
   * **databaseSubnets** (<code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code>)  VPC subnets for database. __*Optional*__
   * **instanceEngine** (<code>[aws_rds.IInstanceEngine](#aws-cdk-lib-aws-rds-iinstanceengine)</code>)  The database instance engine. __*Default*__: MySQL 8.0.21
   * **instanceType** (<code>[aws_ec2.InstanceType](#aws-cdk-lib-aws-ec2-instancetype)</code>)  The database instance type. __*Default*__: r5.large
+  * **maxCapacity** (<code>number</code>)  The maximum number of Aurora Serverless V2 capacity units. __*Default*__: 10
+  * **minCapacity** (<code>number</code>)  The minimum number of Aurora Serverless V2 capacity units. __*Default*__: 0.5
   * **singleDbInstance** (<code>boolean</code>)  Whether to use single RDS instance rather than RDS cluster. __*Default*__: false
 
 
@@ -140,6 +142,8 @@ new KeyCloak(scope: Construct, id: string, props: KeyCloakProps)
   * **bastion** (<code>boolean</code>)  Create a bastion host for debugging or trouble-shooting. __*Default*__: false
   * **clusterEngine** (<code>[aws_rds.IClusterEngine](#aws-cdk-lib-aws-rds-iclusterengine)</code>)  The database cluster engine. __*Default*__: rds.AuroraMysqlEngineVersion.VER_2_09_1
   * **databaseInstanceType** (<code>[aws_ec2.InstanceType](#aws-cdk-lib-aws-ec2-instancetype)</code>)  Database instance type. __*Default*__: r5.large
+  * **databaseMaxCapacity** (<code>number</code>)  The maximum number of Aurora Serverless V2 capacity units. __*Default*__: 10
+  * **databaseMinCapacity** (<code>number</code>)  The minimum number of Aurora Serverless V2 capacity units. __*Default*__: 0.5
   * **databaseSubnets** (<code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code>)  VPC subnets for database. __*Default*__: VPC isolated subnets
   * **env** (<code>Map<string, string></code>)  The environment variables to pass to the keycloak container. __*Optional*__
   * **instanceEngine** (<code>[aws_rds.IInstanceEngine](#aws-cdk-lib-aws-rds-iinstanceengine)</code>)  The database instance engine. __*Default*__: MySQL 8.0.21
@@ -183,6 +187,8 @@ addDatabase(props: DatabaseProps): Database
   * **databaseSubnets** (<code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code>)  VPC subnets for database. __*Optional*__
   * **instanceEngine** (<code>[aws_rds.IInstanceEngine](#aws-cdk-lib-aws-rds-iinstanceengine)</code>)  The database instance engine. __*Default*__: MySQL 8.0.21
   * **instanceType** (<code>[aws_ec2.InstanceType](#aws-cdk-lib-aws-ec2-instancetype)</code>)  The database instance type. __*Default*__: r5.large
+  * **maxCapacity** (<code>number</code>)  The maximum number of Aurora Serverless V2 capacity units. __*Default*__: 10
+  * **minCapacity** (<code>number</code>)  The minimum number of Aurora Serverless V2 capacity units. __*Default*__: 0.5
   * **singleDbInstance** (<code>boolean</code>)  Whether to use single RDS instance rather than RDS cluster. __*Default*__: false
 
 __Returns__:
@@ -294,7 +300,7 @@ Name | Type | Description
 
 
 
-## struct DatabaseCofig  <a id="cdk-keycloak-databasecofig"></a>
+## struct DatabaseConfig  <a id="cdk-keycloak-databaseconfig"></a>
 
 
 Database configuration.
@@ -327,6 +333,8 @@ Name | Type | Description
 **databaseSubnets**? | <code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code> | VPC subnets for database.<br/>__*Optional*__
 **instanceEngine**? | <code>[aws_rds.IInstanceEngine](#aws-cdk-lib-aws-rds-iinstanceengine)</code> | The database instance engine.<br/>__*Default*__: MySQL 8.0.21
 **instanceType**? | <code>[aws_ec2.InstanceType](#aws-cdk-lib-aws-ec2-instancetype)</code> | The database instance type.<br/>__*Default*__: r5.large
+**maxCapacity**? | <code>number</code> | The maximum number of Aurora Serverless V2 capacity units.<br/>__*Default*__: 10
+**minCapacity**? | <code>number</code> | The minimum number of Aurora Serverless V2 capacity units.<br/>__*Default*__: 0.5
 **singleDbInstance**? | <code>boolean</code> | Whether to use single RDS instance rather than RDS cluster.<br/>__*Default*__: false
 
 
@@ -349,6 +357,8 @@ Name | Type | Description
 **bastion**? | <code>boolean</code> | Create a bastion host for debugging or trouble-shooting.<br/>__*Default*__: false
 **clusterEngine**? | <code>[aws_rds.IClusterEngine](#aws-cdk-lib-aws-rds-iclusterengine)</code> | The database cluster engine.<br/>__*Default*__: rds.AuroraMysqlEngineVersion.VER_2_09_1
 **databaseInstanceType**? | <code>[aws_ec2.InstanceType](#aws-cdk-lib-aws-ec2-instancetype)</code> | Database instance type.<br/>__*Default*__: r5.large
+**databaseMaxCapacity**? | <code>number</code> | The maximum number of Aurora Serverless V2 capacity units.<br/>__*Default*__: 10
+**databaseMinCapacity**? | <code>number</code> | The minimum number of Aurora Serverless V2 capacity units.<br/>__*Default*__: 0.5
 **databaseSubnets**? | <code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code> | VPC subnets for database.<br/>__*Default*__: VPC isolated subnets
 **env**? | <code>Map<string, string></code> | The environment variables to pass to the keycloak container.<br/>__*Optional*__
 **instanceEngine**? | <code>[aws_rds.IInstanceEngine](#aws-cdk-lib-aws-rds-iinstanceengine)</code> | The database instance engine.<br/>__*Default*__: MySQL 8.0.21
