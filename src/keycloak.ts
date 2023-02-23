@@ -245,6 +245,13 @@ export interface KeyCloakProps {
    * @default 10
    */
   readonly databaseMaxCapacity?: number;
+
+  /**
+   * Controls what happens to the database if it stops being managed by CloudFormation
+   *
+   * @default RemovalPolicy.RETAIN
+   */
+  readonly databaseRemovalPolicy?: cdk.RemovalPolicy;
 }
 
 export class KeyCloak extends Construct {
@@ -279,6 +286,7 @@ export class KeyCloak extends Construct {
       removalPolicy: props.databaseRemovalPolicy,
       maxCapacity: props.databaseMaxCapacity,
       minCapacity: props.databaseMinCapacity,
+      removalPolicy: props.databaseRemovalPolicy,
     });
     const keycloakContainerService = this.addKeyCloakContainerService({
       database: this.db,
@@ -401,6 +409,13 @@ export interface DatabaseProps {
    * @default 10
    */
   readonly maxCapacity?: number;
+
+  /**
+   * Controls what happens to the database if it stops being managed by CloudFormation
+   *
+   * @default RemovalPolicy.RETAIN
+   */
+  readonly removalPolicy?: cdk.RemovalPolicy;
 }
 
 /**
