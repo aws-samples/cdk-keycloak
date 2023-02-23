@@ -209,11 +209,18 @@ export interface KeyCloakProps {
   readonly autoScaleTask?: AutoScaleTask;
 
   /**
-   * Whether to put the put the load balancer in the public or private subnets
+   * Whether to put the load balancer in the public or private subnets
    *
    * @default true
    */
   readonly internetFacing?: boolean;
+
+  /**
+   * Controls what happens to the database if it stops being managed by CloudFormation
+   *
+   * @default RemovalPolicy.RETAIN
+   */
+  readonly databaseRemovalPolicy?: cdk.RemovalPolicy;
 }
 
 export class KeyCloak extends Construct {
@@ -243,6 +250,7 @@ export class KeyCloak extends Construct {
       auroraServerlessV2: props.auroraServerlessV2,
       singleDbInstance: props.singleDbInstance,
       backupRetention: props.backupRetention,
+      removalPolicy: props.databaseRemovalPolicy,
     });
     const keycloakContainerService = this.addKeyCloakContainerService({
       database: this.db,
@@ -334,6 +342,13 @@ export interface DatabaseProps {
    * @default - 7 days
    */
   readonly backupRetention?: cdk.Duration;
+
+  /**
+   * Controls what happens to the database if it stops being managed by CloudFormation
+   *
+   * @default RemovalPolicy.RETAIN
+   */
+  readonly removalPolicy?: cdk.RemovalPolicy;
 }
 
 /**
@@ -408,7 +423,7 @@ export class Database extends Construct {
       instanceType: props.instanceType ?? new ec2.InstanceType('r5.large'),
       parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.mysql8.0'),
       deletionProtection: true,
-      removalPolicy: cdk.RemovalPolicy.RETAIN,
+      removalPolicy: props.removalPolicy ?? cdk.RemovalPolicy.RETAIN,
     });
     return {
       connections: dbInstance.connections,
@@ -436,7 +451,7 @@ export class Database extends Construct {
         retention: props.backupRetention ?? cdk.Duration.days(7),
       },
       storageEncrypted: true,
-      removalPolicy: cdk.RemovalPolicy.RETAIN,
+      removalPolicy: props.removalPolicy ?? cdk.RemovalPolicy.RETAIN,
     });
     return {
       connections: dbCluster.connections,
@@ -454,7 +469,7 @@ export class Database extends Construct {
       credentials: rds.Credentials.fromGeneratedSecret('admin'),
       backupRetention: props.backupRetention ?? cdk.Duration.days(7),
       deletionProtection: true,
-      removalPolicy: cdk.RemovalPolicy.RETAIN,
+      removalPolicy: props.removalPolicy ?? cdk.RemovalPolicy.RETAIN,
       parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.aurora-mysql5.7'),
     });
     return {
@@ -485,7 +500,7 @@ export class Database extends Construct {
         retention: props.backupRetention ?? cdk.Duration.days(7),
       },
       storageEncrypted: true,
-      removalPolicy: cdk.RemovalPolicy.RETAIN,
+      removalPolicy: props.removalPolicy ?? cdk.RemovalPolicy.RETAIN,
     });
     // Set Serverless V2 Scaling Configuration
     // TODO: Use cleaner way to set scaling configuration.
