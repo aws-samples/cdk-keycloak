@@ -4,7 +4,7 @@ import {
   aws_ec2 as ec2, aws_ecs as ecs, aws_elasticloadbalancingv2 as elbv2,
   aws_iam as iam,
   aws_logs as logs,
-  aws_rds as rds, aws_secretsmanager as secretsmanager,
+  aws_rds as rds, aws_secretsmanager as secretsmanager
 } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
@@ -221,6 +221,18 @@ export interface KeyCloakProps {
    * @default RemovalPolicy.RETAIN
    */
   readonly databaseRemovalPolicy?: cdk.RemovalPolicy;
+  /**
+   * The minimum number of Aurora Serverless V2 capacity units.
+   *
+   * @default 0.5
+  */
+  readonly databaseMinCapacity?: number;
+  /**
+  * The maximum number of Aurora Serverless V2 capacity units.
+  *
+   * @default 10
+   */
+  readonly databaseMaxCapacity?: number;
 }
 
 export class KeyCloak extends Construct {
@@ -251,6 +263,8 @@ export class KeyCloak extends Construct {
       singleDbInstance: props.singleDbInstance,
       backupRetention: props.backupRetention,
       removalPolicy: props.databaseRemovalPolicy,
+      maxCapacity: props.databaseMaxCapacity,
+      minCapacity: props.databaseMinCapacity,
     });
     const keycloakContainerService = this.addKeyCloakContainerService({
       database: this.db,
@@ -349,12 +363,24 @@ export interface DatabaseProps {
    * @default RemovalPolicy.RETAIN
    */
   readonly removalPolicy?: cdk.RemovalPolicy;
+  /**
+   * The minimum number of Aurora Serverless V2 capacity units.
+   *
+   * @default 0.5
+  */
+  readonly minCapacity?: number;
+  /**
+   * The maximum number of Aurora Serverless V2 capacity units.
+   *
+   * @default 10
+   */
+  readonly maxCapacity?: number;
 }
 
 /**
  * Database configuration
  */
-export interface DatabaseCofig {
+export interface DatabaseConfig {
   /**
    * The database secret.
    */
@@ -409,7 +435,7 @@ export class Database extends Construct {
     printOutput(this, 'clusterEndpointHostname', this.clusterEndpointHostname);
     printOutput(this, 'clusterIdentifier', this.clusterIdentifier);
   }
-  private _createRdsInstance(props: DatabaseProps): DatabaseCofig {
+  private _createRdsInstance(props: DatabaseProps): DatabaseConfig {
     const dbInstance = new rds.DatabaseInstance(this, 'DBInstance', {
       vpc: props.vpc,
       databaseName: 'keycloak',
@@ -433,7 +459,7 @@ export class Database extends Construct {
     };
   }
   // create a RDS for MySQL DB cluster
-  private _createRdsCluster(props: DatabaseProps): DatabaseCofig {
+  private _createRdsCluster(props: DatabaseProps): DatabaseConfig {
     const dbCluster = new rds.DatabaseCluster(this, 'DBCluster', {
       engine: props.clusterEngine ?? rds.DatabaseClusterEngine.auroraMysql({
         version: rds.AuroraMysqlEngineVersion.VER_2_09_1,
@@ -460,7 +486,7 @@ export class Database extends Construct {
       secret: dbCluster.secret!,
     };
   }
-  private _createServerlessCluster(props: DatabaseProps): DatabaseCofig {
+  private _createServerlessCluster(props: DatabaseProps): DatabaseConfig {
     const dbCluster = new rds.ServerlessCluster(this, 'AuroraServerlessCluster', {
       engine: rds.DatabaseClusterEngine.AURORA_MYSQL,
       vpc: props.vpc,
@@ -480,7 +506,7 @@ export class Database extends Construct {
     };
   }
   // create a RDS for MySQL DB cluster with Aurora Serverless v2
-  private _createServerlessV2Cluster(props: DatabaseProps): DatabaseCofig {
+  private _createServerlessV2Cluster(props: DatabaseProps): DatabaseConfig {
     const dbCluster = new rds.DatabaseCluster(this, 'DBCluster', {
       engine: props.clusterEngine ?? rds.DatabaseClusterEngine.auroraMysql({
         version: rds.AuroraMysqlEngineVersion.VER_3_02_0,
@@ -508,8 +534,8 @@ export class Database extends Construct {
     (
       dbCluster.node.findChild('Resource') as rds.CfnDBCluster
     ).serverlessV2ScalingConfiguration = {
-      minCapacity: 0.5,
-      maxCapacity: 10,
+      minCapacity: props.minCapacity ?? 0.5,
+      maxCapacity: props.maxCapacity ?? 10,
     };
     return {
       connections: dbCluster.connections,
