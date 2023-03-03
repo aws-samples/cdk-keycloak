@@ -4,7 +4,7 @@ import {
   aws_ec2 as ec2, aws_ecs as ecs, aws_elasticloadbalancingv2 as elbv2,
   aws_iam as iam,
   aws_logs as logs,
-  aws_rds as rds, aws_secretsmanager as secretsmanager
+  aws_rds as rds, aws_secretsmanager as secretsmanager,
 } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
@@ -216,17 +216,12 @@ export interface KeyCloakProps {
   readonly internetFacing?: boolean;
 
   /**
-   * Controls what happens to the database if it stops being managed by CloudFormation
-   *
-   * @default RemovalPolicy.RETAIN
-   */
-  readonly databaseRemovalPolicy?: cdk.RemovalPolicy;
-  /**
    * The minimum number of Aurora Serverless V2 capacity units.
    *
    * @default 0.5
   */
   readonly databaseMinCapacity?: number;
+
   /**
   * The maximum number of Aurora Serverless V2 capacity units.
   *
@@ -272,7 +267,6 @@ export class KeyCloak extends Construct {
       removalPolicy: props.databaseRemovalPolicy,
       maxCapacity: props.databaseMaxCapacity,
       minCapacity: props.databaseMinCapacity,
-      removalPolicy: props.databaseRemovalPolicy,
     });
     const keycloakContainerService = this.addKeyCloakContainerService({
       database: this.db,
@@ -366,16 +360,11 @@ export interface DatabaseProps {
   readonly backupRetention?: cdk.Duration;
 
   /**
-   * Controls what happens to the database if it stops being managed by CloudFormation
-   *
-   * @default RemovalPolicy.RETAIN
-   */
-  readonly removalPolicy?: cdk.RemovalPolicy;
-  /**
    * The minimum number of Aurora Serverless V2 capacity units.
    *
    * @default 0.5
   */
+
   readonly minCapacity?: number;
   /**
    * The maximum number of Aurora Serverless V2 capacity units.
