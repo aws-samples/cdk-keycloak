@@ -97,6 +97,7 @@ new Database(scope: Construct, id: string, props: DatabaseProps)
   * **instanceType** (<code>[aws_ec2.InstanceType](#aws-cdk-lib-aws-ec2-instancetype)</code>)  The database instance type. __*Default*__: r5.large
   * **maxCapacity** (<code>number</code>)  The maximum number of Aurora Serverless V2 capacity units. __*Default*__: 10
   * **minCapacity** (<code>number</code>)  The minimum number of Aurora Serverless V2 capacity units. __*Default*__: 0.5
+  * **removalPolicy** (<code>[RemovalPolicy](#aws-cdk-lib-removalpolicy)</code>)  Controls what happens to the database if it stops being managed by CloudFormation. __*Default*__: RemovalPolicy.RETAIN
   * **singleDbInstance** (<code>boolean</code>)  Whether to use single RDS instance rather than RDS cluster. __*Default*__: false
 
 
@@ -144,10 +145,11 @@ new KeyCloak(scope: Construct, id: string, props: KeyCloakProps)
   * **databaseInstanceType** (<code>[aws_ec2.InstanceType](#aws-cdk-lib-aws-ec2-instancetype)</code>)  Database instance type. __*Default*__: r5.large
   * **databaseMaxCapacity** (<code>number</code>)  The maximum number of Aurora Serverless V2 capacity units. __*Default*__: 10
   * **databaseMinCapacity** (<code>number</code>)  The minimum number of Aurora Serverless V2 capacity units. __*Default*__: 0.5
+  * **databaseRemovalPolicy** (<code>[RemovalPolicy](#aws-cdk-lib-removalpolicy)</code>)  Controls what happens to the database if it stops being managed by CloudFormation. __*Default*__: RemovalPolicy.RETAIN
   * **databaseSubnets** (<code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code>)  VPC subnets for database. __*Default*__: VPC isolated subnets
   * **env** (<code>Map<string, string></code>)  The environment variables to pass to the keycloak container. __*Optional*__
   * **instanceEngine** (<code>[aws_rds.IInstanceEngine](#aws-cdk-lib-aws-rds-iinstanceengine)</code>)  The database instance engine. __*Default*__: MySQL 8.0.21
-  * **internetFacing** (<code>boolean</code>)  Whether to put the put the load balancer in the public or private subnets. __*Default*__: true
+  * **internetFacing** (<code>boolean</code>)  Whether to put the load balancer in the public or private subnets. __*Default*__: true
   * **nodeCount** (<code>number</code>)  Number of keycloak node in the cluster. __*Default*__: 2
   * **privateSubnets** (<code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code>)  VPC private subnets for keycloak service. __*Default*__: VPC private subnets
   * **publicSubnets** (<code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code>)  VPC public subnets for ALB. __*Default*__: VPC public subnets
@@ -189,6 +191,7 @@ addDatabase(props: DatabaseProps): Database
   * **instanceType** (<code>[aws_ec2.InstanceType](#aws-cdk-lib-aws-ec2-instancetype)</code>)  The database instance type. __*Default*__: r5.large
   * **maxCapacity** (<code>number</code>)  The maximum number of Aurora Serverless V2 capacity units. __*Default*__: 10
   * **minCapacity** (<code>number</code>)  The minimum number of Aurora Serverless V2 capacity units. __*Default*__: 0.5
+  * **removalPolicy** (<code>[RemovalPolicy](#aws-cdk-lib-removalpolicy)</code>)  Controls what happens to the database if it stops being managed by CloudFormation. __*Default*__: RemovalPolicy.RETAIN
   * **singleDbInstance** (<code>boolean</code>)  Whether to use single RDS instance rather than RDS cluster. __*Default*__: false
 
 __Returns__:
@@ -335,6 +338,7 @@ Name | Type | Description
 **instanceType**? | <code>[aws_ec2.InstanceType](#aws-cdk-lib-aws-ec2-instancetype)</code> | The database instance type.<br/>__*Default*__: r5.large
 **maxCapacity**? | <code>number</code> | The maximum number of Aurora Serverless V2 capacity units.<br/>__*Default*__: 10
 **minCapacity**? | <code>number</code> | The minimum number of Aurora Serverless V2 capacity units.<br/>__*Default*__: 0.5
+**removalPolicy**? | <code>[RemovalPolicy](#aws-cdk-lib-removalpolicy)</code> | Controls what happens to the database if it stops being managed by CloudFormation.<br/>__*Default*__: RemovalPolicy.RETAIN
 **singleDbInstance**? | <code>boolean</code> | Whether to use single RDS instance rather than RDS cluster.<br/>__*Default*__: false
 
 
@@ -359,10 +363,11 @@ Name | Type | Description
 **databaseInstanceType**? | <code>[aws_ec2.InstanceType](#aws-cdk-lib-aws-ec2-instancetype)</code> | Database instance type.<br/>__*Default*__: r5.large
 **databaseMaxCapacity**? | <code>number</code> | The maximum number of Aurora Serverless V2 capacity units.<br/>__*Default*__: 10
 **databaseMinCapacity**? | <code>number</code> | The minimum number of Aurora Serverless V2 capacity units.<br/>__*Default*__: 0.5
+**databaseRemovalPolicy**? | <code>[RemovalPolicy](#aws-cdk-lib-removalpolicy)</code> | Controls what happens to the database if it stops being managed by CloudFormation.<br/>__*Default*__: RemovalPolicy.RETAIN
 **databaseSubnets**? | <code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code> | VPC subnets for database.<br/>__*Default*__: VPC isolated subnets
 **env**? | <code>Map<string, string></code> | The environment variables to pass to the keycloak container.<br/>__*Optional*__
 **instanceEngine**? | <code>[aws_rds.IInstanceEngine](#aws-cdk-lib-aws-rds-iinstanceengine)</code> | The database instance engine.<br/>__*Default*__: MySQL 8.0.21
-**internetFacing**? | <code>boolean</code> | Whether to put the put the load balancer in the public or private subnets.<br/>__*Default*__: true
+**internetFacing**? | <code>boolean</code> | Whether to put the load balancer in the public or private subnets.<br/>__*Default*__: true
 **nodeCount**? | <code>number</code> | Number of keycloak node in the cluster.<br/>__*Default*__: 2
 **privateSubnets**? | <code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code> | VPC private subnets for keycloak service.<br/>__*Default*__: VPC private subnets
 **publicSubnets**? | <code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code> | VPC public subnets for ALB.<br/>__*Default*__: VPC public subnets
