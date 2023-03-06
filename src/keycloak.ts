@@ -251,7 +251,7 @@ export interface KeyCloakProps {
    * @default 0.5
   */
   readonly databaseMinCapacity?: number;
-  
+
   /**
   * The maximum number of Aurora Serverless V2 capacity units.
   *
@@ -672,14 +672,14 @@ export class ContainerService extends Construct {
     // if this is a quarkus distribution
     if (parseInt(props.keycloakVersion.version.split('.')[0]) > 16) {
       containerPort = 8080;
-      protocol = elbv2.ApplicationProtocol.HTTPS;
+      protocol = elbv2.ApplicationProtocol.HTTP;
       usernameKey = 'KEYCLOAK_ADMIN';
       passwordKey = 'KEYCLOAK_ADMIN_PASSWORD';
       command = ['start', '--optimized'];
       envOverrides = Object.assign({
         KC_PROXY: 'edge',
-        KC_HOSTNAME_URL: `https://${props.hostname}:${containerPort}`,
-        KC_HOSTNAME_STRICT_BACKCHANNEL: true,
+        KC_HOSTNAME: props.hostname,
+        KC_HOSTNAME_STRICT_BACKCHANNEL: 'true',
       }, props.env);
     }
 
@@ -777,15 +777,8 @@ export class ContainerService extends Construct {
       protocol: elbv2.ApplicationProtocol.HTTPS,
       certificates: [{ certificateArn: props.certificate.certificateArn }],
     });
-    // const healthCheck = isQuarkusDistribution ? {
-    //   healthyThresholdCount: 3,
-    //   healthyHttpCodes: '200-499',
-    // } : {
-    //   healthyThresholdCount: 3,
-    // };
     listener.addTargets('ECSTarget', {
       targets: [this.service],
-      // healthCheck,
       healthCheck: {
         healthyThresholdCount: 3,
       },
