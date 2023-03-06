@@ -59,6 +59,31 @@ export class KeycloakVersion {
   public static readonly V16_1_1 = KeycloakVersion.of('16.1.1');
 
   /**
+   * Keycloak version 17.0.1
+   */
+  public static readonly V17_0_1 = KeycloakVersion.of('17.0.1');
+
+  /**
+   * Keycloak version 18.0.2
+   */
+  public static readonly V18_0_3 = KeycloakVersion.of('18.0.2');
+
+  /**
+   * Keycloak version 19.0.3
+   */
+  public static readonly V19_0_3 = KeycloakVersion.of('19.0.3');
+
+  /**
+   * Keycloak version 20.0.5
+   */
+  public static readonly V20_0_3 = KeycloakVersion.of('20.0.5');
+
+  /**
+   * Keycloak version 21.0.0
+   */
+  public static readonly V21_0_0 = KeycloakVersion.of('21.0.0');
+
+  /**
    * Custom cluster version
    * @param version custom version number
    */
@@ -76,7 +101,7 @@ interface dockerImageMap {
 }
 
 const KEYCLOAK_DOCKER_IMAGE_URI_MAP: dockerImageMap = {
-  'aws': 'jboss/keycloak:',
+  'aws': 'quay.io/keycloak/keycloak:',
   'aws-cn': '048912060910.dkr.ecr.cn-northwest-1.amazonaws.com.cn/dockerhub/jboss/keycloak:',
 };
 
@@ -226,6 +251,12 @@ export interface KeyCloakProps {
    * @default 10
    */
   readonly databaseMaxCapacity?: number;
+
+  /**
+   * The hostname to use for the keycloak server
+   */
+  readonly hostname?: string;
+
 }
 
 export class KeyCloak extends Construct {
@@ -272,6 +303,7 @@ export class KeyCloak extends Construct {
       autoScaleTask: props.autoScaleTask,
       env: props.env,
       internetFacing: props.internetFacing ?? true,
+      hostname: props.hostname,
     });
     this.applicationLoadBalancer = keycloakContainerService.applicationLoadBalancer;
     if (!cdk.Stack.of(this).templateOptions.description) {
@@ -600,6 +632,11 @@ export interface ContainerServiceProps {
    * @default true
    */
   readonly internetFacing?: boolean;
+
+  /**
+   * The hostname to use for the keycloak server
+   */
+  readonly hostname?: string;
 }
 
 export class ContainerService extends Construct {
@@ -607,6 +644,28 @@ export class ContainerService extends Construct {
   readonly applicationLoadBalancer: elbv2.ApplicationLoadBalancer;
   constructor(scope: Construct, id: string, props: ContainerServiceProps) {
     super(scope, id);
+
+    let containerPort = 8443;
+    let protocol = elbv2.ApplicationProtocol.HTTPS;
+    let usernameKey = 'KEYCLOAK_USER';
+    let passwordKey = 'KEYCLOAK_PASSWORD';
+    let command = undefined;
+
+    let envOverrides = props.env;
+
+    // if this is a quarkus distribution
+    if (parseInt(props.keycloakVersion.version.split('.')[0]) > 16) {
+      containerPort = 8080;
+      protocol = elbv2.ApplicationProtocol.HTTPS;
+      usernameKey = 'KEYCLOAK_ADMIN';
+      passwordKey = 'KEYCLOAK_ADMIN_PASSWORD';
+      command = ['start', '--optimized'];
+      envOverrides = Object.assign({
+        KC_PROXY: 'edge',
+        KC_HOSTNAME_URL: `https://${props.hostname}:${containerPort}`,
+        KC_HOSTNAME_STRICT_BACKCHANNEL: true,
+      }, props.env);
+    }
 
     const vpc = props.vpc;
     const cluster = new ecs.Cluster(this, 'Cluster', { vpc, containerInsights: true });
@@ -630,6 +689,7 @@ export class ContainerService extends Construct {
 
     const kc = taskDefinition.addContainer('keycloak', {
       image: ecs.ContainerImage.fromRegistry(this.getKeyCloakDockerImageUri(props.keycloakVersion.version)),
+      command,
       environment: Object.assign({
         DB_ADDR: props.database.clusterEndpointHostname,
         DB_DATABASE: 'keycloak',
@@ -644,11 +704,11 @@ export class ContainerService extends Construct {
         // because the default `initialize_sql` is compatible with MySQL. (See: https://github.com/belaban/JGroups/blob/master/src/org/jgroups/protocols/JDBC_PING.java#L55-L60)
         // But you need to specify `initialize_sql` for PostgreSQL, because `varbinary` schema is not supported. (See: https://github.com/keycloak/keycloak-containers/blob/d4ce446dde3026f89f66fa86b58c2d0d6132ce4d/docker-compose-examples/keycloak-postgres-jdbc-ping.yml#L49)
         // JGROUPS_DISCOVERY_PROPERTIES: '',
-      }, props.env),
+      }, envOverrides),
       secrets: {
         DB_PASSWORD: ecs.Secret.fromSecretsManager(props.database.secret, 'password'),
-        KEYCLOAK_USER: ecs.Secret.fromSecretsManager(props.keycloakSecret, 'username'),
-        KEYCLOAK_PASSWORD: ecs.Secret.fromSecretsManager(props.keycloakSecret, 'password'),
+        [usernameKey]: ecs.Secret.fromSecretsManager(props.keycloakSecret, 'username'),
+        [passwordKey]: ecs.Secret.fromSecretsManager(props.keycloakSecret, 'password'),
       },
       logging: ecs.LogDrivers.awsLogs({
         streamPrefix: 'keycloak',
@@ -656,7 +716,7 @@ export class ContainerService extends Construct {
       }),
     });
     kc.addPortMappings(
-      { containerPort: 8443 }, // HTTPS web port
+      { containerPort }, // web port
       { containerPort: 7600 }, // jgroups-tcp
       { containerPort: 57600 }, // jgroups-tcp-fd
       { containerPort: 55200, protocol: ecs.Protocol.UDP }, // jgroups-udp
@@ -701,9 +761,15 @@ export class ContainerService extends Construct {
       protocol: elbv2.ApplicationProtocol.HTTPS,
       certificates: [{ certificateArn: props.certificate.certificateArn }],
     });
-
+    // const healthCheck = isQuarkusDistribution ? {
+    //   healthyThresholdCount: 3,
+    //   healthyHttpCodes: '200-499',
+    // } : {
+    //   healthyThresholdCount: 3,
+    // };
     listener.addTargets('ECSTarget', {
       targets: [this.service],
+      // healthCheck,
       healthCheck: {
         healthyThresholdCount: 3,
       },
@@ -711,8 +777,8 @@ export class ContainerService extends Construct {
       // see https://docs.aws.amazon.com/cli/latest/reference/elbv2/modify-target-group-attributes.html
       slowStart: cdk.Duration.seconds(60),
       stickinessCookieDuration: props.stickinessCookieDuration ?? cdk.Duration.days(1),
-      port: 8443,
-      protocol: elbv2.ApplicationProtocol.HTTPS,
+      port: containerPort,
+      protocol,
     });
 
     // allow task execution role to read the secrets

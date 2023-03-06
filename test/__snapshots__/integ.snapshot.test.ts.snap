@@ -655,7 +655,7 @@ Object {
               },
             ],
             "Essential": true,
-            "Image": "jboss/keycloak:15.0.215.0.2",
+            "Image": "quay.io/keycloak/keycloak:15.0.215.0.2",
             "LogConfiguration": Object {
               "LogDriver": "awslogs",
               "Options": Object {

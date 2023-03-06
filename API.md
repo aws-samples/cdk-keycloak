@@ -50,6 +50,7 @@ new ContainerService(scope: Construct, id: string, props: ContainerServiceProps)
   * **bastion** (<code>boolean</code>)  Whether to create the bastion host. __*Default*__: false
   * **circuitBreaker** (<code>boolean</code>)  Whether to enable the ECS service deployment circuit breaker. __*Default*__: false
   * **env** (<code>Map<string, string></code>)  The environment variables to pass to the keycloak container. __*Optional*__
+  * **hostname** (<code>string</code>)  The hostname to use for the keycloak server. __*Optional*__
   * **internetFacing** (<code>boolean</code>)  Whether to put the put the load balancer in the public or private subnets. __*Default*__: true
   * **nodeCount** (<code>number</code>)  Number of keycloak node in the cluster. __*Default*__: 1
   * **privateSubnets** (<code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code>)  VPC subnets for keycloak service. __*Optional*__
@@ -146,6 +147,7 @@ new KeyCloak(scope: Construct, id: string, props: KeyCloakProps)
   * **databaseMinCapacity** (<code>number</code>)  The minimum number of Aurora Serverless V2 capacity units. __*Default*__: 0.5
   * **databaseSubnets** (<code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code>)  VPC subnets for database. __*Default*__: VPC isolated subnets
   * **env** (<code>Map<string, string></code>)  The environment variables to pass to the keycloak container. __*Optional*__
+  * **hostname** (<code>string</code>)  The hostname to use for the keycloak server. __*Optional*__
   * **instanceEngine** (<code>[aws_rds.IInstanceEngine](#aws-cdk-lib-aws-rds-iinstanceengine)</code>)  The database instance engine. __*Default*__: MySQL 8.0.21
   * **internetFacing** (<code>boolean</code>)  Whether to put the put the load balancer in the public or private subnets. __*Default*__: true
   * **nodeCount** (<code>number</code>)  Number of keycloak node in the cluster. __*Default*__: 2
@@ -212,6 +214,7 @@ addKeyCloakContainerService(props: ContainerServiceProps): ContainerService
   * **bastion** (<code>boolean</code>)  Whether to create the bastion host. __*Default*__: false
   * **circuitBreaker** (<code>boolean</code>)  Whether to enable the ECS service deployment circuit breaker. __*Default*__: false
   * **env** (<code>Map<string, string></code>)  The environment variables to pass to the keycloak container. __*Optional*__
+  * **hostname** (<code>string</code>)  The hostname to use for the keycloak server. __*Optional*__
   * **internetFacing** (<code>boolean</code>)  Whether to put the put the load balancer in the public or private subnets. __*Default*__: true
   * **nodeCount** (<code>number</code>)  Number of keycloak node in the cluster. __*Default*__: 1
   * **privateSubnets** (<code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code>)  VPC subnets for keycloak service. __*Optional*__
@@ -240,6 +243,11 @@ Name | Type | Description
 *static* **V15_0_1** | <code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code> | Keycloak version 15.0.1.
 *static* **V15_0_2** | <code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code> | Keycloak version 15.0.2.
 *static* **V16_1_1** | <code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code> | Keycloak version 16.1.1.
+*static* **V17_0_1** | <code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code> | Keycloak version 17.0.1.
+*static* **V18_0_3** | <code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code> | Keycloak version 18.0.2.
+*static* **V19_0_3** | <code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code> | Keycloak version 19.0.3.
+*static* **V20_0_3** | <code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code> | Keycloak version 20.0.5.
+*static* **V21_0_0** | <code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code> | Keycloak version 21.0.0.
 
 ### Methods
 
@@ -292,6 +300,7 @@ Name | Type | Description
 **bastion**? | <code>boolean</code> | Whether to create the bastion host.<br/>__*Default*__: false
 **circuitBreaker**? | <code>boolean</code> | Whether to enable the ECS service deployment circuit breaker.<br/>__*Default*__: false
 **env**? | <code>Map<string, string></code> | The environment variables to pass to the keycloak container.<br/>__*Optional*__
+**hostname**? | <code>string</code> | The hostname to use for the keycloak server.<br/>__*Optional*__
 **internetFacing**? | <code>boolean</code> | Whether to put the put the load balancer in the public or private subnets.<br/>__*Default*__: true
 **nodeCount**? | <code>number</code> | Number of keycloak node in the cluster.<br/>__*Default*__: 1
 **privateSubnets**? | <code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code> | VPC subnets for keycloak service.<br/>__*Optional*__
@@ -361,6 +370,7 @@ Name | Type | Description
 **databaseMinCapacity**? | <code>number</code> | The minimum number of Aurora Serverless V2 capacity units.<br/>__*Default*__: 0.5
 **databaseSubnets**? | <code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code> | VPC subnets for database.<br/>__*Default*__: VPC isolated subnets
 **env**? | <code>Map<string, string></code> | The environment variables to pass to the keycloak container.<br/>__*Optional*__
+**hostname**? | <code>string</code> | The hostname to use for the keycloak server.<br/>__*Optional*__
 **instanceEngine**? | <code>[aws_rds.IInstanceEngine](#aws-cdk-lib-aws-rds-iinstanceengine)</code> | The database instance engine.<br/>__*Default*__: MySQL 8.0.21
 **internetFacing**? | <code>boolean</code> | Whether to put the put the load balancer in the public or private subnets.<br/>__*Default*__: true
 **nodeCount**? | <code>number</code> | Number of keycloak node in the cluster.<br/>__*Default*__: 2
