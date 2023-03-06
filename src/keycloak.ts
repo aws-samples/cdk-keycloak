@@ -4,7 +4,7 @@ import {
   aws_ec2 as ec2, aws_ecs as ecs, aws_elasticloadbalancingv2 as elbv2,
   aws_iam as iam,
   aws_logs as logs,
-  aws_rds as rds, aws_secretsmanager as secretsmanager,
+  aws_rds as rds, aws_secretsmanager as secretsmanager
 } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
@@ -234,17 +234,24 @@ export interface KeyCloakProps {
   readonly autoScaleTask?: AutoScaleTask;
 
   /**
-   * Whether to put the put the load balancer in the public or private subnets
+   * Whether to put the load balancer in the public or private subnets
    *
    * @default true
    */
   readonly internetFacing?: boolean;
+
+  /**
+   * The hostname to use for the keycloak server
+   */
+  readonly hostname?: string;
+
   /**
    * The minimum number of Aurora Serverless V2 capacity units.
    *
    * @default 0.5
   */
   readonly databaseMinCapacity?: number;
+  
   /**
   * The maximum number of Aurora Serverless V2 capacity units.
   *
@@ -253,10 +260,11 @@ export interface KeyCloakProps {
   readonly databaseMaxCapacity?: number;
 
   /**
-   * The hostname to use for the keycloak server
+   * Controls what happens to the database if it stops being managed by CloudFormation
+   *
+   * @default RemovalPolicy.RETAIN
    */
-  readonly hostname?: string;
-
+  readonly databaseRemovalPolicy?: cdk.RemovalPolicy;
 }
 
 export class KeyCloak extends Construct {
@@ -288,6 +296,7 @@ export class KeyCloak extends Construct {
       backupRetention: props.backupRetention,
       maxCapacity: props.databaseMaxCapacity,
       minCapacity: props.databaseMinCapacity,
+      removalPolicy: props.databaseRemovalPolicy,
     });
     const keycloakContainerService = this.addKeyCloakContainerService({
       database: this.db,
@@ -392,6 +401,13 @@ export interface DatabaseProps {
    * @default 10
    */
   readonly maxCapacity?: number;
+
+  /**
+   * Controls what happens to the database if it stops being managed by CloudFormation
+   *
+   * @default RemovalPolicy.RETAIN
+   */
+  readonly removalPolicy?: cdk.RemovalPolicy;
 }
 
 /**
@@ -466,7 +482,7 @@ export class Database extends Construct {
       instanceType: props.instanceType ?? new ec2.InstanceType('r5.large'),
       parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.mysql8.0'),
       deletionProtection: true,
-      removalPolicy: cdk.RemovalPolicy.RETAIN,
+      removalPolicy: props.removalPolicy ?? cdk.RemovalPolicy.RETAIN,
     });
     return {
       connections: dbInstance.connections,
@@ -494,7 +510,7 @@ export class Database extends Construct {
         retention: props.backupRetention ?? cdk.Duration.days(7),
       },
       storageEncrypted: true,
-      removalPolicy: cdk.RemovalPolicy.RETAIN,
+      removalPolicy: props.removalPolicy ?? cdk.RemovalPolicy.RETAIN,
     });
     return {
       connections: dbCluster.connections,
@@ -512,7 +528,7 @@ export class Database extends Construct {
       credentials: rds.Credentials.fromGeneratedSecret('admin'),
       backupRetention: props.backupRetention ?? cdk.Duration.days(7),
       deletionProtection: true,
-      removalPolicy: cdk.RemovalPolicy.RETAIN,
+      removalPolicy: props.removalPolicy ?? cdk.RemovalPolicy.RETAIN,
       parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.aurora-mysql5.7'),
     });
     return {
@@ -543,7 +559,7 @@ export class Database extends Construct {
         retention: props.backupRetention ?? cdk.Duration.days(7),
       },
       storageEncrypted: true,
-      removalPolicy: cdk.RemovalPolicy.RETAIN,
+      removalPolicy: props.removalPolicy ?? cdk.RemovalPolicy.RETAIN,
     });
     // Set Serverless V2 Scaling Configuration
     // TODO: Use cleaner way to set scaling configuration.
