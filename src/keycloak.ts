@@ -4,7 +4,7 @@ import {
   aws_ec2 as ec2, aws_ecs as ecs, aws_elasticloadbalancingv2 as elbv2,
   aws_iam as iam,
   aws_logs as logs,
-  aws_rds as rds, aws_secretsmanager as secretsmanager
+  aws_rds as rds, aws_secretsmanager as secretsmanager,
 } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
@@ -82,6 +82,11 @@ export class KeycloakVersion {
    * Keycloak version 21.0.0
    */
   public static readonly V21_0_0 = KeycloakVersion.of('21.0.0');
+
+  /**
+   * Keycloak version 21.0.1
+   */
+  public static readonly V21_0_1 = KeycloakVersion.of('21.0.1');
 
   /**
    * Custom cluster version

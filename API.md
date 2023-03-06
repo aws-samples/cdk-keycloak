@@ -251,6 +251,7 @@ Name | Type | Description
 *static* **V19_0_3** | <code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code> | Keycloak version 19.0.3.
 *static* **V20_0_3** | <code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code> | Keycloak version 20.0.5.
 *static* **V21_0_0** | <code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code> | Keycloak version 21.0.0.
+*static* **V21_0_1** | <code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code> | Keycloak version 21.0.1.
 
 ### Methods
 
