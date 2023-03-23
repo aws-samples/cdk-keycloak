@@ -774,6 +774,59 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
+    "KeyCloakKeyCloakContainerSerivceTaskDefTaskRoleDefaultPolicyE26BE579": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "KeyCloakkeycloaks3ping30AFC53D",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "KeyCloakkeycloaks3ping30AFC53D",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "KeyCloakKeyCloakContainerSerivceTaskDefTaskRoleDefaultPolicyE26BE579",
+        "Roles": Array [
+          Object {
+            "Ref": "KeyCloakKeyCloakContainerSerivceTaskDefTaskRole0DC4D418",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
     "KeyCloakKeyCloakContainerSerivceTaskRole0658CED2": Object {
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
@@ -1215,6 +1268,11 @@ Object {
         },
       },
       "Type": "AWS::EC2::VPCGatewayAttachment",
+    },
+    "KeyCloakkeycloaks3ping30AFC53D": Object {
+      "DeletionPolicy": "Retain",
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
     },
     "keycloakdemoKeyCloakDatabaseAuroraServerlessClusterSecretBBC2EF3A3fdaad7efa858a3daf9490cf0a702aeb": Object {
       "DeletionPolicy": "Delete",

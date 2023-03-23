@@ -1,4 +1,4 @@
-import { App, Stack, assertions } from 'aws-cdk-lib';
+import { App, assertions, Stack } from 'aws-cdk-lib';
 import * as kc from '../src';
 // import '@aws-cdk/assert/jest';
 import { KeycloakVersion } from '../src';
