@@ -299,7 +299,6 @@ export class KeyCloak extends Construct {
     this.keycloakSecret = this._generateKeycloakSecret();
     this.vpc = props.vpc ?? getOrCreateVpc(this);
 
-    const s3PingBucket = new s3.Bucket(this, 'keycloak_s3_ping');
     this.db = this.addDatabase({
       vpc: this.vpc,
       databaseSubnets: props.databaseSubnets,
@@ -330,7 +329,6 @@ export class KeyCloak extends Construct {
       internetFacing: props.internetFacing ?? true,
       hostname: props.hostname,
       containerImage: props.containerImage,
-      s3PingBucket,
     });
 
     this.applicationLoadBalancer = keycloakContainerService.applicationLoadBalancer;
@@ -680,11 +678,6 @@ export interface ContainerServiceProps {
    * @default quay.io/keycloak/keycloak:${KEYCLOAK_VERSION}
    */
   readonly containerImage?: ecs.ContainerImage;
-
-  /**
-   * S3 Bucket to use for S3_PING cluster cache
-   */
-  readonly s3PingBucket?: s3.Bucket;
 }
 
 export class ContainerService extends Construct {
@@ -697,6 +690,7 @@ export class ContainerService extends Construct {
     let containerPort = 8443;
     let protocol = elbv2.ApplicationProtocol.HTTPS;
     let command = undefined;
+    let s3PingBucket: s3.Bucket | undefined = undefined;
     const image = props.containerImage ?? ecs.ContainerImage.fromRegistry(this.getKeyCloakDockerImageUri(props.keycloakVersion.version));
     const isQuarkusDistribution = parseInt(props.keycloakVersion.version.split('.')[0]) > 16;
     let environment: {[key: string]: string} = {
@@ -729,6 +723,7 @@ export class ContainerService extends Construct {
 
     // if this is a quarkus distribution
     if (isQuarkusDistribution) {
+      s3PingBucket = new s3.Bucket(this, 'keycloak_s3_ping');
       containerPort = 8080;
       protocol = elbv2.ApplicationProtocol.HTTP;
       command = ['start', '--optimized'];
@@ -741,7 +736,7 @@ export class ContainerService extends Construct {
         KC_DB_URL_HOST: props.database.clusterEndpointHostname,
         KC_DB_URL_PORT: '3306',
         KC_DB_USERNAME: 'admin',
-        JAVA_OPTS_APPEND: `-Djgroups.s3.region_name=${region} -Djgroups.s3.bucket_name=${props.s3PingBucket!.bucketName}`,
+        JAVA_OPTS_APPEND: `-Djgroups.s3.region_name=${region} -Djgroups.s3.bucket_name=${s3PingBucket!.bucketName}`,
       };
       secrets = {
         KC_DB_PASSWORD: ecs.Secret.fromSecretsManager(props.database.secret, 'password'),
@@ -769,8 +764,6 @@ export class ContainerService extends Construct {
       memoryLimitMiB: 8192,
       executionRole,
     });
-
-    props.s3PingBucket!.grantReadWrite(taskDefinition.taskRole);
 
     const logGroup = new logs.LogGroup(this, 'LogGroup', {
       retention: logs.RetentionDays.ONE_MONTH,
@@ -803,6 +796,7 @@ export class ContainerService extends Construct {
     if (isQuarkusDistribution) {
       this.service.connections.allowFrom(this.service.connections, ec2.Port.tcp(7800), 'kc jgroups-tcp');
       this.service.connections.allowFrom(this.service.connections, ec2.Port.tcp(57800), 'kc jgroups-tcp-fd');
+      s3PingBucket!.grantReadWrite(taskDefinition.taskRole);
     } else {
       this.service.connections.allowFrom(this.service.connections, ec2.Port.tcp(7600), 'kc jgroups-tcp');
       this.service.connections.allowFrom(this.service.connections, ec2.Port.tcp(57600), 'kc jgroups-tcp-fd');

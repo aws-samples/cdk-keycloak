@@ -56,7 +56,6 @@ new ContainerService(scope: Construct, id: string, props: ContainerServiceProps)
   * **nodeCount** (<code>number</code>)  Number of keycloak node in the cluster. __*Default*__: 1
   * **privateSubnets** (<code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code>)  VPC subnets for keycloak service. __*Optional*__
   * **publicSubnets** (<code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code>)  VPC public subnets for ALB. __*Optional*__
-  * **s3PingBucket** (<code>[aws_s3.Bucket](#aws-cdk-lib-aws-s3-bucket)</code>)  S3 Bucket to use for S3_PING cluster cache. __*Optional*__
   * **stickinessCookieDuration** (<code>[Duration](#aws-cdk-lib-duration)</code>)  The sticky session duration for the keycloak workload with ALB. __*Default*__: one day
 
 
@@ -226,7 +225,6 @@ addKeyCloakContainerService(props: ContainerServiceProps): ContainerService
   * **nodeCount** (<code>number</code>)  Number of keycloak node in the cluster. __*Default*__: 1
   * **privateSubnets** (<code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code>)  VPC subnets for keycloak service. __*Optional*__
   * **publicSubnets** (<code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code>)  VPC public subnets for ALB. __*Optional*__
-  * **s3PingBucket** (<code>[aws_s3.Bucket](#aws-cdk-lib-aws-s3-bucket)</code>)  S3 Bucket to use for S3_PING cluster cache. __*Optional*__
   * **stickinessCookieDuration** (<code>[Duration](#aws-cdk-lib-duration)</code>)  The sticky session duration for the keycloak workload with ALB. __*Default*__: one day
 
 __Returns__:
@@ -315,7 +313,6 @@ Name | Type | Description
 **nodeCount**? | <code>number</code> | Number of keycloak node in the cluster.<br/>__*Default*__: 1
 **privateSubnets**? | <code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code> | VPC subnets for keycloak service.<br/>__*Optional*__
 **publicSubnets**? | <code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code> | VPC public subnets for ALB.<br/>__*Optional*__
-**s3PingBucket**? | <code>[aws_s3.Bucket](#aws-cdk-lib-aws-s3-bucket)</code> | S3 Bucket to use for S3_PING cluster cache.<br/>__*Optional*__
 **stickinessCookieDuration**? | <code>[Duration](#aws-cdk-lib-duration)</code> | The sticky session duration for the keycloak workload with ALB.<br/>__*Default*__: one day
 
 
