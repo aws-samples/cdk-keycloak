@@ -642,10 +642,6 @@ Object {
                 "Value": "mysql",
               },
               Object {
-                "Name": "PROXY_ADDRESS_FORWARDING",
-                "Value": "true",
-              },
-              Object {
                 "Name": "JDBC_PARAMS",
                 "Value": "useSSL=false",
               },
@@ -653,9 +649,13 @@ Object {
                 "Name": "JGROUPS_DISCOVERY_PROTOCOL",
                 "Value": "JDBC_PING",
               },
+              Object {
+                "Name": "PROXY_ADDRESS_FORWARDING",
+                "Value": "true",
+              },
             ],
             "Essential": true,
-            "Image": "jboss/keycloak:15.0.215.0.2",
+            "Image": "quay.io/keycloak/keycloak:15.0.215.0.2",
             "LogConfiguration": Object {
               "LogDriver": "awslogs",
               "Options": Object {

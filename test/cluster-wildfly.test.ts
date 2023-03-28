@@ -1,4 +1,4 @@
-import { App, Stack, assertions } from 'aws-cdk-lib';
+import { App, assertions, Stack } from 'aws-cdk-lib';
 import * as kc from '../src';
 // import '@aws-cdk/assert/jest';
 import { KeycloakVersion } from '../src';
@@ -426,16 +426,16 @@ test('with env', () => {
             Value: 'mysql',
           },
           {
-            Name: 'PROXY_ADDRESS_FORWARDING',
-            Value: 'true',
-          },
-          {
             Name: 'JDBC_PARAMS',
             Value: 'useSSL=false',
           },
           {
             Name: 'JGROUPS_DISCOVERY_PROTOCOL',
             Value: 'JDBC_PING',
+          },
+          {
+            Name: 'PROXY_ADDRESS_FORWARDING',
+            Value: 'true',
           },
           {
             Name: 'JAVA_OPTS',
