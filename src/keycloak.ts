@@ -6,7 +6,7 @@ import {
   aws_logs as logs,
   aws_rds as rds,
   aws_s3 as s3,
-  aws_secretsmanager as secretsmanager,
+  aws_secretsmanager as secretsmanager
 } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
@@ -699,14 +699,14 @@ export class ContainerService extends Construct {
       DB_PORT: '3306',
       DB_USER: 'admin',
       DB_VENDOR: 'mysql',
-      // KEYCLOAK_LOGLEVEL: 'DEBUG',
-      PROXY_ADDRESS_FORWARDING: 'true',
       JDBC_PARAMS: 'useSSL=false',
       JGROUPS_DISCOVERY_PROTOCOL: 'JDBC_PING',
       // We don't need to specify `initialize_sql` string into `JGROUPS_DISCOVERY_PROPERTIES` property,
       // because the default `initialize_sql` is compatible with MySQL. (See: https://github.com/belaban/JGroups/blob/master/src/org/jgroups/protocols/JDBC_PING.java#L55-L60)
       // But you need to specify `initialize_sql` for PostgreSQL, because `varbinary` schema is not supported. (See: https://github.com/keycloak/keycloak-containers/blob/d4ce446dde3026f89f66fa86b58c2d0d6132ce4d/docker-compose-examples/keycloak-postgres-jdbc-ping.yml#L49)
       // JGROUPS_DISCOVERY_PROPERTIES: '',
+      // KEYCLOAK_LOGLEVEL: 'DEBUG',
+      PROXY_ADDRESS_FORWARDING: 'true',
     };
     let secrets: {[key: string]: cdk.aws_ecs.Secret} = {
       DB_PASSWORD: ecs.Secret.fromSecretsManager(props.database.secret, 'password'),
@@ -728,15 +728,19 @@ export class ContainerService extends Construct {
       protocol = elbv2.ApplicationProtocol.HTTP;
       command = ['start', '--optimized'];
       environment = {
-        KC_PROXY: 'edge',
-        KC_HOSTNAME: props.hostname!,
-        KC_HOSTNAME_STRICT_BACKCHANNEL: 'true',
+        JAVA_OPTS_APPEND: `-Djgroups.s3.region_name=${region} -Djgroups.s3.bucket_name=${s3PingBucket!.bucketName}`,
+        // We have selected the cache stack of 'ec2' which uses S3_PING under the hood
+        // This is the AWS native cluster discovery approach for caching
+        // See: https://www.keycloak.org/server/caching#_transport_stacks
+        KC_CACHE_STACK: 'ec2',
         KC_DB: 'mysql',
         KC_DB_URL_DATABASE: 'keycloak',
         KC_DB_URL_HOST: props.database.clusterEndpointHostname,
         KC_DB_URL_PORT: '3306',
         KC_DB_USERNAME: 'admin',
-        JAVA_OPTS_APPEND: `-Djgroups.s3.region_name=${region} -Djgroups.s3.bucket_name=${s3PingBucket!.bucketName}`,
+        KC_HOSTNAME: props.hostname!,
+        KC_HOSTNAME_STRICT_BACKCHANNEL: 'true',
+        KC_PROXY: 'edge',
       };
       secrets = {
         KC_DB_PASSWORD: ecs.Secret.fromSecretsManager(props.database.secret, 'password'),
