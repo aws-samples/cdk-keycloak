@@ -388,16 +388,11 @@ test('with env', () => {
       {
         Environment: [
           {
-            Name: 'KC_PROXY',
-            Value: 'edge',
+            Name: 'JAVA_OPTS_APPEND',
           },
           {
-            Name: 'KC_HOSTNAME',
-            Value: 'keycloak.test',
-          },
-          {
-            Name: 'KC_HOSTNAME_STRICT_BACKCHANNEL',
-            Value: 'true',
+            Name: 'KC_CACHE_STACK',
+            Value: 'ec2',
           },
           {
             Name: 'KC_DB',
@@ -422,7 +417,16 @@ test('with env', () => {
             Value: 'admin',
           },
           {
-            Name: 'JAVA_OPTS_APPEND',
+            Name: 'KC_HOSTNAME',
+            Value: 'keycloak.test',
+          },
+          {
+            Name: 'KC_HOSTNAME_STRICT_BACKCHANNEL',
+            Value: 'true',
+          },
+          {
+            Name: 'KC_PROXY',
+            Value: 'edge',
           },
           {
             Name: 'JAVA_OPTS',

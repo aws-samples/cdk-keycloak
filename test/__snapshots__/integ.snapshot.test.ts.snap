@@ -642,16 +642,16 @@ Object {
                 "Value": "mysql",
               },
               Object {
-                "Name": "PROXY_ADDRESS_FORWARDING",
-                "Value": "true",
-              },
-              Object {
                 "Name": "JDBC_PARAMS",
                 "Value": "useSSL=false",
               },
               Object {
                 "Name": "JGROUPS_DISCOVERY_PROTOCOL",
                 "Value": "JDBC_PING",
+              },
+              Object {
+                "Name": "PROXY_ADDRESS_FORWARDING",
+                "Value": "true",
               },
             ],
             "Essential": true,

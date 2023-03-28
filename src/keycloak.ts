@@ -6,7 +6,7 @@ import {
   aws_logs as logs,
   aws_rds as rds,
   aws_s3 as s3,
-  aws_secretsmanager as secretsmanager
+  aws_secretsmanager as secretsmanager,
 } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
