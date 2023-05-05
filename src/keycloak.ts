@@ -512,7 +512,7 @@ export class Database extends Construct {
   private _createRdsCluster(props: DatabaseProps): DatabaseConfig {
     const dbCluster = new rds.DatabaseCluster(this, 'DBCluster', {
       engine: props.clusterEngine ?? rds.DatabaseClusterEngine.auroraMysql({
-        version: rds.AuroraMysqlEngineVersion.VER_2_09_1,
+        version: rds.AuroraMysqlEngineVersion.VER_2_11_2,
       }),
       defaultDatabaseName: 'keycloak',
       deletionProtection: true,
