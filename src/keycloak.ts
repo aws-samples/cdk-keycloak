@@ -340,7 +340,7 @@ export class KeyCloak extends Construct {
     return new Database(this, 'Database', props);
   }
   public addKeyCloakContainerService(props: ContainerServiceProps) {
-    return new ContainerService(this, 'KeyCloakContainerSerivce', props);
+    return new ContainerService(this, 'KeyCloakContainerService', props);
   }
   private _generateKeycloakSecret(): secretsmanager.ISecret {
     return new secretsmanager.Secret(this, 'KCSecret', {
