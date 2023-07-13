@@ -100,6 +100,21 @@ new KeyCloak(stack, 'KeyCloak', {
 
 ```
 
+
+# Customize fargate task settings
+
+Define `taskCpu` or `taskMemory` for overriding the defaults for the ecs service task. 
+Could be useful for development environments. For example:
+
+```ts
+new KeyCloak(stack, 'KeyCloak', {
+  nodeCount: 1, 
+  taskCpu: 512,
+  taskMemory: 2048,
+});
+
+```
+
 # Deploy in existing Vpc Subnets
 
 You can deploy the workload in the existing Vpc and subnets. The `publicSubnets` are for the ALB, `privateSubnets` for the keycloak container tasks and `databaseSubnets` for the database.

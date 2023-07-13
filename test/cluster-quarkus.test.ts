@@ -529,3 +529,31 @@ test('with env', () => {
     },
   });
 });
+
+
+test('with customized task settings', () => {
+  // GIVEN
+  const app = new App();
+  const stack = new Stack(app, 'testing-stack');
+
+  // WHEN
+  new kc.KeyCloak(stack, 'KeyCloak', {
+    keycloakVersion: KeycloakVersion.V21_0_1,
+    certificateArn: 'MOCK_ARN',
+    hostname: 'keycloak.test',
+    taskCpu: 512,
+    taskMemory: 1024,
+  });
+
+  // THEN
+  const t = assertions.Template.fromStack(stack);
+  t.hasResourceProperties('AWS::ECS::TaskDefinition', {
+    ContainerDefinitions: [
+      {
+        Name: 'keycloak',
+      },
+    ],
+    Cpu: '512',
+    Memory: '1024',
+  });
+});
