@@ -57,6 +57,8 @@ new ContainerService(scope: Construct, id: string, props: ContainerServiceProps)
   * **privateSubnets** (<code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code>)  VPC subnets for keycloak service. __*Optional*__
   * **publicSubnets** (<code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code>)  VPC public subnets for ALB. __*Optional*__
   * **stickinessCookieDuration** (<code>[Duration](#aws-cdk-lib-duration)</code>)  The sticky session duration for the keycloak workload with ALB. __*Default*__: one day
+  * **taskCpu** (<code>number</code>)  The number of cpu units used by the keycloak task. __*Default*__: 4096
+  * **taskMemory** (<code>number</code>)  The amount (in MiB) of memory used by the keycloak task. __*Default*__: 8192
 
 
 
@@ -159,6 +161,8 @@ new KeyCloak(scope: Construct, id: string, props: KeyCloakProps)
   * **publicSubnets** (<code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code>)  VPC public subnets for ALB. __*Default*__: VPC public subnets
   * **singleDbInstance** (<code>boolean</code>)  Whether to use single RDS instance rather than RDS cluster. __*Default*__: false
   * **stickinessCookieDuration** (<code>[Duration](#aws-cdk-lib-duration)</code>)  The sticky session duration for the keycloak workload with ALB. __*Default*__: one day
+  * **taskCpu** (<code>number</code>)  The number of cpu units used by the keycloak task. __*Default*__: 4096
+  * **taskMemory** (<code>number</code>)  The amount (in MiB) of memory used by the keycloak task. __*Default*__: 8192
   * **vpc** (<code>[aws_ec2.IVpc](#aws-cdk-lib-aws-ec2-ivpc)</code>)  VPC for the workload. __*Optional*__
 
 
@@ -226,6 +230,8 @@ addKeyCloakContainerService(props: ContainerServiceProps): ContainerService
   * **privateSubnets** (<code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code>)  VPC subnets for keycloak service. __*Optional*__
   * **publicSubnets** (<code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code>)  VPC public subnets for ALB. __*Optional*__
   * **stickinessCookieDuration** (<code>[Duration](#aws-cdk-lib-duration)</code>)  The sticky session duration for the keycloak workload with ALB. __*Default*__: one day
+  * **taskCpu** (<code>number</code>)  The number of cpu units used by the keycloak task. __*Default*__: 4096
+  * **taskMemory** (<code>number</code>)  The amount (in MiB) of memory used by the keycloak task. __*Default*__: 8192
 
 __Returns__:
 * <code>[ContainerService](#cdk-keycloak-containerservice)</code>
@@ -314,6 +320,8 @@ Name | Type | Description
 **privateSubnets**? | <code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code> | VPC subnets for keycloak service.<br/>__*Optional*__
 **publicSubnets**? | <code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code> | VPC public subnets for ALB.<br/>__*Optional*__
 **stickinessCookieDuration**? | <code>[Duration](#aws-cdk-lib-duration)</code> | The sticky session duration for the keycloak workload with ALB.<br/>__*Default*__: one day
+**taskCpu**? | <code>number</code> | The number of cpu units used by the keycloak task.<br/>__*Default*__: 4096
+**taskMemory**? | <code>number</code> | The amount (in MiB) of memory used by the keycloak task.<br/>__*Default*__: 8192
 
 
 
@@ -389,6 +397,8 @@ Name | Type | Description
 **publicSubnets**? | <code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code> | VPC public subnets for ALB.<br/>__*Default*__: VPC public subnets
 **singleDbInstance**? | <code>boolean</code> | Whether to use single RDS instance rather than RDS cluster.<br/>__*Default*__: false
 **stickinessCookieDuration**? | <code>[Duration](#aws-cdk-lib-duration)</code> | The sticky session duration for the keycloak workload with ALB.<br/>__*Default*__: one day
+**taskCpu**? | <code>number</code> | The number of cpu units used by the keycloak task.<br/>__*Default*__: 4096
+**taskMemory**? | <code>number</code> | The amount (in MiB) of memory used by the keycloak task.<br/>__*Default*__: 8192
 **vpc**? | <code>[aws_ec2.IVpc](#aws-cdk-lib-aws-ec2-ivpc)</code> | VPC for the workload.<br/>__*Optional*__
 
 

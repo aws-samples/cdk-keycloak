@@ -272,13 +272,29 @@ export interface KeyCloakProps {
    */
   readonly databaseRemovalPolicy?: cdk.RemovalPolicy;
 
-
   /**
    * Overrides the default image
    *
    * @default quay.io/keycloak/keycloak:${KEYCLOAK_VERSION}
    */
   readonly containerImage?: ecs.ContainerImage;
+
+  /**
+   * The number of cpu units used by the keycloak task.
+   *
+   * @default 4096
+   * @see FargateTaskDefinitionProps
+   */
+  readonly taskCpu?: number;
+
+  /**
+   * The amount (in MiB) of memory used by the keycloak task.
+   *
+   * @default 8192
+   * @see FargateTaskDefinitionProps
+   */
+  readonly taskMemory?: number;
+
 }
 
 export class KeyCloak extends Construct {
@@ -329,6 +345,8 @@ export class KeyCloak extends Construct {
       internetFacing: props.internetFacing ?? true,
       hostname: props.hostname,
       containerImage: props.containerImage,
+      taskCpu: props.taskCpu,
+      taskMemory: props.taskMemory,
     });
 
     this.applicationLoadBalancer = keycloakContainerService.applicationLoadBalancer;
@@ -671,13 +689,28 @@ export interface ContainerServiceProps {
    */
   readonly hostname?: string;
 
-
   /**
    * Overrides the default image
    *
    * @default quay.io/keycloak/keycloak:${KEYCLOAK_VERSION}
    */
   readonly containerImage?: ecs.ContainerImage;
+
+  /**
+   * The number of cpu units used by the keycloak task.
+   *
+   * @default 4096
+   * @see FargateTaskDefinitionProps
+   */
+  readonly taskCpu?: number;
+
+  /**
+   * The amount (in MiB) of memory used by the keycloak task.
+   *
+   * @default 8192
+   * @see FargateTaskDefinitionProps
+   */
+  readonly taskMemory?: number;
 }
 
 export class ContainerService extends Construct {
@@ -764,8 +797,8 @@ export class ContainerService extends Construct {
       ),
     });
     const taskDefinition = new ecs.FargateTaskDefinition(this, 'TaskDef', {
-      cpu: 4096,
-      memoryLimitMiB: 8192,
+      cpu: props.taskCpu ?? 4096,
+      memoryLimitMiB: props.taskMemory ?? 8192,
       executionRole,
     });
 
