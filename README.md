@@ -1,6 +1,6 @@
 [![NPM version](https://badge.fury.io/js/cdk-keycloak.svg)](https://badge.fury.io/js/cdk-keycloak)
 [![PyPI version](https://badge.fury.io/py/cdk-keycloak.svg)](https://badge.fury.io/py/cdk-keycloak)
-![Release](https://github.com/aws-samples/cdk-keycloak/workflows/Release/badge.svg?branch=main)
+[![release](https://github.com/aws-samples/cdk-keycloak/actions/workflows/release.yml/badge.svg)](https://github.com/aws-samples/cdk-keycloak/actions/workflows/release.yml)
 
 # `cdk-keycloak`
 
