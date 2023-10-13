@@ -354,12 +354,18 @@ Object {
       "DependsOn": Array [
         "KeyCloakKeyCloakContainerServiceALBHttpsListenerECSTargetGroup65B43774",
         "KeyCloakKeyCloakContainerServiceALBHttpsListener6BFECEEA",
+        "KeyCloakKeyCloakContainerServiceTaskDefTaskRole509DDBD7",
       ],
       "Properties": Object {
         "Cluster": Object {
           "Ref": "KeyCloakKeyCloakContainerServiceCluster4583BCAE",
         },
         "DeploymentConfiguration": Object {
+          "Alarms": Object {
+            "AlarmNames": Array [],
+            "Enable": false,
+            "Rollback": false,
+          },
           "MaximumPercent": 200,
           "MinimumHealthyPercent": 50,
         },
@@ -432,6 +438,9 @@ Object {
       "UpdateReplacePolicy": "Retain",
     },
     "KeyCloakKeyCloakContainerServiceSecurityGroup7433DA3A": Object {
+      "DependsOn": Array [
+        "KeyCloakKeyCloakContainerServiceTaskDefTaskRole509DDBD7",
+      ],
       "Properties": Object {
         "GroupDescription": "keycloak-demo/KeyCloak/KeyCloakContainerService/Service/SecurityGroup",
         "SecurityGroupEgress": Array [
@@ -448,6 +457,9 @@ Object {
       "Type": "AWS::EC2::SecurityGroup",
     },
     "KeyCloakKeyCloakContainerServiceSecurityGroupfromkeycloakdemoKeyCloakKeyCloakContainerServiceALBSecurityGroup67E092F7844342691A3B": Object {
+      "DependsOn": Array [
+        "KeyCloakKeyCloakContainerServiceTaskDefTaskRole509DDBD7",
+      ],
       "Properties": Object {
         "Description": "Load balancer to target",
         "FromPort": 8443,
@@ -469,6 +481,9 @@ Object {
       "Type": "AWS::EC2::SecurityGroupIngress",
     },
     "KeyCloakKeyCloakContainerServiceSecurityGroupfromkeycloakdemoKeyCloakKeyCloakContainerServiceSecurityGroup17E82FED576009361FCC7": Object {
+      "DependsOn": Array [
+        "KeyCloakKeyCloakContainerServiceTaskDefTaskRole509DDBD7",
+      ],
       "Properties": Object {
         "Description": "kc jgroups-tcp-fd",
         "FromPort": 57600,
@@ -490,6 +505,9 @@ Object {
       "Type": "AWS::EC2::SecurityGroupIngress",
     },
     "KeyCloakKeyCloakContainerServiceSecurityGroupfromkeycloakdemoKeyCloakKeyCloakContainerServiceSecurityGroup17E82FED760084F83EAB": Object {
+      "DependsOn": Array [
+        "KeyCloakKeyCloakContainerServiceTaskDefTaskRole509DDBD7",
+      ],
       "Properties": Object {
         "Description": "kc jgroups-tcp",
         "FromPort": 7600,
@@ -511,6 +529,9 @@ Object {
       "Type": "AWS::EC2::SecurityGroupIngress",
     },
     "KeyCloakKeyCloakContainerServiceSecurityGroupfromkeycloakdemoKeyCloakKeyCloakContainerServiceSecurityGroup17E82FEDUDP54200C13840AE": Object {
+      "DependsOn": Array [
+        "KeyCloakKeyCloakContainerServiceTaskDefTaskRole509DDBD7",
+      ],
       "Properties": Object {
         "Description": "kc jgroups-udp-fd",
         "FromPort": 54200,
@@ -532,6 +553,9 @@ Object {
       "Type": "AWS::EC2::SecurityGroupIngress",
     },
     "KeyCloakKeyCloakContainerServiceSecurityGroupfromkeycloakdemoKeyCloakKeyCloakContainerServiceSecurityGroup17E82FEDUDP55200DCB1BF9D": Object {
+      "DependsOn": Array [
+        "KeyCloakKeyCloakContainerServiceTaskDefTaskRole509DDBD7",
+      ],
       "Properties": Object {
         "Description": "kc jgroups-udp",
         "FromPort": 55200,
@@ -553,6 +577,9 @@ Object {
       "Type": "AWS::EC2::SecurityGroupIngress",
     },
     "KeyCloakKeyCloakContainerServiceTaskCountTarget95167BD4": Object {
+      "DependsOn": Array [
+        "KeyCloakKeyCloakContainerServiceTaskDefTaskRole509DDBD7",
+      ],
       "Properties": Object {
         "MaxCapacity": 10,
         "MinCapacity": 2,
@@ -596,6 +623,9 @@ Object {
       "Type": "AWS::ApplicationAutoScaling::ScalableTarget",
     },
     "KeyCloakKeyCloakContainerServiceTaskCountTargetCpuScalingB44CF87F": Object {
+      "DependsOn": Array [
+        "KeyCloakKeyCloakContainerServiceTaskDefTaskRole509DDBD7",
+      ],
       "Properties": Object {
         "PolicyName": "keycloakdemoKeyCloakKeyCloakContainerServiceTaskCountTargetCpuScaling8EE194F1",
         "PolicyType": "TargetTrackingScaling",
