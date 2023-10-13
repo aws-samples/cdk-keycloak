@@ -67,7 +67,7 @@ export class KeycloakVersion {
   /**
    * Keycloak version 18.0.2
    */
-  public static readonly V18_0_3 = KeycloakVersion.of('18.0.2');
+  public static readonly V18_0_2 = KeycloakVersion.of('18.0.2');
 
   /**
    * Keycloak version 19.0.3
@@ -77,7 +77,7 @@ export class KeycloakVersion {
   /**
    * Keycloak version 20.0.5
    */
-  public static readonly V20_0_3 = KeycloakVersion.of('20.0.5');
+  public static readonly V20_0_5 = KeycloakVersion.of('20.0.5');
 
   /**
    * Keycloak version 21.0.0
