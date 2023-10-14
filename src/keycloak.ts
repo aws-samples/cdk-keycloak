@@ -191,13 +191,13 @@ export interface KeyCloakProps {
   /**
    * The database instance engine
    *
-   * @default - MySQL 8.0.21
+   * @default - MySQL 8.0.34
    */
   readonly instanceEngine?: rds.IInstanceEngine;
   /**
    * The database cluster engine
    *
-   * @default rds.AuroraMysqlEngineVersion.VER_2_09_1
+   * @default rds.AuroraMysqlEngineVersion.VER_3_04_0
    */
   readonly clusterEngine?: rds.IClusterEngine;
   /**
@@ -390,13 +390,13 @@ export interface DatabaseProps {
   /**
    * The database instance engine
    *
-   * @default - MySQL 8.0.21
+   * @default - MySQL 8.0.34
    */
   readonly instanceEngine?: rds.IInstanceEngine;
   /**
    * The database cluster engine
    *
-   * @default rds.AuroraMysqlEngineVersion.VER_2_09_1
+   * @default rds.AuroraMysqlEngineVersion.VER_3_04_0
    */
   readonly clusterEngine?: rds.IClusterEngine;
   /**
@@ -509,7 +509,7 @@ export class Database extends Construct {
       databaseName: 'keycloak',
       vpcSubnets: props.databaseSubnets,
       engine: props.instanceEngine ?? rds.DatabaseInstanceEngine.mysql({
-        version: rds.MysqlEngineVersion.VER_8_0_21,
+        version: rds.MysqlEngineVersion.VER_8_0_34,
       }),
       storageEncrypted: true,
       backupRetention: props.backupRetention ?? cdk.Duration.days(7),
@@ -528,19 +528,30 @@ export class Database extends Construct {
   }
   // create a RDS for MySQL DB cluster
   private _createRdsCluster(props: DatabaseProps): DatabaseConfig {
+    const instanceProps = {
+      instanceType: props.instanceType ?? new ec2.InstanceType('r5.large'),
+      isFromLegacyInstanceProps: true,
+    };
     const dbCluster = new rds.DatabaseCluster(this, 'DBCluster', {
       engine: props.clusterEngine ?? rds.DatabaseClusterEngine.auroraMysql({
-        version: rds.AuroraMysqlEngineVersion.VER_2_11_2,
+        version: rds.AuroraMysqlEngineVersion.VER_3_04_0,
       }),
       defaultDatabaseName: 'keycloak',
       deletionProtection: true,
       credentials: rds.Credentials.fromGeneratedSecret('admin'),
-      instanceProps: {
-        vpc: props.vpc,
-        vpcSubnets: props.databaseSubnets,
-        instanceType: props.instanceType ?? new ec2.InstanceType('r5.large'),
-      },
-      parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.aurora-mysql5.7'),
+      vpc: props.vpc,
+      vpcSubnets: props.databaseSubnets,
+      writer: rds.ClusterInstance.provisioned('Writer', {
+        instanceType: instanceProps.instanceType,
+        isFromLegacyInstanceProps: instanceProps.isFromLegacyInstanceProps,
+      }),
+      readers: [
+        rds.ClusterInstance.provisioned('Reader', {
+          instanceType: instanceProps.instanceType,
+          isFromLegacyInstanceProps: instanceProps.isFromLegacyInstanceProps,
+        }),
+      ],
+      parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.aurora-mysql8.0'),
       backup: {
         retention: props.backupRetention ?? cdk.Duration.days(7),
       },
@@ -575,19 +586,30 @@ export class Database extends Construct {
   }
   // create a RDS for MySQL DB cluster with Aurora Serverless v2
   private _createServerlessV2Cluster(props: DatabaseProps): DatabaseConfig {
+    const instanceProps = {
+      // Specify serverless Instance Type
+      instanceType: new ec2.InstanceType('serverless'),
+      isFromLegacyInstanceProps: true,
+    };
     const dbCluster = new rds.DatabaseCluster(this, 'DBCluster', {
       engine: props.clusterEngine ?? rds.DatabaseClusterEngine.auroraMysql({
-        version: rds.AuroraMysqlEngineVersion.VER_3_02_0,
+        version: rds.AuroraMysqlEngineVersion.VER_3_04_0,
       }),
       defaultDatabaseName: 'keycloak',
       deletionProtection: true,
       credentials: rds.Credentials.fromGeneratedSecret('admin'),
-      instanceProps: {
-        vpc: props.vpc,
-        vpcSubnets: props.databaseSubnets,
-        // Specify serverless Instance Type
-        instanceType: new ec2.InstanceType('serverless'),
-      },
+      vpc: props.vpc,
+      vpcSubnets: props.databaseSubnets,
+      writer: rds.ClusterInstance.provisioned('Writer', {
+        instanceType: instanceProps.instanceType,
+        isFromLegacyInstanceProps: instanceProps.isFromLegacyInstanceProps,
+      }),
+      readers: [
+        rds.ClusterInstance.provisioned('Reader', {
+          instanceType: instanceProps.instanceType,
+          isFromLegacyInstanceProps: instanceProps.isFromLegacyInstanceProps,
+        }),
+      ],
       // Set default parameter group for Aurora MySQL 8.0
       parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.aurora-mysql8.0'),
       backup: {
