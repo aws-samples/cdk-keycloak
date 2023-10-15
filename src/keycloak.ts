@@ -91,6 +91,11 @@ export class KeycloakVersion {
   public static readonly V21_0_1 = KeycloakVersion.of('21.0.1');
 
   /**
+   * Keycloak version 22.0.4
+   */
+  public static readonly V22_0_4 = KeycloakVersion.of('22.0.4');
+
+  /**
    * Custom cluster version
    * @param version custom version number
    */

@@ -10,7 +10,7 @@ test('create the default cluster', () => {
   // WHEN
   new kc.KeyCloak(stack, 'KeyCloak', {
     certificateArn: 'MOCK_ARN',
-    keycloakVersion: KeycloakVersion.V21_0_1,
+    keycloakVersion: KeycloakVersion.V22_0_4,
   });
 
   // THEN
@@ -103,7 +103,7 @@ test('with aurora serverless', () => {
   new kc.KeyCloak(stack, 'KeyCloak', {
     certificateArn: 'MOCK_ARN',
     auroraServerless: true,
-    keycloakVersion: KeycloakVersion.V21_0_1,
+    keycloakVersion: KeycloakVersion.V22_0_4,
   });
 
   // THEN
@@ -175,7 +175,7 @@ test('with aurora serverless v2', () => {
   new kc.KeyCloak(stack, 'KeyCloak', {
     certificateArn: 'MOCK_ARN',
     auroraServerlessV2: true,
-    keycloakVersion: KeycloakVersion.V21_0_1,
+    keycloakVersion: KeycloakVersion.V22_0_4,
   });
 
   // THEN
@@ -276,7 +276,7 @@ test('with single rds instance', () => {
   new kc.KeyCloak(stack, 'KeyCloak', {
     certificateArn: 'MOCK_ARN',
     singleDbInstance: true,
-    keycloakVersion: KeycloakVersion.V21_0_1,
+    keycloakVersion: KeycloakVersion.V22_0_4,
   });
 
   // THEN
@@ -373,7 +373,7 @@ test('with env', () => {
 
   // WHEN
   new kc.KeyCloak(stack, 'KeyCloak', {
-    keycloakVersion: KeycloakVersion.V21_0_1,
+    keycloakVersion: KeycloakVersion.V22_0_4,
     certificateArn: 'MOCK_ARN',
     env: {
       JAVA_OPTS: '-DHelloWorld',
@@ -539,7 +539,7 @@ test('with customized task settings', () => {
 
   // WHEN
   new kc.KeyCloak(stack, 'KeyCloak', {
-    keycloakVersion: KeycloakVersion.V21_0_1,
+    keycloakVersion: KeycloakVersion.V22_0_4,
     certificateArn: 'MOCK_ARN',
     hostname: 'keycloak.test',
     taskCpu: 512,
