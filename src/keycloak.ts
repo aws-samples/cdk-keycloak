@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+import * as path from 'path';
 import * as cdk from 'aws-cdk-lib';
 import {
   aws_certificatemanager as certmgr,
@@ -5,7 +7,6 @@ import {
   aws_iam as iam,
   aws_logs as logs,
   aws_rds as rds,
-  aws_s3 as s3,
   aws_secretsmanager as secretsmanager,
 } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
@@ -741,11 +742,10 @@ export class ContainerService extends Construct {
   constructor(scope: Construct, id: string, props: ContainerServiceProps) {
     super(scope, id);
 
-    const region = cdk.Stack.of(this).region;
     let containerPort = 8443;
     let protocol = elbv2.ApplicationProtocol.HTTPS;
-    let command = undefined;
-    let s3PingBucket: s3.Bucket | undefined = undefined;
+    let entryPoint = fs.readFileSync(path.join(__dirname, '../entryPoint.txt'), 'utf8').split(',');
+    let workingDirectory = '/opt/keycloak';
     const image = props.containerImage ?? ecs.ContainerImage.fromRegistry(this.getKeyCloakDockerImageUri(props.keycloakVersion.version));
     const isQuarkusDistribution = parseInt(props.keycloakVersion.version.split('.')[0]) > 16;
     let environment: {[key: string]: string} = {
@@ -778,16 +778,9 @@ export class ContainerService extends Construct {
 
     // if this is a quarkus distribution
     if (isQuarkusDistribution) {
-      s3PingBucket = new s3.Bucket(this, 'keycloak_s3_ping');
       containerPort = 8080;
       protocol = elbv2.ApplicationProtocol.HTTP;
-      command = ['start', '--optimized'];
       environment = {
-        JAVA_OPTS_APPEND: `-Djgroups.s3.region_name=${region} -Djgroups.s3.bucket_name=${s3PingBucket!.bucketName}`,
-        // We have selected the cache stack of 'ec2' which uses S3_PING under the hood
-        // This is the AWS native cluster discovery approach for caching
-        // See: https://www.keycloak.org/server/caching#_transport_stacks
-        KC_CACHE_STACK: 'ec2',
         KC_DB: 'mysql',
         KC_DB_URL_DATABASE: 'keycloak',
         KC_DB_URL_HOST: props.database.clusterEndpointHostname,
@@ -796,6 +789,9 @@ export class ContainerService extends Construct {
         KC_HOSTNAME: props.hostname!,
         KC_HOSTNAME_STRICT_BACKCHANNEL: 'true',
         KC_PROXY: 'edge',
+        INITIALIZE_SQL: 'CREATE TABLE IF NOT EXISTS JGROUPSPING (own_addr varchar(200) NOT NULL, cluster_name varchar(200) NOT NULL, ping_data VARBINARY(255), constraint PK_JGROUPSPING PRIMARY KEY (own_addr, cluster_name));',
+        KC_CACHE_CONFIG_FILE: 'cache-ispn-jdbc-ping.xml',
+
       };
       secrets = {
         KC_DB_PASSWORD: ecs.Secret.fromSecretsManager(props.database.secret, 'password'),
@@ -804,8 +800,8 @@ export class ContainerService extends Construct {
       };
       portMappings = [
         { containerPort: containerPort }, // web port
-        { containerPort: 7800 }, // jgroups-s3
-        { containerPort: 57800 }, // jgroups-s3-fd
+        { containerPort: 7800 }, // jgroups-tcp
+        { containerPort: 57800 }, // jgroups-tcp-fd
       ];
     }
 
@@ -831,7 +827,8 @@ export class ContainerService extends Construct {
 
     const kc = taskDefinition.addContainer('keycloak', {
       image,
-      command,
+      entryPoint,
+      workingDirectory,
       environment: Object.assign(environment, props.env),
       secrets,
       logging: ecs.LogDrivers.awsLogs({
@@ -855,7 +852,6 @@ export class ContainerService extends Construct {
     if (isQuarkusDistribution) {
       this.service.connections.allowFrom(this.service.connections, ec2.Port.tcp(7800), 'kc jgroups-tcp');
       this.service.connections.allowFrom(this.service.connections, ec2.Port.tcp(57800), 'kc jgroups-tcp-fd');
-      s3PingBucket!.grantReadWrite(taskDefinition.taskRole);
     } else {
       this.service.connections.allowFrom(this.service.connections, ec2.Port.tcp(7600), 'kc jgroups-tcp');
       this.service.connections.allowFrom(this.service.connections, ec2.Port.tcp(57600), 'kc jgroups-tcp-fd');
