@@ -114,7 +114,7 @@ interface dockerImageMap {
 
 const KEYCLOAK_DOCKER_IMAGE_URI_MAP: dockerImageMap = {
   'aws': 'quay.io/keycloak/keycloak:',
-  'aws-cn': '048912060910.dkr.ecr.cn-northwest-1.amazonaws.com.cn/dockerhub/jboss/keycloak:',
+  'aws-cn': '048912060910.dkr.ecr.cn-northwest-1.amazonaws.com.cn/quay/keycloak/keycloak:',
 };
 
 /**
