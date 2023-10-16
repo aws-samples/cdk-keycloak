@@ -422,10 +422,6 @@ test('with env', () => {
             Value: 'edge',
           },
           {
-            Name: 'INITIALIZE_SQL',
-            Value: 'CREATE TABLE IF NOT EXISTS JGROUPSPING (own_addr varchar(200) NOT NULL, cluster_name varchar(200) NOT NULL, ping_data VARBINARY(255), constraint PK_JGROUPSPING PRIMARY KEY (own_addr, cluster_name));',
-          },
-          {
             Name: 'KC_CACHE_CONFIG_FILE',
             Value: 'cache-ispn-jdbc-ping.xml',
           },
