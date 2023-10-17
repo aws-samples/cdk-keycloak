@@ -5,7 +5,6 @@ import {
   aws_iam as iam,
   aws_logs as logs,
   aws_rds as rds,
-  aws_s3 as s3,
   aws_secretsmanager as secretsmanager,
 } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
@@ -67,7 +66,7 @@ export class KeycloakVersion {
   /**
    * Keycloak version 18.0.2
    */
-  public static readonly V18_0_3 = KeycloakVersion.of('18.0.2');
+  public static readonly V18_0_2 = KeycloakVersion.of('18.0.2');
 
   /**
    * Keycloak version 19.0.3
@@ -77,7 +76,7 @@ export class KeycloakVersion {
   /**
    * Keycloak version 20.0.5
    */
-  public static readonly V20_0_3 = KeycloakVersion.of('20.0.5');
+  public static readonly V20_0_5 = KeycloakVersion.of('20.0.5');
 
   /**
    * Keycloak version 21.0.0
@@ -88,6 +87,11 @@ export class KeycloakVersion {
    * Keycloak version 21.0.1
    */
   public static readonly V21_0_1 = KeycloakVersion.of('21.0.1');
+
+  /**
+   * Keycloak version 22.0.4
+   */
+  public static readonly V22_0_4 = KeycloakVersion.of('22.0.4');
 
   /**
    * Custom cluster version
@@ -108,7 +112,7 @@ interface dockerImageMap {
 
 const KEYCLOAK_DOCKER_IMAGE_URI_MAP: dockerImageMap = {
   'aws': 'quay.io/keycloak/keycloak:',
-  'aws-cn': '048912060910.dkr.ecr.cn-northwest-1.amazonaws.com.cn/dockerhub/jboss/keycloak:',
+  'aws-cn': '048912060910.dkr.ecr.cn-northwest-1.amazonaws.com.cn/quay/keycloak/keycloak:',
 };
 
 /**
@@ -191,13 +195,13 @@ export interface KeyCloakProps {
   /**
    * The database instance engine
    *
-   * @default - MySQL 8.0.21
+   * @default - MySQL 8.0.34
    */
   readonly instanceEngine?: rds.IInstanceEngine;
   /**
    * The database cluster engine
    *
-   * @default rds.AuroraMysqlEngineVersion.VER_2_09_1
+   * @default rds.AuroraMysqlEngineVersion.VER_3_04_0
    */
   readonly clusterEngine?: rds.IClusterEngine;
   /**
@@ -390,13 +394,13 @@ export interface DatabaseProps {
   /**
    * The database instance engine
    *
-   * @default - MySQL 8.0.21
+   * @default - MySQL 8.0.34
    */
   readonly instanceEngine?: rds.IInstanceEngine;
   /**
    * The database cluster engine
    *
-   * @default rds.AuroraMysqlEngineVersion.VER_2_09_1
+   * @default rds.AuroraMysqlEngineVersion.VER_3_04_0
    */
   readonly clusterEngine?: rds.IClusterEngine;
   /**
@@ -509,7 +513,7 @@ export class Database extends Construct {
       databaseName: 'keycloak',
       vpcSubnets: props.databaseSubnets,
       engine: props.instanceEngine ?? rds.DatabaseInstanceEngine.mysql({
-        version: rds.MysqlEngineVersion.VER_8_0_21,
+        version: rds.MysqlEngineVersion.VER_8_0_34,
       }),
       storageEncrypted: true,
       backupRetention: props.backupRetention ?? cdk.Duration.days(7),
@@ -528,19 +532,30 @@ export class Database extends Construct {
   }
   // create a RDS for MySQL DB cluster
   private _createRdsCluster(props: DatabaseProps): DatabaseConfig {
+    const instanceProps = {
+      instanceType: props.instanceType ?? new ec2.InstanceType('r5.large'),
+      isFromLegacyInstanceProps: true,
+    };
     const dbCluster = new rds.DatabaseCluster(this, 'DBCluster', {
       engine: props.clusterEngine ?? rds.DatabaseClusterEngine.auroraMysql({
-        version: rds.AuroraMysqlEngineVersion.VER_2_11_2,
+        version: rds.AuroraMysqlEngineVersion.VER_3_04_0,
       }),
       defaultDatabaseName: 'keycloak',
       deletionProtection: true,
       credentials: rds.Credentials.fromGeneratedSecret('admin'),
-      instanceProps: {
-        vpc: props.vpc,
-        vpcSubnets: props.databaseSubnets,
-        instanceType: props.instanceType ?? new ec2.InstanceType('r5.large'),
-      },
-      parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.aurora-mysql5.7'),
+      vpc: props.vpc,
+      vpcSubnets: props.databaseSubnets,
+      writer: rds.ClusterInstance.provisioned('Writer', {
+        instanceType: instanceProps.instanceType,
+        isFromLegacyInstanceProps: instanceProps.isFromLegacyInstanceProps,
+      }),
+      readers: [
+        rds.ClusterInstance.provisioned('Reader', {
+          instanceType: instanceProps.instanceType,
+          isFromLegacyInstanceProps: instanceProps.isFromLegacyInstanceProps,
+        }),
+      ],
+      parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.aurora-mysql8.0'),
       backup: {
         retention: props.backupRetention ?? cdk.Duration.days(7),
       },
@@ -575,19 +590,30 @@ export class Database extends Construct {
   }
   // create a RDS for MySQL DB cluster with Aurora Serverless v2
   private _createServerlessV2Cluster(props: DatabaseProps): DatabaseConfig {
+    const instanceProps = {
+      // Specify serverless Instance Type
+      instanceType: new ec2.InstanceType('serverless'),
+      isFromLegacyInstanceProps: true,
+    };
     const dbCluster = new rds.DatabaseCluster(this, 'DBCluster', {
       engine: props.clusterEngine ?? rds.DatabaseClusterEngine.auroraMysql({
-        version: rds.AuroraMysqlEngineVersion.VER_3_02_0,
+        version: rds.AuroraMysqlEngineVersion.VER_3_04_0,
       }),
       defaultDatabaseName: 'keycloak',
       deletionProtection: true,
       credentials: rds.Credentials.fromGeneratedSecret('admin'),
-      instanceProps: {
-        vpc: props.vpc,
-        vpcSubnets: props.databaseSubnets,
-        // Specify serverless Instance Type
-        instanceType: new ec2.InstanceType('serverless'),
-      },
+      vpc: props.vpc,
+      vpcSubnets: props.databaseSubnets,
+      writer: rds.ClusterInstance.provisioned('Writer', {
+        instanceType: instanceProps.instanceType,
+        isFromLegacyInstanceProps: instanceProps.isFromLegacyInstanceProps,
+      }),
+      readers: [
+        rds.ClusterInstance.provisioned('Reader', {
+          instanceType: instanceProps.instanceType,
+          isFromLegacyInstanceProps: instanceProps.isFromLegacyInstanceProps,
+        }),
+      ],
       // Set default parameter group for Aurora MySQL 8.0
       parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.aurora-mysql8.0'),
       backup: {
@@ -719,11 +745,10 @@ export class ContainerService extends Construct {
   constructor(scope: Construct, id: string, props: ContainerServiceProps) {
     super(scope, id);
 
-    const region = cdk.Stack.of(this).region;
     let containerPort = 8443;
     let protocol = elbv2.ApplicationProtocol.HTTPS;
-    let command = undefined;
-    let s3PingBucket: s3.Bucket | undefined = undefined;
+    let entryPoint = undefined;
+    let workingDirectory = undefined;
     const image = props.containerImage ?? ecs.ContainerImage.fromRegistry(this.getKeyCloakDockerImageUri(props.keycloakVersion.version));
     const isQuarkusDistribution = parseInt(props.keycloakVersion.version.split('.')[0]) > 16;
     let environment: {[key: string]: string} = {
@@ -756,16 +781,11 @@ export class ContainerService extends Construct {
 
     // if this is a quarkus distribution
     if (isQuarkusDistribution) {
-      s3PingBucket = new s3.Bucket(this, 'keycloak_s3_ping');
       containerPort = 8080;
       protocol = elbv2.ApplicationProtocol.HTTP;
-      command = ['start', '--optimized'];
+      entryPoint = 'sh,-c,touch cache-ispn-jdbc-ping.xml && echo "<?xml version=\\"1.0\\" encoding=\\"UTF-8\\"?> <infinispan    xmlns:xsi=\\"http://www.w3.org/2001/XMLSchema-instance\\"    xsi:schemaLocation=\\"urn:infinispan:config:11.0 http://www.infinispan.org/schemas/infinispan-config-11.0.xsd\\"    xmlns=\\"urn:infinispan:config:11.0\\">  <jgroups>    <stack name=\\"jdbc-ping-tcp\\" extends=\\"tcp\\">      <JDBC_PING connection_driver=\\"com.mysql.cj.jdbc.Driver\\"                 connection_username=\\"\\\${env.KC_DB_USERNAME}\\"                  connection_password=\\"\\\${env.KC_DB_PASSWORD}\\"                 connection_url=\\"jdbc:mysql://\\\${env.KC_DB_URL_HOST}/\\\${env.KC_DB_URL_DATABASE}\\"                                  info_writer_sleep_time=\\"500\\"                 remove_all_data_on_view_change=\\"true\\"                 stack.combine=\\"REPLACE\\"                 stack.position=\\"MPING\\" />    </stack>  </jgroups>  <cache-container name=\\"keycloak\\">    <transport lock-timeout=\\"60000\\" stack=\\"jdbc-ping-tcp\\"/>    <local-cache name=\\"realms\\">      <encoding>        <key media-type=\\"application/x-java-object\\"/>        <value media-type=\\"application/x-java-object\\"/>      </encoding>      <memory max-count=\\"10000\\"/>    </local-cache>    <local-cache name=\\"users\\">      <encoding>        <key media-type=\\"application/x-java-object\\"/>        <value media-type=\\"application/x-java-object\\"/>      </encoding>      <memory max-count=\\"10000\\"/>    </local-cache>    <distributed-cache name=\\"sessions\\" owners=\\"3\\">      <expiration lifespan=\\"-1\\"/>    </distributed-cache>    <distributed-cache name=\\"authenticationSessions\\" owners=\\"3\\">      <expiration lifespan=\\"-1\\"/>    </distributed-cache>    <distributed-cache name=\\"offlineSessions\\" owners=\\"3\\">      <expiration lifespan=\\"-1\\"/>    </distributed-cache>    <distributed-cache name=\\"clientSessions\\" owners=\\"3\\">      <expiration lifespan=\\"-1\\"/>    </distributed-cache>    <distributed-cache name=\\"offlineClientSessions\\" owners=\\"3\\">      <expiration lifespan=\\"-1\\"/>    </distributed-cache>    <distributed-cache name=\\"loginFailures\\" owners=\\"3\\">      <expiration lifespan=\\"-1\\"/>    </distributed-cache>    <local-cache name=\\"authorization\\">      <encoding>        <key media-type=\\"application/x-java-object\\"/>        <value media-type=\\"application/x-java-object\\"/>      </encoding>      <memory max-count=\\"10000\\"/>    </local-cache>    <replicated-cache name=\\"work\\">      <expiration lifespan=\\"-1\\"/>    </replicated-cache>    <local-cache name=\\"keys\\">      <encoding>        <key media-type=\\"application/x-java-object\\"/>        <value media-type=\\"application/x-java-object\\"/>      </encoding>      <expiration max-idle=\\"3600000\\"/>      <memory max-count=\\"1000\\"/>    </local-cache>    <distributed-cache name=\\"actionTokens\\" owners=\\"3\\">      <encoding>        <key media-type=\\"application/x-java-object\\"/>        <value media-type=\\"application/x-java-object\\"/>      </encoding>      <expiration max-idle=\\"-1\\" lifespan=\\"-1\\" interval=\\"300000\\"/>     <memory max-count=\\"-1\\"/>    </distributed-cache>  </cache-container></infinispan>" > cache-ispn-jdbc-ping.xml && cp cache-ispn-jdbc-ping.xml /opt/keycloak/conf/cache-ispn-jdbc-ping.xml && /opt/keycloak/bin/kc.sh build && /opt/keycloak/bin/kc.sh start'.split(',');
+      workingDirectory = '/opt/keycloak';
       environment = {
-        JAVA_OPTS_APPEND: `-Djgroups.s3.region_name=${region} -Djgroups.s3.bucket_name=${s3PingBucket!.bucketName}`,
-        // We have selected the cache stack of 'ec2' which uses S3_PING under the hood
-        // This is the AWS native cluster discovery approach for caching
-        // See: https://www.keycloak.org/server/caching#_transport_stacks
-        KC_CACHE_STACK: 'ec2',
         KC_DB: 'mysql',
         KC_DB_URL_DATABASE: 'keycloak',
         KC_DB_URL_HOST: props.database.clusterEndpointHostname,
@@ -774,6 +794,7 @@ export class ContainerService extends Construct {
         KC_HOSTNAME: props.hostname!,
         KC_HOSTNAME_STRICT_BACKCHANNEL: 'true',
         KC_PROXY: 'edge',
+        KC_CACHE_CONFIG_FILE: 'cache-ispn-jdbc-ping.xml',
       };
       secrets = {
         KC_DB_PASSWORD: ecs.Secret.fromSecretsManager(props.database.secret, 'password'),
@@ -782,8 +803,8 @@ export class ContainerService extends Construct {
       };
       portMappings = [
         { containerPort: containerPort }, // web port
-        { containerPort: 7800 }, // jgroups-s3
-        { containerPort: 57800 }, // jgroups-s3-fd
+        { containerPort: 7800 }, // jgroups-tcp
+        { containerPort: 57800 }, // jgroups-tcp-fd
       ];
     }
 
@@ -809,7 +830,8 @@ export class ContainerService extends Construct {
 
     const kc = taskDefinition.addContainer('keycloak', {
       image,
-      command,
+      entryPoint,
+      workingDirectory,
       environment: Object.assign(environment, props.env),
       secrets,
       logging: ecs.LogDrivers.awsLogs({
@@ -833,7 +855,6 @@ export class ContainerService extends Construct {
     if (isQuarkusDistribution) {
       this.service.connections.allowFrom(this.service.connections, ec2.Port.tcp(7800), 'kc jgroups-tcp');
       this.service.connections.allowFrom(this.service.connections, ec2.Port.tcp(57800), 'kc jgroups-tcp-fd');
-      s3PingBucket!.grantReadWrite(taskDefinition.taskRole);
     } else {
       this.service.connections.allowFrom(this.service.connections, ec2.Port.tcp(7600), 'kc jgroups-tcp');
       this.service.connections.allowFrom(this.service.connections, ec2.Port.tcp(57600), 'kc jgroups-tcp-fd');

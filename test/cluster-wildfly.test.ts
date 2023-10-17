@@ -18,11 +18,11 @@ test('create the default cluster', () => {
   const t = assertions.Template.fromStack(stack);
   t.hasResourceProperties('AWS::RDS::DBCluster', {
     Engine: 'aurora-mysql',
-    DBClusterParameterGroupName: 'default.aurora-mysql5.7',
+    DBClusterParameterGroupName: 'default.aurora-mysql8.0',
     DBSubnetGroupName: {
       Ref: 'KeyCloakDatabaseDBClusterSubnetsE36F1B1B',
     },
-    EngineVersion: '5.7.mysql_aurora.2.11.2',
+    EngineVersion: '8.0.mysql_aurora.3.04.0',
     MasterUsername: 'admin',
     MasterUserPassword: {
       'Fn::Join': [
@@ -192,7 +192,7 @@ test('with aurora serverless v2', () => {
     DBSubnetGroupName: {
       Ref: 'KeyCloakDatabaseDBClusterSubnetsE36F1B1B',
     },
-    EngineVersion: '8.0.mysql_aurora.3.02.0',
+    EngineVersion: '8.0.mysql_aurora.3.04.0',
     MasterUsername: 'admin',
     MasterUserPassword: {
       'Fn::Join': [
@@ -304,7 +304,7 @@ test('with single rds instance', () => {
       Ref: 'KeyCloakDatabaseDBInstanceSubnetGroup71BF616F',
     },
     Engine: 'mysql',
-    EngineVersion: '8.0.21',
+    EngineVersion: '8.0.34',
     MasterUsername: 'admin',
     MasterUserPassword: {
       'Fn::Join': [

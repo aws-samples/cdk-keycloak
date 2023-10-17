@@ -20,8 +20,9 @@ export class IntegTesting {
     // create a default keycloak workload with minimal required props
     new KeyCloak(stack, 'KeyCloak', {
       certificateArn: stack.node.tryGetContext('ACM_CERT_ARN') || 'MOCK_ARN',
-      keycloakVersion: KeycloakVersion.V15_0_2,
-      auroraServerless: true,
+      keycloakVersion: KeycloakVersion.V22_0_4,
+      hostname: 'hostname for keycloak server',
+      auroraServerlessV2: true,
       nodeCount: 2,
       autoScaleTask: {
         min: 2,

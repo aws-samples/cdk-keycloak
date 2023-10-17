@@ -10,18 +10,18 @@ test('create the default cluster', () => {
   // WHEN
   new kc.KeyCloak(stack, 'KeyCloak', {
     certificateArn: 'MOCK_ARN',
-    keycloakVersion: KeycloakVersion.V21_0_1,
+    keycloakVersion: KeycloakVersion.V22_0_4,
   });
 
   // THEN
   const t = assertions.Template.fromStack(stack);
   t.hasResourceProperties('AWS::RDS::DBCluster', {
     Engine: 'aurora-mysql',
-    DBClusterParameterGroupName: 'default.aurora-mysql5.7',
+    DBClusterParameterGroupName: 'default.aurora-mysql8.0',
     DBSubnetGroupName: {
       Ref: 'KeyCloakDatabaseDBClusterSubnetsE36F1B1B',
     },
-    EngineVersion: '5.7.mysql_aurora.2.11.2',
+    EngineVersion: '8.0.mysql_aurora.3.04.0',
     MasterUsername: 'admin',
     MasterUserPassword: {
       'Fn::Join': [
@@ -103,7 +103,7 @@ test('with aurora serverless', () => {
   new kc.KeyCloak(stack, 'KeyCloak', {
     certificateArn: 'MOCK_ARN',
     auroraServerless: true,
-    keycloakVersion: KeycloakVersion.V21_0_1,
+    keycloakVersion: KeycloakVersion.V22_0_4,
   });
 
   // THEN
@@ -175,7 +175,7 @@ test('with aurora serverless v2', () => {
   new kc.KeyCloak(stack, 'KeyCloak', {
     certificateArn: 'MOCK_ARN',
     auroraServerlessV2: true,
-    keycloakVersion: KeycloakVersion.V21_0_1,
+    keycloakVersion: KeycloakVersion.V22_0_4,
   });
 
   // THEN
@@ -186,7 +186,7 @@ test('with aurora serverless v2', () => {
     DBSubnetGroupName: {
       Ref: 'KeyCloakDatabaseDBClusterSubnetsE36F1B1B',
     },
-    EngineVersion: '8.0.mysql_aurora.3.02.0',
+    EngineVersion: '8.0.mysql_aurora.3.04.0',
     MasterUsername: 'admin',
     MasterUserPassword: {
       'Fn::Join': [
@@ -276,7 +276,7 @@ test('with single rds instance', () => {
   new kc.KeyCloak(stack, 'KeyCloak', {
     certificateArn: 'MOCK_ARN',
     singleDbInstance: true,
-    keycloakVersion: KeycloakVersion.V21_0_1,
+    keycloakVersion: KeycloakVersion.V22_0_4,
   });
 
   // THEN
@@ -294,7 +294,7 @@ test('with single rds instance', () => {
       Ref: 'KeyCloakDatabaseDBInstanceSubnetGroup71BF616F',
     },
     Engine: 'mysql',
-    EngineVersion: '8.0.21',
+    EngineVersion: '8.0.34',
     MasterUsername: 'admin',
     MasterUserPassword: {
       'Fn::Join': [
@@ -373,7 +373,7 @@ test('with env', () => {
 
   // WHEN
   new kc.KeyCloak(stack, 'KeyCloak', {
-    keycloakVersion: KeycloakVersion.V21_0_1,
+    keycloakVersion: KeycloakVersion.V22_0_4,
     certificateArn: 'MOCK_ARN',
     env: {
       JAVA_OPTS: '-DHelloWorld',
@@ -387,13 +387,6 @@ test('with env', () => {
     ContainerDefinitions: [
       {
         Environment: [
-          {
-            Name: 'JAVA_OPTS_APPEND',
-          },
-          {
-            Name: 'KC_CACHE_STACK',
-            Value: 'ec2',
-          },
           {
             Name: 'KC_DB',
             Value: 'mysql',
@@ -427,6 +420,10 @@ test('with env', () => {
           {
             Name: 'KC_PROXY',
             Value: 'edge',
+          },
+          {
+            Name: 'KC_CACHE_CONFIG_FILE',
+            Value: 'cache-ispn-jdbc-ping.xml',
           },
           {
             Name: 'JAVA_OPTS',
@@ -538,7 +535,7 @@ test('with customized task settings', () => {
 
   // WHEN
   new kc.KeyCloak(stack, 'KeyCloak', {
-    keycloakVersion: KeycloakVersion.V21_0_1,
+    keycloakVersion: KeycloakVersion.V22_0_4,
     certificateArn: 'MOCK_ARN',
     hostname: 'keycloak.test',
     taskCpu: 512,

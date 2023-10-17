@@ -95,9 +95,9 @@ new Database(scope: Construct, id: string, props: DatabaseProps)
   * **auroraServerless** (<code>boolean</code>)  enable aurora serverless. __*Default*__: false
   * **auroraServerlessV2** (<code>boolean</code>)  enable aurora serverless v2. __*Default*__: false
   * **backupRetention** (<code>[Duration](#aws-cdk-lib-duration)</code>)  database backup retension. __*Default*__: 7 days
-  * **clusterEngine** (<code>[aws_rds.IClusterEngine](#aws-cdk-lib-aws-rds-iclusterengine)</code>)  The database cluster engine. __*Default*__: rds.AuroraMysqlEngineVersion.VER_2_09_1
+  * **clusterEngine** (<code>[aws_rds.IClusterEngine](#aws-cdk-lib-aws-rds-iclusterengine)</code>)  The database cluster engine. __*Default*__: rds.AuroraMysqlEngineVersion.VER_3_04_0
   * **databaseSubnets** (<code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code>)  VPC subnets for database. __*Optional*__
-  * **instanceEngine** (<code>[aws_rds.IInstanceEngine](#aws-cdk-lib-aws-rds-iinstanceengine)</code>)  The database instance engine. __*Default*__: MySQL 8.0.21
+  * **instanceEngine** (<code>[aws_rds.IInstanceEngine](#aws-cdk-lib-aws-rds-iinstanceengine)</code>)  The database instance engine. __*Default*__: MySQL 8.0.34
   * **instanceType** (<code>[aws_ec2.InstanceType](#aws-cdk-lib-aws-ec2-instancetype)</code>)  The database instance type. __*Default*__: r5.large
   * **maxCapacity** (<code>number</code>)  The maximum number of Aurora Serverless V2 capacity units. __*Default*__: 10
   * **minCapacity** (<code>number</code>)  The minimum number of Aurora Serverless V2 capacity units. __*Default*__: 0.5
@@ -145,7 +145,7 @@ new KeyCloak(scope: Construct, id: string, props: KeyCloakProps)
   * **autoScaleTask** (<code>[AutoScaleTask](#cdk-keycloak-autoscaletask)</code>)  Autoscaling for the ECS Service. __*Default*__: no ecs service autoscaling
   * **backupRetention** (<code>[Duration](#aws-cdk-lib-duration)</code>)  database backup retension. __*Default*__: 7 days
   * **bastion** (<code>boolean</code>)  Create a bastion host for debugging or trouble-shooting. __*Default*__: false
-  * **clusterEngine** (<code>[aws_rds.IClusterEngine](#aws-cdk-lib-aws-rds-iclusterengine)</code>)  The database cluster engine. __*Default*__: rds.AuroraMysqlEngineVersion.VER_2_09_1
+  * **clusterEngine** (<code>[aws_rds.IClusterEngine](#aws-cdk-lib-aws-rds-iclusterengine)</code>)  The database cluster engine. __*Default*__: rds.AuroraMysqlEngineVersion.VER_3_04_0
   * **containerImage** (<code>[aws_ecs.ContainerImage](#aws-cdk-lib-aws-ecs-containerimage)</code>)  Overrides the default image. __*Default*__: quay.io/keycloak/keycloak:${KEYCLOAK_VERSION}
   * **databaseInstanceType** (<code>[aws_ec2.InstanceType](#aws-cdk-lib-aws-ec2-instancetype)</code>)  Database instance type. __*Default*__: r5.large
   * **databaseMaxCapacity** (<code>number</code>)  The maximum number of Aurora Serverless V2 capacity units. __*Default*__: 10
@@ -154,7 +154,7 @@ new KeyCloak(scope: Construct, id: string, props: KeyCloakProps)
   * **databaseSubnets** (<code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code>)  VPC subnets for database. __*Default*__: VPC isolated subnets
   * **env** (<code>Map<string, string></code>)  The environment variables to pass to the keycloak container. __*Optional*__
   * **hostname** (<code>string</code>)  The hostname to use for the keycloak server. __*Optional*__
-  * **instanceEngine** (<code>[aws_rds.IInstanceEngine](#aws-cdk-lib-aws-rds-iinstanceengine)</code>)  The database instance engine. __*Default*__: MySQL 8.0.21
+  * **instanceEngine** (<code>[aws_rds.IInstanceEngine](#aws-cdk-lib-aws-rds-iinstanceengine)</code>)  The database instance engine. __*Default*__: MySQL 8.0.34
   * **internetFacing** (<code>boolean</code>)  Whether to put the load balancer in the public or private subnets. __*Default*__: true
   * **nodeCount** (<code>number</code>)  Number of keycloak node in the cluster. __*Default*__: 2
   * **privateSubnets** (<code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code>)  VPC private subnets for keycloak service. __*Default*__: VPC private subnets
@@ -193,9 +193,9 @@ addDatabase(props: DatabaseProps): Database
   * **auroraServerless** (<code>boolean</code>)  enable aurora serverless. __*Default*__: false
   * **auroraServerlessV2** (<code>boolean</code>)  enable aurora serverless v2. __*Default*__: false
   * **backupRetention** (<code>[Duration](#aws-cdk-lib-duration)</code>)  database backup retension. __*Default*__: 7 days
-  * **clusterEngine** (<code>[aws_rds.IClusterEngine](#aws-cdk-lib-aws-rds-iclusterengine)</code>)  The database cluster engine. __*Default*__: rds.AuroraMysqlEngineVersion.VER_2_09_1
+  * **clusterEngine** (<code>[aws_rds.IClusterEngine](#aws-cdk-lib-aws-rds-iclusterengine)</code>)  The database cluster engine. __*Default*__: rds.AuroraMysqlEngineVersion.VER_3_04_0
   * **databaseSubnets** (<code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code>)  VPC subnets for database. __*Optional*__
-  * **instanceEngine** (<code>[aws_rds.IInstanceEngine](#aws-cdk-lib-aws-rds-iinstanceengine)</code>)  The database instance engine. __*Default*__: MySQL 8.0.21
+  * **instanceEngine** (<code>[aws_rds.IInstanceEngine](#aws-cdk-lib-aws-rds-iinstanceengine)</code>)  The database instance engine. __*Default*__: MySQL 8.0.34
   * **instanceType** (<code>[aws_ec2.InstanceType](#aws-cdk-lib-aws-ec2-instancetype)</code>)  The database instance type. __*Default*__: r5.large
   * **maxCapacity** (<code>number</code>)  The maximum number of Aurora Serverless V2 capacity units. __*Default*__: 10
   * **minCapacity** (<code>number</code>)  The minimum number of Aurora Serverless V2 capacity units. __*Default*__: 0.5
@@ -256,11 +256,12 @@ Name | Type | Description
 *static* **V15_0_2** | <code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code> | Keycloak version 15.0.2.
 *static* **V16_1_1** | <code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code> | Keycloak version 16.1.1.
 *static* **V17_0_1** | <code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code> | Keycloak version 17.0.1.
-*static* **V18_0_3** | <code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code> | Keycloak version 18.0.2.
+*static* **V18_0_2** | <code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code> | Keycloak version 18.0.2.
 *static* **V19_0_3** | <code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code> | Keycloak version 19.0.3.
-*static* **V20_0_3** | <code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code> | Keycloak version 20.0.5.
+*static* **V20_0_5** | <code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code> | Keycloak version 20.0.5.
 *static* **V21_0_0** | <code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code> | Keycloak version 21.0.0.
 *static* **V21_0_1** | <code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code> | Keycloak version 21.0.1.
+*static* **V22_0_4** | <code>[KeycloakVersion](#cdk-keycloak-keycloakversion)</code> | Keycloak version 22.0.4.
 
 ### Methods
 
@@ -354,9 +355,9 @@ Name | Type | Description
 **auroraServerless**? | <code>boolean</code> | enable aurora serverless.<br/>__*Default*__: false
 **auroraServerlessV2**? | <code>boolean</code> | enable aurora serverless v2.<br/>__*Default*__: false
 **backupRetention**? | <code>[Duration](#aws-cdk-lib-duration)</code> | database backup retension.<br/>__*Default*__: 7 days
-**clusterEngine**? | <code>[aws_rds.IClusterEngine](#aws-cdk-lib-aws-rds-iclusterengine)</code> | The database cluster engine.<br/>__*Default*__: rds.AuroraMysqlEngineVersion.VER_2_09_1
+**clusterEngine**? | <code>[aws_rds.IClusterEngine](#aws-cdk-lib-aws-rds-iclusterengine)</code> | The database cluster engine.<br/>__*Default*__: rds.AuroraMysqlEngineVersion.VER_3_04_0
 **databaseSubnets**? | <code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code> | VPC subnets for database.<br/>__*Optional*__
-**instanceEngine**? | <code>[aws_rds.IInstanceEngine](#aws-cdk-lib-aws-rds-iinstanceengine)</code> | The database instance engine.<br/>__*Default*__: MySQL 8.0.21
+**instanceEngine**? | <code>[aws_rds.IInstanceEngine](#aws-cdk-lib-aws-rds-iinstanceengine)</code> | The database instance engine.<br/>__*Default*__: MySQL 8.0.34
 **instanceType**? | <code>[aws_ec2.InstanceType](#aws-cdk-lib-aws-ec2-instancetype)</code> | The database instance type.<br/>__*Default*__: r5.large
 **maxCapacity**? | <code>number</code> | The maximum number of Aurora Serverless V2 capacity units.<br/>__*Default*__: 10
 **minCapacity**? | <code>number</code> | The minimum number of Aurora Serverless V2 capacity units.<br/>__*Default*__: 0.5
@@ -381,7 +382,7 @@ Name | Type | Description
 **autoScaleTask**? | <code>[AutoScaleTask](#cdk-keycloak-autoscaletask)</code> | Autoscaling for the ECS Service.<br/>__*Default*__: no ecs service autoscaling
 **backupRetention**? | <code>[Duration](#aws-cdk-lib-duration)</code> | database backup retension.<br/>__*Default*__: 7 days
 **bastion**? | <code>boolean</code> | Create a bastion host for debugging or trouble-shooting.<br/>__*Default*__: false
-**clusterEngine**? | <code>[aws_rds.IClusterEngine](#aws-cdk-lib-aws-rds-iclusterengine)</code> | The database cluster engine.<br/>__*Default*__: rds.AuroraMysqlEngineVersion.VER_2_09_1
+**clusterEngine**? | <code>[aws_rds.IClusterEngine](#aws-cdk-lib-aws-rds-iclusterengine)</code> | The database cluster engine.<br/>__*Default*__: rds.AuroraMysqlEngineVersion.VER_3_04_0
 **containerImage**? | <code>[aws_ecs.ContainerImage](#aws-cdk-lib-aws-ecs-containerimage)</code> | Overrides the default image.<br/>__*Default*__: quay.io/keycloak/keycloak:${KEYCLOAK_VERSION}
 **databaseInstanceType**? | <code>[aws_ec2.InstanceType](#aws-cdk-lib-aws-ec2-instancetype)</code> | Database instance type.<br/>__*Default*__: r5.large
 **databaseMaxCapacity**? | <code>number</code> | The maximum number of Aurora Serverless V2 capacity units.<br/>__*Default*__: 10
@@ -390,7 +391,7 @@ Name | Type | Description
 **databaseSubnets**? | <code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code> | VPC subnets for database.<br/>__*Default*__: VPC isolated subnets
 **env**? | <code>Map<string, string></code> | The environment variables to pass to the keycloak container.<br/>__*Optional*__
 **hostname**? | <code>string</code> | The hostname to use for the keycloak server.<br/>__*Optional*__
-**instanceEngine**? | <code>[aws_rds.IInstanceEngine](#aws-cdk-lib-aws-rds-iinstanceengine)</code> | The database instance engine.<br/>__*Default*__: MySQL 8.0.21
+**instanceEngine**? | <code>[aws_rds.IInstanceEngine](#aws-cdk-lib-aws-rds-iinstanceengine)</code> | The database instance engine.<br/>__*Default*__: MySQL 8.0.34
 **internetFacing**? | <code>boolean</code> | Whether to put the load balancer in the public or private subnets.<br/>__*Default*__: true
 **nodeCount**? | <code>number</code> | Number of keycloak node in the cluster.<br/>__*Default*__: 2
 **privateSubnets**? | <code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code> | VPC private subnets for keycloak service.<br/>__*Default*__: VPC private subnets
