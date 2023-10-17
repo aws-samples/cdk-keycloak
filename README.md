@@ -58,16 +58,16 @@ The `KeyCloak` construct provisions the **Amaozn RDS cluster for MySQL** with **
 new KeyCloak(stack, 'KeyCloak', {
   hostname,
   certificateArn,
-  auroraServerless: true,
   keycloakVersion,
+  auroraServerless: true,
 });
 
 // Aurora Serverless v2
 new KeyCloak(stack, 'KeyCloak', {
   hostname,
   certificateArn,
-  auroraServerlessV2: true,
   keycloakVersion,
+  auroraServerlessV2: true,
 });
 ```
 
@@ -84,8 +84,8 @@ Plesae note this is not recommended for production environment.
 new KeyCloak(stack, 'KeyCloak', {
   hostname,
   certificateArn,
-  singleDbInstance: true,
   keycloakVersion,
+  singleDbInstance: true,
 });
 
 ```
@@ -96,6 +96,9 @@ Define `autoScaleTask` for the ecs service task autoscaling. For example:
 
 ```ts
 new KeyCloak(stack, 'KeyCloak', {
+  hostname,
+  certificateArn,
+  keycloakVersion,
   auroraServerlessV2: true,
   nodeCount: 2,
   autoScaleTask: {
@@ -115,6 +118,9 @@ Could be useful for development environments. For example:
 
 ```ts
 new KeyCloak(stack, 'KeyCloak', {
+  hostname,
+  certificateArn,
+  keycloakVersion,
   nodeCount: 1, 
   taskCpu: 512,
   taskMemory: 2048,
@@ -133,6 +139,7 @@ Consider the sample below:
 ```ts
 new KeyCloak(stack, 'KeyCloak', {
   hostname: 'keycloak.example.com',
+  keycloakVersion: KeycloakVersion.V22_0_4,
   certificateArn: 'arn:aws:acm:us-east-1:123456789012:certificate/293cf875-ca98-4c2e-a797-e1cf6df2553c',
   vpc: ec2.Vpc.fromLookup(stack, 'Vpc', { vpcId: 'vpc-0417e46d' }),
   publicSubnets: {
