@@ -103,6 +103,7 @@ new Database(scope: Construct, id: string, props: DatabaseProps)
   * **minCapacity** (<code>number</code>)  The minimum number of Aurora Serverless V2 capacity units. __*Default*__: 0.5
   * **removalPolicy** (<code>[RemovalPolicy](#aws-cdk-lib-removalpolicy)</code>)  Controls what happens to the database if it stops being managed by CloudFormation. __*Default*__: RemovalPolicy.RETAIN
   * **singleDbInstance** (<code>boolean</code>)  Whether to use single RDS instance rather than RDS cluster. __*Default*__: false
+  * **storageEncryptionKey** (<code>[aws_kms.IKey](#aws-cdk-lib-aws-kms-ikey)</code>)  The storage encryption key, that should be used to encrypt the database. __*Default*__: Will create an aws managed key, when unspecified.
 
 
 
@@ -161,6 +162,7 @@ new KeyCloak(scope: Construct, id: string, props: KeyCloakProps)
   * **publicSubnets** (<code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code>)  VPC public subnets for ALB. __*Default*__: VPC public subnets
   * **singleDbInstance** (<code>boolean</code>)  Whether to use single RDS instance rather than RDS cluster. __*Default*__: false
   * **stickinessCookieDuration** (<code>[Duration](#aws-cdk-lib-duration)</code>)  The sticky session duration for the keycloak workload with ALB. __*Default*__: one day
+  * **storageEncryptionKey** (<code>[aws_kms.IKey](#aws-cdk-lib-aws-kms-ikey)</code>)  The storage encryption key, that should be used to encrypt the database. __*Default*__: Will create an aws managed key, when unspecified.
   * **taskCpu** (<code>number</code>)  The number of cpu units used by the keycloak task. __*Default*__: 4096
   * **taskMemory** (<code>number</code>)  The amount (in MiB) of memory used by the keycloak task. __*Default*__: 8192
   * **vpc** (<code>[aws_ec2.IVpc](#aws-cdk-lib-aws-ec2-ivpc)</code>)  VPC for the workload. __*Optional*__
@@ -201,6 +203,7 @@ addDatabase(props: DatabaseProps): Database
   * **minCapacity** (<code>number</code>)  The minimum number of Aurora Serverless V2 capacity units. __*Default*__: 0.5
   * **removalPolicy** (<code>[RemovalPolicy](#aws-cdk-lib-removalpolicy)</code>)  Controls what happens to the database if it stops being managed by CloudFormation. __*Default*__: RemovalPolicy.RETAIN
   * **singleDbInstance** (<code>boolean</code>)  Whether to use single RDS instance rather than RDS cluster. __*Default*__: false
+  * **storageEncryptionKey** (<code>[aws_kms.IKey](#aws-cdk-lib-aws-kms-ikey)</code>)  The storage encryption key, that should be used to encrypt the database. __*Default*__: Will create an aws managed key, when unspecified.
 
 __Returns__:
 * <code>[Database](#cdk-keycloak-database)</code>
@@ -363,6 +366,7 @@ Name | Type | Description
 **minCapacity**? | <code>number</code> | The minimum number of Aurora Serverless V2 capacity units.<br/>__*Default*__: 0.5
 **removalPolicy**? | <code>[RemovalPolicy](#aws-cdk-lib-removalpolicy)</code> | Controls what happens to the database if it stops being managed by CloudFormation.<br/>__*Default*__: RemovalPolicy.RETAIN
 **singleDbInstance**? | <code>boolean</code> | Whether to use single RDS instance rather than RDS cluster.<br/>__*Default*__: false
+**storageEncryptionKey**? | <code>[aws_kms.IKey](#aws-cdk-lib-aws-kms-ikey)</code> | The storage encryption key, that should be used to encrypt the database.<br/>__*Default*__: Will create an aws managed key, when unspecified.
 
 
 
@@ -398,6 +402,7 @@ Name | Type | Description
 **publicSubnets**? | <code>[aws_ec2.SubnetSelection](#aws-cdk-lib-aws-ec2-subnetselection)</code> | VPC public subnets for ALB.<br/>__*Default*__: VPC public subnets
 **singleDbInstance**? | <code>boolean</code> | Whether to use single RDS instance rather than RDS cluster.<br/>__*Default*__: false
 **stickinessCookieDuration**? | <code>[Duration](#aws-cdk-lib-duration)</code> | The sticky session duration for the keycloak workload with ALB.<br/>__*Default*__: one day
+**storageEncryptionKey**? | <code>[aws_kms.IKey](#aws-cdk-lib-aws-kms-ikey)</code> | The storage encryption key, that should be used to encrypt the database.<br/>__*Default*__: Will create an aws managed key, when unspecified.
 **taskCpu**? | <code>number</code> | The number of cpu units used by the keycloak task.<br/>__*Default*__: 4096
 **taskMemory**? | <code>number</code> | The amount (in MiB) of memory used by the keycloak task.<br/>__*Default*__: 8192
 **vpc**? | <code>[aws_ec2.IVpc](#aws-cdk-lib-aws-ec2-ivpc)</code> | VPC for the workload.<br/>__*Optional*__
