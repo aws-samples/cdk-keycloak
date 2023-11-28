@@ -621,16 +621,9 @@ export class Database extends Construct {
       },
       storageEncrypted: true,
       removalPolicy: props.removalPolicy ?? cdk.RemovalPolicy.RETAIN,
+      serverlessV2MinCapacity: props.minCapacity ?? 0.5,
+      serverlessV2MaxCapacity: props.maxCapacity ?? 10,
     });
-    // Set Serverless V2 Scaling Configuration
-    // TODO: Use cleaner way to set scaling configuration.
-    // https://github.com/aws/aws-cdk/issues/20197
-    (
-      dbCluster.node.findChild('Resource') as rds.CfnDBCluster
-    ).serverlessV2ScalingConfiguration = {
-      minCapacity: props.minCapacity ?? 0.5,
-      maxCapacity: props.maxCapacity ?? 10,
-    };
     return {
       connections: dbCluster.connections,
       endpoint: dbCluster.clusterEndpoint.hostname,
