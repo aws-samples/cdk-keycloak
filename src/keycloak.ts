@@ -7,6 +7,7 @@ import {
   aws_rds as rds,
   aws_secretsmanager as secretsmanager,
 } from 'aws-cdk-lib';
+import { IKey } from 'aws-cdk-lib/aws-kms';
 import { Construct } from 'constructs';
 
 // regional availibility for aurora serverless
@@ -277,6 +278,13 @@ export interface KeyCloakProps {
   readonly databaseRemovalPolicy?: cdk.RemovalPolicy;
 
   /**
+   * The storage encryption key, that should be used to encrypt the database.
+   *
+   * @default Will create an aws managed key, when unspecified.
+   */
+  readonly storageEncryptionKey?: IKey;
+
+  /**
    * Overrides the default image
    *
    * @default quay.io/keycloak/keycloak:${KEYCLOAK_VERSION}
@@ -332,6 +340,7 @@ export class KeyCloak extends Construct {
       maxCapacity: props.databaseMaxCapacity,
       minCapacity: props.databaseMinCapacity,
       removalPolicy: props.databaseRemovalPolicy,
+      storageEncryptionKey: props.storageEncryptionKey,
     });
     const keycloakContainerService = this.addKeyCloakContainerService({
       database: this.db,
@@ -447,6 +456,13 @@ export interface DatabaseProps {
    * @default RemovalPolicy.RETAIN
    */
   readonly removalPolicy?: cdk.RemovalPolicy;
+
+  /**
+   * The storage encryption key, that should be used to encrypt the database.
+   *
+   * @default Will create an aws managed key, when unspecified.
+   */
+  readonly storageEncryptionKey?: IKey;
 }
 
 /**
@@ -516,6 +532,7 @@ export class Database extends Construct {
         version: rds.MysqlEngineVersion.VER_8_0_34,
       }),
       storageEncrypted: true,
+      ...(props.storageEncryptionKey && { storageEncryptionKey: props.storageEncryptionKey }),
       backupRetention: props.backupRetention ?? cdk.Duration.days(7),
       credentials: rds.Credentials.fromGeneratedSecret('admin'),
       instanceType: props.instanceType ?? new ec2.InstanceType('r5.large'),
@@ -560,6 +577,7 @@ export class Database extends Construct {
         retention: props.backupRetention ?? cdk.Duration.days(7),
       },
       storageEncrypted: true,
+      ...(props.storageEncryptionKey && { storageEncryptionKey: props.storageEncryptionKey }),
       removalPolicy: props.removalPolicy ?? cdk.RemovalPolicy.RETAIN,
     });
     return {
@@ -620,6 +638,7 @@ export class Database extends Construct {
         retention: props.backupRetention ?? cdk.Duration.days(7),
       },
       storageEncrypted: true,
+      ...(props.storageEncryptionKey && { storageEncryptionKey: props.storageEncryptionKey }),
       removalPolicy: props.removalPolicy ?? cdk.RemovalPolicy.RETAIN,
     });
     // Set Serverless V2 Scaling Configuration
